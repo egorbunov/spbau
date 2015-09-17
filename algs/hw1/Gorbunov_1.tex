@@ -3,27 +3,163 @@
 \usepackage[russian]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage{pscyr}
+\usepackage{titlesec}
 \usepackage[top=0.7in, bottom=1in, left=0.6in, right=0.6in]{geometry}
 \linespread{1.5}
 
 \usepackage{amsmath}
+\usepackage{MnSymbol}
 \usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{mathtools}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
 
+\makeatletter
+\renewcommand{\ALG@name}{Алгоритм}
+\renewcommand{\listalgorithmname}{Список алгроитмов}
+
+\newenvironment{procedure}[1]
+  {\renewcommand*{\ALG@name}{Процедура}
+  \algorithm\renewcommand{\thealgorithm}{\thechapter.\arabic{algorithm} #1}}
+  {\endalgorithm}
+
+\makeatother
+
+\algrenewcommand\algorithmicrequire{\textbf{Вход:}}
+\algrenewcommand\algorithmicensure{\textbf{Выход:}}
+\algnewcommand\True{\textbf{true}\space}
+\algnewcommand\False{\textbf{false}\space}
+\algnewcommand\And{\textbf{and}\space}
+
+
+\newcommand{\algFor}[3]{#1 \textbf{from} #2 \textbf{to} #3}
+\newcommand{\algAssign}[2]{\State #1 $\leftarrow$ #2}
+\newcommand{\algState}[1]{\State #1}
+
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+\titleformat{\section}[runin]{\normalfont\bfseries\large}{\thesection.}{}{}[]
+\titleformat{\subsection}[runin]{\normalfont\bfseries}{\thesubsection.}{}{}[]
+\titleformat{\subsubsection}[runin]{\normalfont}{\thesubsubsection.}{}{}[]
 \newcommand{\task}[1]{\section*{Задание #1}}
+\newcommand{\subtask}[1]{\subsection*{#1}}
+\newcommand{\subsubtask}[1]{\subsubsection*{#1}}
+\newcommand{\cd}[1]{\textsf{#1}}
+\newcommand{\md}[2]{#1~\text{mod}~#2}
+
+\title{Алгоритмы. Домашнее задание №1}
+\author{Горбунов Егор Алексеевич}
 
 \begin{document}
-
+\maketitle
 \task{1}
-\begin{enumerate}
-	\item Имеем 2 функции $f, g: \mathbb{N} \rightarrow \mathbb{N}$. Покажем, что
-	\[ 
-	\exists_{N, C > 0}{ \forall_{n \geq N}{ f(n) \leq C g(n) }} \iff \exists_{C > 0}{ \forall_{n}{ f(n) \leq C g(n) }} 
-	\]
-	($\Leftarrow$) Достаточно положить тогда, что $N = 1$ (т.к. $n \in \mathbb{N}$).
-	($\Rightarrow$) В предположении, что мы работаем с функциями $f$ и $g$ такими, что $\forall n \in \mathbb{N} 
-	(f(n) < \inf, g(n) < \inf$. Тогда имеем, что $\exists_{N, C > 0}{ \forall_{n \geq N}{ f(n) \leq C g(n) }}$.
-	Если $N \neq 1$, то есть номер $n'$, на котором нарушается условие $f(n) \leq Cg(n)$. Т.е. $N$ --- конечно, то
-	можем перебрать все пары $(i, j), i < N, j < N$
-\end{enumerate}
+\subtask{(a)}
+Имеем 2 функции $f, g: \mathbb{N} \rightarrow \mathbb{R}_{>0}$. Покажем, что
+\[ 
+	\exists_{N, C > 0}{ \forall_{n \geq N}{(f(n) \leq C g(n))}} \iff \exists_{C > 0}{ \forall_{n}{(f(n) \leq C g(n))}} 
+\]
+($\Leftarrow$) Достаточно положить тогда, что $N = 1$ (т.к. $n \in \mathbb{N}$).
+($\Rightarrow$) В предположении, что мы работаем с функциями $f$ и $g$ такими, что $\forall n \in \mathbb{N}\
+(f(n) < \infty,\ g(n) < \infty)$. Тогда имеем, что $\exists_{N, C > 0}{ \forall_{n \geq N}{f(n)~\leq~Cg(n)}}$.
+Если $N \neq 1$, то есть номер $n'$, на котором нарушается условие $f(n) \leq Cg(n)$, т.е. $f(n') > Cg(n')$. 
+$N$ --- конечно, тогда мы можем перебрать все пары $i,\ j$ и найти такие, что $f(i)$ наибольшее, а $g(j)$ наименьшее.
+Ясно тогда, что $\forall~n~<~N\ (g(n)\frac{f(i)}{g(j)}~\geq~f(n))$, но тогда и подавно в силу положительности 
+$g, f:\ g(n)\frac{f(i)}{g(j)}+Cg(n)~\geq~f(n)$, т.е.
+\[ f(n)~\leq~(\frac{f(i)}{g(j)}+C)g(n)~\forall~n\in\mathbb{N} \]
+Для $n \geq N$ ничего это так же верно в силу того, что мы лишь добавили положительное слагаемое к правой части неравенства
+$f(n) \leq Cg(n)$. Таким образом мы нашли новую константу $C' = \frac{f(i)}{g(j)}+C$, для которой уже справедливо утверждение
+без $\exists N$. \hfill $\blacksquare$
+\subtask{(b)} Вопрос об эквивалентности следующих утверждений:
+\[ 
+	\forall_{C>0}{\exists_{N}}{\forall_{n\geq N}{(f(n) \leq C g(n))}} \iff \forall_{C>0}{\forall_{n}{(f(n) \leq C g(n))}}
+\]
+Рассмотрим: $g(n)=log(n),\ f(n)=\frac{1}{n}$. Ясно, что $f(n)=o(g(n))$, но так же, например для $C=1$ $f(n)>g(n)$ при 
+$n=1$, а значит $n$ должен быть по крайней мере $\geq 2$, чтобы $f(n)\leq g(n)$, таким образом из определения $f=o(g)$
+убрать условие о существовании $N$ нельзя. \hfill $\blacksquare$
 
+\newpage
+\task{2}
+\subtask{(a)} В силу того, что во внутренний цикл вход происходит лишь при условии, что $used[i]==0$, где $i$ --- 
+переменная внешнего цикла, а если исполнение доходит до внутреннего цикла, то как минимум в $used[i]$ будет присвоена $1$
+и вообще, на каждой итерации внутреннего цикла происходит изменение некоторой ячейки массива $used$ с $0$ на $1$. Таким
+образом весь алгоритм сделает $n$ присвоений, а значит суммарно будет сделано $n$ итераций. Ответ: $\mathcal{O}(n)$
+\subtask{(b)} 
+Числа длины $n$ в десятичной системе счисления.
+\subsubtask{(i)} Сложение в столбик: будет сделано $n$ операций поразрядного сложения, т.е. сложность $\mathcal{O}(n)$
+\subsubtask{(ii)} Умножение в столбик: $n$ операций умножения для каждого из разрядов второго числа, после чего нужно будет
+сложить $n$ чисел (столько, сколько у второго числа разрядов). Итого $\mathcal{O}(n^2)$
+\subsubtask{(iii)} Деление в столбик: $\mathcal{O}(n^2)$ Т.к. на каждом шаге мы находим число (от 1 до 10) и производим 
+умножение на него того числа, на которое делим. Это происходит за $\mathcal{O}(n)$. Потом происходит вычитание 2-х чисел
+за $\mathcal{O}(n)$. И это повторяется $\mathcal{O}(n)$ раз.
+\subtask{(c)} Заметим, что строку \cd{int j = pi[i-1];} можно вынести из цикла наружу, т.к. в конце итерации \cd{i} 
+внешнего цикла переменная \cd{j} равняется по значению \cd{pi[i]}, а значит на следующей итерации она и так равняется
+по значению \cd{pi[i-1]}. В строке \cd{if (s[i]==s[j]) ++j} происходит увеличение \cd{j}, это увеличение может произойти 
+не более чем \cd{n} раз (т.к. итераций внешнего цикла \cd{n}). Уменьшаться же значение переменной \cd{j} может лишь в 
+строке \cd{j = pi[j-1];}. Заметим, что \cd{pi[k]} всегда меньше или равно, чем \cd{k}, а значит, в строке \cd{j = pi[j-1];}
+происходит гарантированное уменьшение \cd{j} хотя бы на $1$ (т.к. \cd{pi[j-1]} $\leq$ \cd{j - 1} $<$ \cd{j}). Но в силу 
+условия цикла \cd{while} \cd{(j > 0)} и того, что увеличение \cd{j} может произойти не более чем \cd{n}, уменьшение тоже
+может произойти суммарно не более, чем \cd{n} раз за всю работу алгоритма. А значит, суммарное время работы 
+$=\mathcal{O}(n)$. 
+\\\textit{PS: данная процедура вычисляет префикс функцию для строки \cd{s}. Известно, что вычисление этой функции, построенное
+приведённым в условии задачи образом, занимает линейное от длины строки время.}
+
+\task{3}
+\begin{tabular}{|cc|c|c|c|c|c|}
+\hline
+$A$ & $B$ & $\mathcal{O}$ & $o$ & $\Theta$ & $\omega$ & $\Omega$ \\
+$\lg^k{n}$ & $n^{\epsilon}$ & $+$ & $+$ &  &  &  \\
+$n^k$ & $c^n$ & $+$ & $+$ & & & \\
+$\sqrt{n}$ & $n^{sin(n)}$ & $+$ & $+$ & & & \\
+$2^n$ & $2^{n/2}$ & & & & $+$ & $+$ \\
+$n^{\lg{m}}$ & $m^{\lg{n}}$ & $+$ & & $+$ & & $+$ \\
+$\lg{(n!)}$ & $\lg{(n^n)}$& $+$ & & $+$ & & $+$ \\
+\hline
+\end{tabular}
+
+\task{5} Расширенный алгоритм Евклида.\\
+Будем искать $d = gcd(a, b),\ a \geq b$ и такие $x$ и $y$, что $d = ax+by$. Известно, что
+такие $x$ и $y$ существуют. Пускай мы умеем искать такие числа $x$ и $y$ для $a$ и $(\md{a}{b})$: 
+\[ gcd(a, \md{a}{b}) = bx'+(\md{a}{b})y' = bx' + (a - \floor*{\frac{a}{b}}b)y' = ay' + b(x'-\floor*{\frac{a}{b}}y') \]
+И т.к. известно, что $gcd(a, \md{a}{b}) = gcd(a, b)$, то получаем:
+\[
+	gcd(a, b) = ay' + b(x'-\floor*{\frac{a}{b}}y')
+\]
+Теперь мы можем построить рекурсивную процедуру вычисления разложения $gcd(a,b)$:
+\begin{procedure}{SuperEuclid}
+  \begin{algorithmic}[1]
+    \Require{
+    \begin{tabular}{p{0.9\textwidth}}
+    $a, b$ --- числа, $a \geq b \geq 0$ \\
+    \end{tabular}
+    }
+    \Ensure{$(x, y, d)$ такие, что $d = gcd(a, b) = ax+by$}
+    \Procedure{SuperEuclid}{a, b}
+        \If{$b = 0$}
+			\State $return~(1, 0, a)$
+		\EndIf
+        \algAssign{$(x, y, d)$}{\Call{SuperEuclid}{$b, \md{a}{b}$}} 
+        \State $return~(y, x-\floor*{\frac{a}{b}}y, d)$
+    \EndProcedure
+  \end{algorithmic}
+\end{procedure}
+
+\task{6} 
+\begin{enumerate}
+\item Если $x=y$, то $gcd(x,y)=x=y=\frac{x+y}{2}$
+\item Если $x$ и $y$ чётные, то ясно, что их $gcd$ кратен $2$, т.к. иначе его можно было бы увеличить
+умножением на $2$. Ясно, что $gcd(x, y) \geq 2gcd(x/2,y/2)$, т.к. если $d | x/2, d | y/2$, то всяко $2d$ делит $x$ и $y$. 
+Аналогично $gcd(x/2,y/2) \leq gcd(x, y)/2$, ведь если $d|x, d|y$, то всяко $d/2|x/2$ и $d/2|y/2$. А следовательно должно
+выполняться равенство.
+\item Если какой-то один элемент, например $x$, кратен $2$, а $y$ нет. Тогда ясно, что любой их общей делитель не кратен 
+2, а значит мы спокойно можем делить $x$ на $2$ и искать $gcd(x/2, y)$
+\item 2 последних условных оператора очевидны. Если $d$ делит $x$ и $y$, то конечно $d$ делит и их разность, а если $d$ 
+делит разность, то конечно оно делит каждый элемент разности по отдельности.
+\end{enumerate}
+Таким образом каждый рекурсивный вызов \cd{gcd} верен, а значит алгоритм корректен. Заметим, что в каждом 
+вызове функции хотя бы один из аргументов либо уменьшается вдвое, либо становится чётным (т.к. разность
+двух нечётных чисел --- число чётное), а значит на следующей итерации всяко произойдёт деление вдвое одного
+из аргументов. Итого получаем, что хотя бы каждые 2 рекурсивных вызова происходит деление одного из аргументов пополам, а значит суммарно алгоритм отрабатывает за $O(log(n))$.
 \end{document}
+
