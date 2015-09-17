@@ -1,0 +1,29 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[russian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{pscyr}
+\usepackage[top=0.7in, bottom=1in, left=0.6in, right=0.6in]{geometry}
+\linespread{1.5}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+
+\newcommand{\task}[1]{\section*{Задание #1}}
+
+\begin{document}
+
+\task{1}
+\begin{enumerate}
+	\item Имеем 2 функции $f, g: \mathbb{N} \rightarrow \mathbb{N}$. Покажем, что
+	\[ 
+	\exists_{N, C > 0}{ \forall_{n \geq N}{ f(n) \leq C g(n) }} \iff \exists_{C > 0}{ \forall_{n}{ f(n) \leq C g(n) }} 
+	\]
+	($\Leftarrow$) Достаточно положить тогда, что $N = 1$ (т.к. $n \in \mathbb{N}$).
+	($\Rightarrow$) В предположении, что мы работаем с функциями $f$ и $g$ такими, что $\forall n \in \mathbb{N} 
+	(f(n) < \inf, g(n) < \inf$. Тогда имеем, что $\exists_{N, C > 0}{ \forall_{n \geq N}{ f(n) \leq C g(n) }}$.
+	Если $N \neq 1$, то есть номер $n'$, на котором нарушается условие $f(n) \leq Cg(n)$. Т.е. $N$ --- конечно, то
+	можем перебрать все пары $(i, j), i < N, j < N$
+\end{enumerate}
+
+\end{document}
