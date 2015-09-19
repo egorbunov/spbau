@@ -30,7 +30,9 @@ else
 	echo Executables from [ $FROM ] will be copied to [ $TO ]
 fi
 
-files=$(find $FROM -type f -executable)
+files=$(find $FROM -type f -executable -print )
+echo $files
+IFS=$'\n'
 (cd $FROM && \
 for f in $files; do
 	f="${f#$FROM/}"
