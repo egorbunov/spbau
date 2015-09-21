@@ -1,0 +1,64 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{pscyr}
+\usepackage[top=0.7in, bottom=1in, left=0.6in, right=0.6in]{geometry}
+
+\usepackage{amsmath}
+\usepackage{MnSymbol}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{mathtools}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{xifthen}
+\usepackage{parskip}
+\linespread{1.5}
+\setlength{\parskip}{0pt}
+
+\makeatletter
+\renewcommand{\ALG@name}{Алгоритм}
+\renewcommand{\listalgorithmname}{Список алгроитмов}
+
+\newenvironment{procedure}[1]
+  {\renewcommand*{\ALG@name}{Процедура}
+  \algorithm\renewcommand{\thealgorithm}{\thechapter.\arabic{algorithm} #1}}
+  {\endalgorithm}
+
+\makeatother
+
+\algrenewcommand\algorithmicrequire{\textbf{Вход:}}
+\algrenewcommand\algorithmicensure{\textbf{Выход:}}
+\algnewcommand\True{\textbf{true}\space}
+\algnewcommand\False{\textbf{false}\space}
+\algnewcommand\And{\textbf{and}\space}
+
+
+\newcommand{\algFor}[3]{#1 \textbf{from} #2 \textbf{to} #3}
+\newcommand{\algAssign}[2]{\State #1 $\leftarrow$ #2}
+\newcommand{\algState}[1]{\State #1}
+
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+\newcounter{MyTaskCounter}
+\newcommand{\task}[1]{
+	\stepcounter{MyTaskCounter}
+	\textbf{\large Задача №\theMyTaskCounter}
+	\ifthenelse{\equal{#1}{}}{}{(#1)}
+	\\
+}
+
+\title{Алгоритмы. Домашнее задание №2}
+\author{Горбунов Егор Алексеевич}
+
+\begin{document}
+\maketitle
+\task{Про вычёркивание $k$ цифр из числа длины $n$}
+\task{Совершенное паросочетание в дереве}
+\task{-}
+\task{Запросы о сумме на отрезке}
+\task{Разложение числа в сумму}
+\task{Максимальная сумма}
+\end{document}
