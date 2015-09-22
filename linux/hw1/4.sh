@@ -35,3 +35,7 @@ for str in $strs; do
 done
 
 echo $fin_cnt
+
+
+# another solution (command --- whole line; -x --- match whole line key)
+cat ~/.bash_history | grep -x "$1" | wc -l
