@@ -1,68 +1,206 @@
-\documentclass[12pt, a4paper]{article}
-
-\usepackage[utf8]{inputenc}
-\usepackage[russian]{babel}
-\usepackage{pscyr}
-\usepackage[top=0.7in, bottom=1in, left=0.6in, right=0.6in]{geometry}
-
-\usepackage{amsmath}
-\usepackage{MnSymbol}
-\usepackage{amsthm}
-\usepackage{amsfonts}
-\usepackage{mathtools}
-\usepackage{algorithm}
-\usepackage[noend]{algpseudocode}
-\usepackage{xifthen}
-\usepackage{parskip}
-\linespread{1.5}
-\setlength{\parskip}{0pt}
-
-\makeatletter
-\renewcommand{\ALG@name}{Алгоритм}
-\renewcommand{\listalgorithmname}{Список алгроитмов}
-
-\newenvironment{procedure}[1]
-  {\renewcommand*{\ALG@name}{Процедура}
-  \algorithm\renewcommand{\thealgorithm}{\thechapter.\arabic{algorithm} #1}}
-  {\endalgorithm}
-
-\makeatother
-
-\algrenewcommand\algorithmicrequire{\textbf{Вход:}}
-\algrenewcommand\algorithmicensure{\textbf{Выход:}}
-\algnewcommand\True{\textbf{true}\space}
-\algnewcommand\False{\textbf{false}\space}
-\algnewcommand\And{\textbf{and}\space}
-
-
-\newcommand{\algFor}[3]{#1 \textbf{from} #2 \textbf{to} #3}
-\newcommand{\algAssign}[2]{\State #1 $\leftarrow$ #2}
-\newcommand{\algState}[1]{\State #1}
-
-\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
-\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
-
-\newcounter{MyTaskCounter}
-\newcommand{\task}[1]{
-	\stepcounter{MyTaskCounter}
-	\textbf{\large Задача №\theMyTaskCounter}
-	\ifthenelse{\equal{#1}{}}{}{(#1)}
-	\\
-}
-
+\input{env.tex}
 \title{Алгоритмы. Домашнее задание №2}
 \author{Горбунов Егор Алексеевич}
 
 \begin{document}
 \maketitle
-\task{Про вычёркивание $k$ цифр из числа длины $n$}
-$
-x + y = 5\\
-y + z = 6 
-$
-\task{Совершенное паросочетание в дереве}
+\task{Про вычёркивание $k$ цифр из числа длины $n$ за $\bigO{n}$}
+$num[0..n-1]$ --- входное число длины $n$. Рассмотрим $n[0..k]$ --- первые $k+1$ цифру этого числа. Пусть $i_m$ --- это
+индекс первого вхождения $max(n[0..k])$ в $n[0..k]$. Нам выгодно жадно вычеркнуть все цифры до $i_m$-ой, благо их не больше
+$k$, т.к. $0 \leq i_m \leq k$. Выгодно нам это сделать потому, что положим, первая цифра, которую мы оставим в числе --- это 
+цифра с индексом $j < i_m$, но по определению $i_m$: $num[j]<num[i_m]$, но числа с большей цифрой в старшем разряде всегда
+больше чисел \textbf{той же длины} с меньшей цифрой в старшем разряде. Первой оставить цифру с индексом $>k$ мы не можем,
+т.к. придётся вычеркнуть более $k$ цифр, что не позволительно по условию. Значит нам действительно выгодней всего 
+вычеркнуть все цифры до $i_m$-ой! Таким образом мы вычеркнем $m$ цифр и нам останется вычеркнуть $k-m$ 
+в числе длины $n-m-1$, что решается аналогично =).
+
+\begin{algorithmic}[1]
+\Require{
+\begin{tabular}{p{0.9\textwidth}}
+$num$ --- число длины $n$ \\
+$k$ --- сколько цифр нужно вычеркнуть, $k <= n$
+\end{tabular}
+}
+\xassign{$q$}{$uber\_queue()$}
+\xassign{$from$}{$0$}
+\xassign{$to$}{$k$}
+\xstate{$start:$}
+\For{\xfor{$i$}{$from$}{$to$}}
+	\xstate{$q.push(num[i])$}
+\EndFor
+\xassign{$max$}{$q.max()$}
+\While{$to-from \geq 0$}
+	\xassign{$from$}{$from + 1$}
+	\xassign{$x$}{$q.pop()$}
+	\If{$x != max$}
+		\xstate{$to\_cross.add(x)$}
+	\Else
+		\xassign{$to$}{$to + 1$}
+		\xstate{$break;$}
+	\EndIf
+\EndWhile
+\If{$to\_cross.size() < k$}
+	\xstate{\textbf{goto} $start$}
+\EndIf
+\end{algorithmic}
+
+Приведённый алгоритм будет работать за $\bigO{n}$, если очередь $q$ реализовать на $2$ стеках с поддержкой опреации
+максимума за амортизированную константу. Ни один элемент массива $num$ не может побывать дважды в очереди $q$. $num$
+обходится последовательно слева направо.
+
+\task{Совершенное паросочетание в дереве за $\bigO{n}$}
+Дано дерево $T$. Известно, что в любом дереве найдётся хотя бы $2$ вершины степени $1$. 
+\begin{algorithmic}[1]
+\Require{
+\begin{tabular}{p{0.9\textwidth}}
+$T$ --- дерево \\
+\end{tabular}
+}
+\Ensure{$PM$ --- множество рёбер, входящий в совершенное паросочетание (если его нет, то $\emptyset$)}
+\xassign{$PM$}{$\emptyset$}
+\xassign{$S$}{$\emptyset$}
+\xassign{$mcnt$}{$0$}
+\For{$v \in V(T)$} 
+	\If{$d(v) = 1$}
+		\xstate{$S.add(v)$}
+	\EndIf
+\EndFor \label{pm:initend}
+\While{$S \neq \emptyset$}
+	\xassign{$v$}{$S.pop()$} \label{pm:delv}
+	\xassign{$u$}{$\Gamma(v).first()$}
+	\xstate{$T.delete\_edge((v, u))$}
+	\xstate{$PM.add((v, u))$}
+	\For{$v \in \Gamma(u)$} \label{pm:ssearch}
+		\xstate{$T.delete\_edge((v, u))$}
+		\If{$d(v) = 1$}
+			\xstate{$S.add(v)$}
+		\EndIf
+	\EndFor					\label{pm:esearch}
+	\xassign{$mcnt$}{$mcnt+2$}
+\EndWhile
+\If{$mcnt < |V(T)|$}
+	\xassign{$PM$}{$\emptyset$}
+\EndIf
+\xreturn{$PM$}
+\end{algorithmic}
+$\Gamma(v)$ --- список вершин, смежных с $v$.\\
+Если $d(v) = 1$, то из $v$ выходит единственное ребро $e \in E(T)$ и оно \textbf{обязано входить в совершенное 
+паросочетание},
+т.к. это единственная возможность покрыть $v$. После выполнения строки, в силу свойст дерева, \ref{pm:initend} в $S$ 
+будет как минимум $2$ вершины. В строке \ref{pm:delv} происходит удаление висячей вершины $v$ из $s$, а на следующей 
+строке мы удаляем единственное ребро $(v, u)$, выходящее из $v$. Теперь мы можем выкинуть их $T$ вершины $v$ и $u$ т.к.
+они уже покрыты. Важно: после выкидывания этих вершин $T\backslash\lbrace v,u \rbrace$ останется деревом, а значит в нём
+так же будет как минимум $2$ висячие вершины, некоторые из них уже могут лежать в $S$, а некоторые могли появиться после
+удаления вершины $u$, поэтому мы и проделываем поиск таких вершин в строках \ref{pm:ssearch}---\ref{pm:esearch}.
+$S$ --- может быть стэком, т.е. операции с ним реализуются за $\bigO{1}$. $PM$ так же может быть стэком, т.е. операции
+с ним тоже за $\bigO{1}$. Удаление ребра из графа может быть реализовано за $\bigO{1}$ (помечать рёбра как удалённые).
+На каждой итерации цикла $While$ мы покрываем $2$ вершинки, суммарное число покрытых вершин хранится в переменной $mcnt$.
+Если к моменту выхода это число не равно $|V(T)|$, то совершенного паросочетания для $T$ не существует.
+
+
+Таким образом на каждой итерации цикла $While$ мы делаем $\bigO{d(u)}$ операций, тело цикла $While$ отрабатывает столько
+раз, сколько вершин в $T$, а таким образом весь алгоритм отрабатывает за $\bigO{2|E(T)|}=\bigO{n}$ (по лемме о 
+рукопожатиях), где $n$ --- число вершин (в дереве $|E(T)| = n - 1$). \hfill $\blacksquare$
 \task{-}
-\task{Запросы о сумме на отрезке}
-\task{Разложение числа в сумму}
-\task{Максимальная сумма}
+\task{Запросы о сумме на отрезке за $\bigO{1}$}
+Делаем следующий предподсчёт, очевидно, работающий за линейное время от размера входного массива:
+\begin{algorithm}
+\begin{algorithmic}[1]
+\caption{Предподсчёт}
+\Require{
+\begin{tabular}{p{0.9\textwidth}}
+$A$ --- массив из $n$ целых чисел \\
+\end{tabular}
+}
+\Ensure{$P$ --- массив из $n + 1$ целых чисел, что $P[0] = 0,\ P[k]=\sum_{i=0}^{k-1}{A[i]}, k > 0$
+}
+\xassign{$P$}{$fill(array[0..n], 0)$}
+\For{\xfor{$i$}{$0$}{$n-1$}}
+	\xassign{$P[i + 1]$}{$P[i]+A[i]$}
+\EndFor
+\end{algorithmic}
+\end{algorithm}\\
+Отвечаем на запрос за $\bigO{1}$ исходя из очевидного равенства: $\sum_{i = l}^{r}{A[i]} = \sum_{i=0}^{r}{A[i]}-\sum_{i=0}^{l-1}{A[i]}$
+\begin{algorithm}
+\begin{algorithmic}[1]
+\caption{Ответ на запрос}
+\Require{
+\begin{tabular}{p{0.9\textwidth}}
+$l, r$ --- натуральные, такие, что $0 \leq l \leq r \leq n-1$ \\
+\end{tabular}
+}
+\Ensure{целое число: $s=\sum_{i=l}^{r}{A[i]}$
+}
+\xreturn{$P[r+1]-P[l]$}
+\end{algorithmic}
+\end{algorithm}
+
+\task{Разложение числа в сумму за $\bigO{n}$}
+\begin{algorithmic}[1]
+\Require{
+\begin{tabular}{p{0.9\textwidth}}
+$s, A[0..n-1]$ --- целое положительное число и массив из целых положительных чисел \\
+\end{tabular}
+}
+\Ensure{$l, r$ такие, что $\sum_{i = l}^{r}{A[i]} = s$; или $l = r = -1$, если сумму составить невозможно}
+
+\xassign{l}{0}
+\xassign{r}{0}
+\xassign{sum}{0}
+\While{$r < n$ AND $l < n$ AND $s != sum$}
+	\If{$sum < s$}
+		\xassign{$sum$}{$sum+A[r]$}
+		\xassign{$r$}{$r + 1$};
+	\ElsIf{$sum > s$}
+		\xassign{$sum$}{$sum-A[l]$}
+		\xassign{$l$}{$l + 1$}
+	\EndIf
+\EndWhile
+\xassign{$r$}{$r+1$}
+\end{algorithmic}
+Этот алгоритм работает за $\bigO{n}$ т.к. $l \leq r$ на протяжении всей его работы, т.к. перед главным циклом это верно,
+а далее $l$ увеличивается лишь тогда, когда $sum > s$, а это верно лишь тогда, когда $l < r$, т.к. $sum$ всегда хранит
+сумму чисел массива с индексами в полуинтервале $[l, r)$.
+
+
+Пускай для некоторого числа $s$ наименьший возможный по левой границе ответ на задачу --- полуинтервал $[a, b)$, 
+алгоритм подбирает ответ, начиная с $[0, 0)$. На каждой итерации двигается \textbf{на 1} либо левая граница, либо правая.
+Тогда рано или поздно либо $l$ дойдёт до $a$, либо $r$ дойдёт до $b$. Пусть $l$ дошёл до $a$ раньше, чем $r$ до $b$, тогда
+$sum < s$, т.к. $l \leq r \leq b$ и числа в массиве положительны. Значит, исходя из алгоритма, далее мы будем двигать правую
+границу до тех пор, пока $r$ не станет равным $b$ и условие внешнего цикла сломается (накоец то)! Пускай $r$ раньше дошёл
+до $b$, чем $l$ дошёл до $a$, т.е. $l < a < b = r$. Но тогда $sum > s$ в силу натуральности чисел массива. А значит, анологично,
+мы будем двигать границу $l$ вперёд до тех пор, пока $l$ не станет равным $a$ и условие цикла снова сломается. Значит
+алгоритм корректен. \hfill $\blacksquare$ 
+\task{Максимальная сумма в массиве над $\mathcal{Z}$ за $\bigO{n}$}
+
+\begin{algorithmic}[1]
+\Require{
+\begin{tabular}{p{0.9\textwidth}}
+$A$ --- массив из $n$ целых чисел \\
+\end{tabular}
+}
+\Ensure{$l, r$ --- такие индексы массива, что: $\sum_{i=l}^{r}{A[i]}$ максимальна
+}
+\xassign{$P$}{$fill(array[0..n], 0)$}
+\For{\xfor{$i$}{$0$}{$n-1$}}
+	\xassign{$P[i + 1]$}{$P[i]+A[i]$}
+\EndFor
+\xassign{$(l, r)$}{$min\_max\_ind(P)$}
+\xassign{$(l', r')$}{$max\_min\_ind(P)$}
+\If{$P[r]-P[l] > P[r']-P[l']$}
+	\xreturn{$(l+1, r)$}
+\Else
+	\xreturn{$(l'+1, r')$}
+\EndIf
+\end{algorithmic}
+$min\_max\_ind(P)$ --- возвращает пару $(l, r)$, что $l$ --- индекс минимального элемента в массиве $P$, а $r$ --- индекс
+максимального элемента в $P$, причём $r > l$ ($r$ ищется после $l$).\\
+$max\_min\_ind(P)$ --- возвращает пару $(l, r)$, что $r$ --- индекс максимального элемента в массиве $P$, а $l$ --- индекс
+минимального элемента в $P$, причём $l < r$ ($l$ ищется после $r$).\\
+
+
+Функции $min\_max\_ind(P)$ и $max\_min\_ind(P)$ очевидно могут быть реализованы за $\bigO{n}$ опреаций. Подсчёт сумм на
+префиксах так же занимает $\bigO{n}$. В конце мы получаем такую пару $(l, r)$, что $\sum_{i=0}^{l-1}{A[i]}$ минимальна,
+а $\sum_{i=0}^{r}{A[i]}$ максимальна, причём из всех возможных $l \leq r$. Но это значит, что $\sum_{i=l}^{r}{A[i]}$
+максимальна! \hfill $\blacksquare$
 \end{document}
