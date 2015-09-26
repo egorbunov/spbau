@@ -21,7 +21,7 @@ void main() {
 ```
 
 #### Linker script
-```Linker Script
+```LinkerScript
 OUTPUT_FORMAT(elf64-x86-64)
 OUTPUT_ARCH(i386:x86-64)
 ENTRY(main);
