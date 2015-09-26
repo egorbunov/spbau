@@ -37,4 +37,20 @@ SECTIONS
 * `.text : { *(.text); } ` ‒ definition of output `.text` section: between `{` and `}` list of input sections is places, that sections will be places in output .text section; `*(.text)` ‒ means all `.text` input sections in all input files; The address of `.text` section will be `0x7C00`
 * `boot : AT(0x7DFE) { SHORT(0xaa55); }` ‒ write at `0x7DFE` that strange number `0xAA55` (boot sector signature), which will tell BIOS, that sector is bootable! `0x7DFE` address of last 2 bytes = `0x7C00 + 0x1FE` (`0x1FE` = 510 in decimal system, so 510 and 511 bytes are last two bytes of sector with size of 512 bytes); 
 
+### Building
+1. `gcc -Werror -Wall -ffreestanding -c -Os hello.c -o hello.o` ‒ compilation
+    * `-Werror` ‒ make all warnings into errors.
+    * `-Wall` ‒ enable ALL (:)) warnings
+    * `-ffreestanding` ‒ compilation takes place in freestanding environment, where standard library may not exist and some another stuff may happen...
+    * `-c` ‒ compile without linking
+    * `-Os` ‒ optimize for size (TODO: strange, but it doesn't compile without it) 
+    * `-o` ‒ specify output file
+2. `ld -static -Thello.ld -nostdlib --nmagic -o hello.elf hello.o` ‒ linking
+    * `-static` ‒ do not link against shared libs
+    * `-nostdlib` ‒ only search library directories explicitly specified on the command line
+    * `--nmagic` ‒ turn off page alignment of sections, and mark the output as NMAGIC (???) if possible.
+    * `-o` ‒ output
+3. `objcopy -O binary hello.elf hello` ‒ copies the contents of an object file to another
+    * `-O binary` ‒ generate raw binary file
+
 ## Multiboot bootloader
