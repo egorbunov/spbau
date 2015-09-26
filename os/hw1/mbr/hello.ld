@@ -5,5 +5,5 @@ SECTIONS
 {
     . = 0x7C00;
     .text : { *(.text); }
-    .sig : AT(0x7DFE) { SHORT(0xaa55); }
+    .boot : AT(0x7DFE) { SHORT(0xaa55); }
 } 
