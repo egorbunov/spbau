@@ -1,56 +1,56 @@
-__asm__(".code16\n");
+__asm__(".code32\n");
 __asm__("jmpl $0x0000, $main\n");
 
 void main() {
-     __asm__ __volatile__("movb $'H' , %al\n");
-     __asm__ __volatile__("movb $0x0e, %ah\n");
-     __asm__ __volatile__("int  $0x10\n");
+     asm ("movb $'H' , %al\n"); // Character to print
+     asm ("movb $0x0e, %ah\n"); // Bios service code to print
+     asm ("int  $0x10\n");      // interruption
 
-     __asm__ __volatile__("movb $'e' , %al\n");
-     __asm__ __volatile__("movb $0x0e, %ah\n");
-     __asm__ __volatile__("int  $0x10\n");
+     asm("movb $'e' , %al\n");
+     asm("movb $0x0e, %ah\n");
+     asm("int  $0x10\n");
 
-     __asm__ __volatile__("movb $'l' , %al\n");
-     __asm__ __volatile__("movb $0x0e, %ah\n");
-     __asm__ __volatile__("int  $0x10\n");
+     asm("movb $'l' , %al\n");
+     asm("movb $0x0e, %ah\n");
+     asm("int  $0x10\n");
 
-     __asm__ __volatile__("movb $'l' , %al\n");
-     __asm__ __volatile__("movb $0x0e, %ah\n");
-     __asm__ __volatile__("int  $0x10\n");
+     asm("movb $'l' , %al\n");
+     asm("movb $0x0e, %ah\n");
+     asm("int  $0x10\n");
 
-     __asm__ __volatile__("movb $'o' , %al\n");
-     __asm__ __volatile__("movb $0x0e, %ah\n");
-     __asm__ __volatile__("int  $0x10\n");
+     asm("movb $'o' , %al\n");
+     asm("movb $0x0e, %ah\n");
+     asm("int  $0x10\n");
 
-     __asm__ __volatile__("movb $',' , %al\n");
-     __asm__ __volatile__("movb $0x0e, %ah\n");
-     __asm__ __volatile__("int  $0x10\n");
+     asm("movb $',' , %al\n");
+     asm("movb $0x0e, %ah\n");
+     asm("int  $0x10\n");
 
-     __asm__ __volatile__("movb $' ' , %al\n");
-     __asm__ __volatile__("movb $0x0e, %ah\n");
-     __asm__ __volatile__("int  $0x10\n");
+     asm("movb $' ' , %al\n");
+     asm("movb $0x0e, %ah\n");
+     asm("int  $0x10\n");
 
-     __asm__ __volatile__("movb $'W' , %al\n");
-     __asm__ __volatile__("movb $0x0e, %ah\n");
-     __asm__ __volatile__("int  $0x10\n");
+     asm("movb $'W' , %al\n");
+     asm("movb $0x0e, %ah\n");
+     asm("int  $0x10\n");
 
-     __asm__ __volatile__("movb $'o' , %al\n");
-     __asm__ __volatile__("movb $0x0e, %ah\n");
-     __asm__ __volatile__("int  $0x10\n");
+     asm("movb $'o' , %al\n");
+     asm("movb $0x0e, %ah\n");
+     asm("int  $0x10\n");
 
-     __asm__ __volatile__("movb $'r' , %al\n");
-     __asm__ __volatile__("movb $0x0e, %ah\n");
-     __asm__ __volatile__("int  $0x10\n");
+     asm("movb $'r' , %al\n");
+     asm("movb $0x0e, %ah\n");
+     asm("int  $0x10\n");
 
-     __asm__ __volatile__("movb $'l' , %al\n");
-     __asm__ __volatile__("movb $0x0e, %ah\n");
-     __asm__ __volatile__("int  $0x10\n");
+     asm("movb $'l' , %al\n");
+     asm("movb $0x0e, %ah\n");
+     asm("int  $0x10\n");
 
-     __asm__ __volatile__("movb $'d' , %al\n");
-     __asm__ __volatile__("movb $0x0e, %ah\n");
-     __asm__ __volatile__("int  $0x10\n");
+     asm("movb $'d' , %al\n");
+     asm("movb $0x0e, %ah\n");
+     asm("int  $0x10\n");
 
-     __asm__ __volatile__("movb $'!' , %al\n");
-     __asm__ __volatile__("movb $0x0e, %ah\n");
-     __asm__ __volatile__("int  $0x10\n");
+     asm("movb $'!' , %al\n");
+     asm("movb $0x0e, %ah\n");
+     asm("int  $0x10\n");
 } 
