@@ -1,3 +1,5 @@
+# ------------SUBLIME STUFF -----------
+*.save
 # ------------LATEX GITIGNORE ---------
 
 ## Core latex/pdflatex auxiliary files:
