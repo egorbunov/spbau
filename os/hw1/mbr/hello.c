@@ -1,5 +1,4 @@
-__asm__(".code32\n");
-__asm__("jmpl $0x0000, $main\n");
+__asm__(".code16\n");
 
 void main() {
      asm ("movb $'H' , %al\n"); // Character to print
