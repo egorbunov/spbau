@@ -53,4 +53,9 @@ SECTIONS
 3. `objcopy -O binary hello.elf hello` ‒ copies the contents of an object file to another
     * `-O binary` ‒ generate raw binary file
 
+### Links
+* http://www.codeproject.com/Articles/664165/Writing-a-boot-loader-in-Assembly-and-C-Part
+
+
+
 ## Multiboot bootloader
