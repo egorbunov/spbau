@@ -20,6 +20,8 @@ void main() {
 }
 ```
 
+Character are printed with INT 10H interrupt, see: https://en.wikipedia.org/wiki/INT_10H.
+
 ### Linker script
 Script, which describes contents of final output object file, which is linked from input object files. That script also specifies where (address in virtual address space) loadable sections of final object file will be loaded before program execution.
 ```LinkerScript
@@ -55,6 +57,7 @@ I've tested it only with QEMU using command: `qemu-system-i386 -hda hello`
 ### Links
 * http://www.codeproject.com/Articles/664165/Writing-a-boot-loader-in-Assembly-and-C-Part
 * http://www.lowlevel.eu/wiki/Teil_4_-_Hello_World
+* https://en.wikipedia.org/wiki/INT_10H
 
 
 ## Multiboot bootloader
