@@ -1,6 +1,6 @@
 __asm__(".code16\n");
 
-int main(void) {
+int cmain(void) {
      asm ("movb $'H' , %al\n"); // Character to print
      asm ("movb $0x0e, %ah\n"); // Bios service code to print
      asm ("int  $0x10\n");      // interruption

@@ -1,5 +1,4 @@
 CFLAGS  := -m32 -Wall -g -fno-stack-protector -nostdinc
-LDFLAGS := -nostdlib -Wl,-N -Wl,-Ttext -Wl,100000
 
 all: hello
 
