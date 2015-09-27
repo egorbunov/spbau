@@ -1,21 +1,16 @@
+CFLAGS  := -m32 -Wall -g -fno-stack-protector -nostdinc
+LDFLAGS := -nostdlib -Wl,-N -Wl,-Ttext -Wl,100000
+
 all: hello
 
-hello: hello.ld hello.o loader.o printf.o screen.o
-	ld -T hello.ld -o hello hello.o loader.o screen.o printf.o
-
-screen.o: screen.c screen.h
-	gcc -Iinclude -Wall -fno-builtin -nostdinc -ffreestanding -nostdlib -o screen.o -c screen.c
-
-printf.o: printf.c printf.h
-	gcc -Iinclude -Wall -fno-builtin -nostdinc -ffreestanding -nostdlib -o printf.o -c printf.c
-
-hello.o: hello.c
-	gcc -Iinclude -Wall -fno-builtin -nostdinc -ffreestanding -nostdlib -o hello.o -c hello.c
+hello: loader.o hello.o
+	ld -melf_i386 -T hello.ld -nostdlib -o hello loader.o hello.o
 
 loader.o: loader.S
-	as loader.S -o loader.o
+	gcc -m32 -o loader.o -c loader.S
+
+hello.o: hello.c
+	gcc $(CFLAGS) -o hello.o -c hello.c
 
 clean: 
-	rm -f *.o hello *.out
-
-.PHONY: clean all
+	rm -f *.o *.bin hello hello1 *.elf

@@ -21,7 +21,7 @@ loader:
     movl  $(stack + STACKSIZE), %esp # set up the stack
     movl  %eax, magic                # Multiboot magic number
     movl  %ebx, mbd                  # Multiboot data structure
-    call  main                      # call C code
+    call  cmain                      # call C code
     cli
 hang:
     hlt                              # halt machine should kernel return
