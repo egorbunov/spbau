@@ -13,11 +13,60 @@
 верным ответом, т.к. теперь всё от него и зависит (если $y = true$, то $or\ x\ y\ = true$ и с $false$ аналогично).
 
 \tasksection{Примитивная рекурсия}
+\[
+prim\_rec\ b\ z\ n = snd\ (n\ (\lambda p.pair\ (succ\ (fst\ p))(p\ b))\ (pair\ \overline{0}\ z))
+\]
+Суть: применяем $b$ $n$ раз к $z$ (каждое следующее применение производится к результату предыдущего). Исходя их этого будет в следующих 
+заданиях строить требуемые функции.
 \task{факториал}
+\[
+fact\ n = prim\_rec\ (\lambda xy.mult\ (succ\ x)\ y)\ \overline{1}\ n
+\]
+Для $n = \overline{0}$ ($\overline{0}=zero$ --- число Чёрча): $fact\ 0 = snd\ (pair\ \overline{0}\ \overline{1})) = \overline{1}$ (уд. определению факториала).
+Для $n = \overline{1}$: 
+\begin{equation*}
+\begin{split}
+fact\ 1 &= snd\ (pair\ (succ\ (fst\ (pair\ \overline{0}\ \overline{1}))((pair\ \overline{0}\ \overline{1})\ (\lambda xy.mult\ (succ\ x)\ y)) \\
+        &= snd\ (pair\ (succ\ \overline{0})\ (mult\ (succ\ \overline{0})\ \overline{1})) \\
+        &= \overline{1}
+\end{split}
+\end{equation*}
+Аналогично для $n > \overline{1}$. \hfill $\blacksquare$
 \task{предыдущее число}
+Идея: вернуть значение счётчика в примитивной рекурсии, только на единицу меньше, т.е. увеличивать результат столько же раз, сколько увеличивается счётчик,
+за исключением одного раза.\\
+При применении абстракции $b$ (параметр $prim\_rec$) счётчик передаётся первым параметром. Итого:
+\[
+pred\ n = prim\_rec\ (\lambda xy.(ifZero\ x)\ x\ (succ\ y))\ \overline{0} 
+\]
+$n=\overline{0}$: $pred\ \overline{0} = \overline{0} = snd\ (pair\ \overline{0}\ \overline{0}))$\\
+$n=\overline{1}$: 
+\begin{equation*}
+\begin{split}
+pred\ \overline{1} &= snd\ ((\lambda p.pair\ (succ\ (fst\ p))(p\ (\lambda xy.(ifZero\ x)\ x\ (succ\ y))))\ (pair\ \overline{0}\ \overline{0}))\\
+			       &= snd\ (pair\ (succ\ (fst\ (pair\ \overline{0}\ \overline{0})))((pair\ \overline{0}\ \overline{0})\ (\lambda xy.(ifZero\ x)\ x\ (succ\ y))))\\
+			       &= snd\ (pair\ (\overline{1})\ ((ifZero\ \overline{0})\ \overline{0}\ (succ\ \overline{0}))) \\
+			       &= snd\ (pair \overline{1}\ \overline{0}) \\
+			       &= \overline{0}
+\end{split}
+\end{equation*}) 
+Для $n=\overline{1}$ верно. 
+Легко проверить для $n=2$: нужно применить абстракцию $(\lambda p.pair\ (succ\ (fst\ p))(p\ (\lambda xy.(ifZero\ x)\ x\ (succ\ y))))$ к паре 
+$(pair \overline{1}\ \overline{0})$ (такая пара получена после первого применения). Ясно что тогда, т.к. $\overline{1} \neq zero$, то в итоге 
+получится пара $(pair \overline{2}\ \overline{1})$ и будет возвращён в качестве ответа её второй элемент: $\overline{1}$. Верно! Таким образом в конце 
+$k$-ой итерации примитивной рекурсии имеем пару $pair\ \overline{k}\ \overline{k-1}$. \hfill $\blacksquare$
 \task{меньше или равно}
+Пользуясь тем, что $pred\ \overline{0} = \overline{0}$ и определением чисел Чёрча получаем:
+\[
+leq\ a\ b = (ifZero\ (b\ pred\ a))\ true\ false
+\]
+Т.е. $b$ раз пытаемся вычесть $1$ из $a$. Если число стало в итоге $\overline{0}$, то $a-b \leq 0\ \Rightarrow\ a\ \leq\ b$ \hfill $\blacksquare$
 \task{модуль разности}
-
+Имея возможность узнать, какое из чисел больше, можем найти модуль разности вычитанием большего из меньшего:
+\[
+dist\ a\ b = (leq\ a\ b)\ (a\ pred\ b)\ (b\ pred\ a)
+\]
+\hfill $\blacksquare$
 \tasksection{Списки}
 \begin{align*}
 	nil &= \lambda cx.x \\
@@ -62,7 +111,34 @@ $Y$-комбинатор по определению таков, что: $\foral
 	F = Y\ (\lambda fm.f)
 \]
 \hfill $\blacksquare$
-\task{ещё один факториал}
+\task{$fact$ через $Y$}
+Определим факториал рекурсивно:
+\[
+	fact = \lambda n.(isZero\ n)\ 1\ (mult\ n\ (fact\ (pred\ n)))
+\]
+Теперь абстрагируемся:
+\[
+ 	fact = \overbrace{(\lambda fn.(isZero\ n)\ 1\ (mult\ n\ (f\ (pred\ n))))}^{fact'}\ fact
+\]
+$fact'$ --- неподвижная точка терма $fact$, таким образом:
+\[
+	fact = Yfact'
+\]
+\hfill $\blacksquare$
 \task{функция Аккермана}
-
+Функция Аккремана:
+\[
+A(n, m) = 
+\begin{cases}
+n + 1 & m = 0 \\
+A(m-1,1) & m > 0\ \land\ n = 0 \\
+A(m-1,A(m,(n-1))) & m > 0\ \land\ n > 0
+\end{cases}
+\]
+Зададим в терминах $\lambda$-исчисления (абстрагируемся сразу, как в предыдущем задании):
+\[
+A = \overbrace{(\lambda fnm.(isZero\ m)\ (succ\ n)\ ((isZero\ n)\ (f\ (pred\ m)\ \overline{1})\ (f\ (pred\ m)\ (f\ m\ (pred\ n)))))}^{A'}\ A
+\]
+Тут $\overline{1}$ --- число Чёрча, соответствующее 1.\\
+Аналогично предыдущей задаче: $A = YA'$. \hfill $\blacksquare$
 \end{document}
