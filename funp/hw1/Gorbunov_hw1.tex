@@ -1,10 +1,62 @@
 \input{env.tex}
+
 \title{Haskell. Домашнее задание №1}
 \author{Горбунов Егор Алексеевич}
 
 \begin{document}
 \maketitle
 
-\task{Долг с пары}
+\tasksection{Долг с пары}
+\task{функция $or$}
+\[or\ x\ y = x\ true\ y\]
+Если $x = true = \lambda ab.a$, то $or\ x\ y$ вернёт $true$ (т.е. $x$), иначе будет возвращён $y$, который и будет 
+верным ответом, т.к. теперь всё от него и зависит (если $y = true$, то $or\ x\ y\ = true$ и с $false$ аналогично).
+
+\tasksection{Примитивная рекурсия}
+\task{факториал}
+\task{предыдущее число}
+\task{меньше или равно}
+\task{модуль разности}
+
+\tasksection{Списки}
+\begin{align*}
+	nil &= \lambda cx.x \\
+	cons\ a\ as &= \lambda cx.c\ a\ (as\ c\ x)
+\end{align*}
+\task{$isEmpty$}
+\[isEmpty\ l = l\ (\lambda ht.false)\ true\]
+Проверим для пустого списка $nil$: $isEmpty\ nil = nil\ (\lambda ht.false)\ true = \lambda cx.x\ (\lambda ht.false)\ 
+true =_\beta true$. Ок. Любой непустой список $l = cons\ a_1 (cons\ a_2 (\ldots(cons\ nil)\ldots))$ представляется в виде:
+\begin{align}
+l &= \lambda cx.c\ a_1\ (T\ c\ x)=\\
+  &= \lambda cx.c\ a_1\ (c\ a_2\ (T'\ c\ x)))=\\
+  &= \lambda cx.c\ a_1\ (c\ a_2\ (\ldots (c\ a_n\ (nil\ c\ x))\ldots))=\\
+  &= \lambda cx.c\ a_1\ (c\ a_2(\ldots\ (c\ a_n\ x)\ldots) \label{eq:list}
+\end{align}
+Ясно, что если вместо $c$ подставить любую абстракцию с 2 связанными переменными, всегда возвращающую $false$, то $isEmpty\ l$ будет возвращать $false$. \hfill $\blacksquare$
+\task{$head$}
+\[ head\ l =  l\ true\ nil\]
+Для $nil$: $head\ nil = nil\ true\ nil = (\lambda cx.x)\ true\ nil =_\beta nil$. Разумно.\\
+Для непустого $l = cons\ a_1\ T$: 
+\begin{align*}
+head\ l &= (\lambda cx.c\ a_1\ (c\ a_2(\ldots\ (c\ a_n\ x)\ldots))\ true\ nil =_\beta \\
+	    &=_\beta true\ a_1\ (\ldots) =_\beta \\
+	    &=_\beta a_1
+\end{align*}
+\hfill $\blacksquare$
+\task{$tail$}
+Соберём хвост списка $l = [a_1,\ldots,a_{n-1},a_n]$ начиная с конца. Пускай:
+\[c\ e\ p\ = pair\ (snd\ p)\ (cons\ e\ (snd\ p)))\]
+Тогда, например $c\ a_n\ (pair\ nil\ nil) = pair\ nil\ l'$, где $l'$ --- лист из элемента $a_n$, т.е. в первом элементе пары хранится хвост списка $l'$ из одного элемента. Таким образом последовательные применения $c$ при построении списка (см. формулу \ref{eq:list}) приведут к тому, что после последнего применения $c$ получится пара $pair\ tail\ l$. Таким образом ответ на задачу:
+\[tail\ l = fst\ (l\ (\lambda ep.pair\ (snd\ p)\ (cons\ e\ (snd\ p)))\ (pair\ nil\ nil))\]
+\hfill $\blacksquare$
+\task{$append$}
+Аналогично операции $tail$ с одним изменением:
+\[append\ l\ a = snd\ (l\ (\lambda ep.pair\ (snd\ p)\ (cons\ e\ (snd\ p)))\ (pair\ nil\ a))\]
+Таким образом после первого применения $c$ (см. формулу \ref{eq:list}): $c\ a_n\ (pair\ nil\ a) = pair\ a\ (cons\ a_n\ a)$. Итого во втором элементе пары у нас будет записан исходный список $l$, с добавленным в конец элементом $a$. \hfill $\blacksquare$
+\tasksection{$Y$-комбинатор}
+\task{}
+\task{}
+\task{}
 
 \end{document}
