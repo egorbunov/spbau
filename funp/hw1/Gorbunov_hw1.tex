@@ -55,8 +55,14 @@ head\ l &= (\lambda cx.c\ a_1\ (c\ a_2(\ldots\ (c\ a_n\ x)\ldots))\ true\ nil =_
 \[append\ l\ a = snd\ (l\ (\lambda ep.pair\ (snd\ p)\ (cons\ e\ (snd\ p)))\ (pair\ nil\ a))\]
 Таким образом после первого применения $c$ (см. формулу \ref{eq:list}): $c\ a_n\ (pair\ nil\ a) = pair\ a\ (cons\ a_n\ a)$. Итого во втором элементе пары у нас будет записан исходный список $l$, с добавленным в конец элементом $a$. \hfill $\blacksquare$
 \tasksection{$Y$-комбинатор}
-\task{}
-\task{}
-\task{}
+\task{про $F:\ \forall\ M (FM=F)$}
+Равенство $F=FM$ $\beta$-эквивалентно следующему: $F=(\lambda fm.f)F$. Видим, что $F$ --- неподвижная точка терма $\lambda fm.f$.
+$Y$-комбинатор по определению таков, что: $\forall G:\ (YG=G(YG))$, но тогда $F=YG$, где $G=\lambda fm.f$, итого:
+\[
+	F = Y\ (\lambda fm.f)
+\]
+\hfill $\blacksquare$
+\task{ещё один факториал}
+\task{функция Аккермана}
 
 \end{document}
