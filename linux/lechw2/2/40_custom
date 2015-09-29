@@ -1,0 +1,86 @@
+#!/bin/sh
+exec tail -n +3 $0
+# This file provides an easy way to add custom menu entries.  Simply type the
+# menu entries you want to add after this comment.  Be careful not to change
+# the 'exec tail' line above.
+
+if [ x"${feature_menuentry_id}" = xy ]; then
+  menuentry_id_option="--id"
+else
+  menuentry_id_option=""
+fi
+
+submenu 'My custom menu' $menuentry_id_option 'gnulinux-advanced-e1adedaf-5e8c-4f3b-9358-ad0150e2d7dc' {
+	menuentry 'Ubuntu, with Linux 3.19.0-30-generic' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-3.19.0-30-generic-advanced-e1adedaf-5e8c-4f3b-9358-ad0150e2d7dc' {
+		recordfail
+		load_video
+		gfxmode $linux_gfx_mode
+		insmod gzio
+		insmod part_msdos
+		insmod ext2
+		set root='hd0,msdos1'
+		if [ x$feature_platform_search_hint = xy ]; then
+		  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1  3ab2aece-61f8-4b98-a90a-1c06de20d238
+		else
+		  search --no-floppy --fs-uuid --set=root 3ab2aece-61f8-4b98-a90a-1c06de20d238
+		fi
+		echo	'Loading Linux 3.19.0-30-generic ...'
+		linux	/vmlinuz-3.19.0-30-generic root=/dev/mapper/xubuntu--vg-root ro  quiet splash $vt_handoff
+		echo	'Loading initial ramdisk ...'
+		initrd	/initrd.img-3.19.0-30-generic
+	}
+	menuentry 'Ubuntu, with Linux 3.19.0-28-generic' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-3.19.0-28-generic-advanced-e1adedaf-5e8c-4f3b-9358-ad0150e2d7dc' {
+		recordfail
+		load_video
+		gfxmode $linux_gfx_mode
+		insmod gzio
+		insmod part_msdos
+		insmod ext2
+		set root='hd0,msdos1'
+		if [ x$feature_platform_search_hint = xy ]; then
+		  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1  3ab2aece-61f8-4b98-a90a-1c06de20d238
+		else
+		  search --no-floppy --fs-uuid --set=root 3ab2aece-61f8-4b98-a90a-1c06de20d238
+		fi
+		echo	'Loading Linux 3.19.0-28-generic ...'
+		linux	/vmlinuz-3.19.0-28-generic root=/dev/mapper/xubuntu--vg-root ro  quiet splash $vt_handoff
+		echo	'Loading initial ramdisk ...'
+		initrd	/initrd.img-3.19.0-28-generic
+	}
+	menuentry 'Ubuntu, with Linux 3.19.0-25-generic' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-3.19.0-25-generic-advanced-e1adedaf-5e8c-4f3b-9358-ad0150e2d7dc' {
+		recordfail
+		load_video
+		gfxmode $linux_gfx_mode
+		insmod gzio
+		insmod part_msdos
+		insmod ext2
+		set root='hd0,msdos1'
+		if [ x$feature_platform_search_hint = xy ]; then
+		  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1  3ab2aece-61f8-4b98-a90a-1c06de20d238
+		else
+		  search --no-floppy --fs-uuid --set=root 3ab2aece-61f8-4b98-a90a-1c06de20d238
+		fi
+		echo	'Loading Linux 3.19.0-25-generic ...'
+		linux	/vmlinuz-3.19.0-25-generic root=/dev/mapper/xubuntu--vg-root ro  quiet splash $vt_handoff
+		echo	'Loading initial ramdisk ...'
+		initrd	/initrd.img-3.19.0-25-generic/fasdfasd
+	}
+	menuentry 'Ubuntu, with Linux 3.13.0-65-generic' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-3.13.0-65-generic-advanced-e1adedaf-5e8c-4f3b-9358-ad0150e2d7dc' {
+		recordfail
+		load_video
+		gfxmode $linux_gfx_mode
+		insmod gzio
+		insmod part_msdos
+		insmod ext2
+		set root='hd0,msdos1'
+		if [ x$feature_platform_search_hint = xy ]; then
+		  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1  3ab2aece-61f8-4b98-a90a-1c06de20d238
+		else
+		  search --no-floppy --fs-uuid --set=root 3ab2aece-61f8-4b98-a90a-1c06de20d238
+		fi
+		echo	'Loading Linux 3.13.0-65-generic ...'
+		linux	/vmlinuz-3.13.0-65-generic root=/dev/mapper/xubuntu--vg-root ro  quiet splash $vt_handoff
+		echo	'Loading initial ramdisk ...'
+		initrd	/initrd.img-3.13.0-65-generic/fadsf
+	}
+}
