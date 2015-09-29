@@ -1,0 +1,4 @@
+1) в каталоге с mycron.cpp и Makefile выполнить команду 'make clean all'
+2) поместить файл mycron.cfg в папку /etc/
+3) поместить файл mycron_job.conf в папку /etc/init/
+4) выполнить 'sudo service mycron_job start'
