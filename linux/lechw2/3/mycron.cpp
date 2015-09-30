@@ -38,7 +38,7 @@ class Scheduler {
     }
   };
 
-  const size_t SECONDS_IN_MINUTE = 3;
+  const size_t SECONDS_IN_MINUTE = 5;
 
   std::vector<Task> tasks;
 public:
@@ -51,6 +51,7 @@ public:
   	log("INFO: looking for command to run, if it's time has come...");
     for (Task &task : tasks) {
       if (task.till_run == 0) {
+      	log("INFO: running command [ " + task.command + " ]");
         if (system(task.command.c_str()) < 0) {
         	log("ERROR: error occured during execution of command [" 
         		+ task.command + " ]");
