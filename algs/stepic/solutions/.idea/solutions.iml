@@ -4,10 +4,10 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/greedy/huffman_decode.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/greedy/huffman_decode.cpp.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/greedy/huffman_encode.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/greedy/n_to_max_sum.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/greedy/point_cover.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/greedy/priority_queue.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/greedy/uniform_backpack.cpp" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
@@ -16,18 +16,14 @@
       <library name="Header Search Paths">
         <CLASSES>
           <root url="file:///usr/include" />
-          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.9/include" />
-          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.9/include-fixed" />
-          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.9/include/cilk" />
-          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.9/include/sanitizer" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.8/include" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed" />
           <root url="file:///usr/local/include" />
         </CLASSES>
         <SOURCES>
           <root url="file:///usr/include" />
-          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.9/include" />
-          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.9/include-fixed" />
-          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.9/include/cilk" />
-          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.9/include/sanitizer" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.8/include" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed" />
           <root url="file:///usr/local/include" />
         </SOURCES>
       </library>
