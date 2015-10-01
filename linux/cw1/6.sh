@@ -1,9 +1,8 @@
 #/bin/bash
 
-words=$(cat input.txt | tr " " "\n" | sort | uniq )
+words=$(cat $1 | tr "[:space:][:punct:]" "\n" | sort | uniq )
 IFS=$'\n'
 for w in $words; do
-	sed -i "s/\($w\)/\*\1\*/g" input.txt
-	sed -i "s/\*\($w\)\*/\1/1" input.txt
-	echo $w
+	sed -i "s/\($w\)/\*\1\*/g" $1
+	sed -i "s/\*\($w\)\*/\1/1" $1
 done
