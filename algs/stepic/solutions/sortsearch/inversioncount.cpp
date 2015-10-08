@@ -1,38 +1,72 @@
-//
-// Created by egorbunov on 06.10.15.
-//
-
 #include <iostream>
+#include <cstdio>
 #include <vector>
 
 namespace {
+
     using namespace std;
 
-    int getInversionNumber(vector<int> &arr) {
-        int cnt = 0;
-        for (int i = 0; i < arr.size(); ++i) {
-            for (int j = i; j < arr.size(); ++j) {
-                if (arr[j] < arr[i])
-                    cnt += 1;
+    /**
+     * merge [from, mid) and [mid, to)
+     */
+    long long merge(vector<int> &array, size_t from, size_t to, size_t mid) {
+        size_t a_it = from;
+        size_t b_it = mid;
+
+        int *tmp_array = new int[to - from];
+        size_t i = 0;
+
+        long long invCnt = 0;
+
+        while (a_it < mid && b_it < to) {
+            if (array[a_it] <= array[b_it]) {
+                tmp_array[i] = array[a_it];
+                a_it++;
+            } else {
+                invCnt += (mid - a_it);
+                tmp_array[i] = array[b_it];
+                b_it++;
             }
+            ++i;
         }
-        return cnt;
-    }
-
-    void solve() {
-        int n, tmp;
-        cin >> n;
-        vector<int> arr;
-
-        while (n-- > 0) {
-            cin >> tmp;
-            arr.push_back(tmp);
+        while (a_it < mid) {
+            tmp_array[i++] = array[a_it++];
+        }
+        while (b_it < to) {
+            tmp_array[i++] = array[b_it++];
         }
 
-        cout << getInversionNumber(arr);
-    }
-}
+        for (size_t j = from; j < to; ++j) {
+            array[j] = tmp_array[j - from];
+        }
 
-int main() {
-    solve();
+        delete[] tmp_array;
+
+        return invCnt;
+    }
+
+    /**
+     * recursive merge sort of [from, to) array part
+     */
+    long long sort(vector<int> &array, size_t from, size_t to) {
+        if (to - from == 1) {
+            return 0;
+        }
+        size_t mid = (from + to) / 2;
+        long long x = sort(array, from, mid);
+        long long y = sort(array, mid, to);
+        long long z = merge(array, from, to, mid);
+        return x + y + z;
+    }
+
+    long long mergesort(vector<int> &array) {
+        if (array.size() < 2) {
+            return 0;
+        }
+        return sort(array, 0, array.size());
+    }
+
+    long long getInversionNumberFast(vector<int> &array) {
+        return mergesort(array);
+    }
 }

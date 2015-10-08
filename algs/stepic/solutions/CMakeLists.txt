@@ -3,5 +3,5 @@ project(solutions)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(SOURCE_FILES sortsearch/inversioncount.cpp)
+set(SOURCE_FILES sortsearch/segscoverpoint.cpp)
 add_executable(solutions ${SOURCE_FILES})
