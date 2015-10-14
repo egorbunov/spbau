@@ -3,5 +3,5 @@ project(test_project)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(SOURCE_FILES src/artic_points_search.cpp)
+set(SOURCE_FILES src/catalan.cpp)
 add_executable(test_project ${SOURCE_FILES})
