@@ -12,8 +12,9 @@ namespace {
 	struct Graph {
 		std::vector<Vertex*> vertices;
 		std::vector<bool> isUsed;
+		std::vector<int> minRevTimes;
 		std::vector<std::vector<Vertex*> > graph;
-		std::vector<size_t> articulationPoints;
+        std::vector<bool> isArticPoint;
 		int _time = 0;
 
 
@@ -21,6 +22,9 @@ namespace {
 			vertices.push_back(new Vertex(vertices.size()));
 			graph.push_back(std::vector<Vertex*>());
 			isUsed.push_back(false);
+            isArticPoint.push_back(false);
+			minRevTimes.push_back(0);
+
 			return vertices.size();
 		}
 
@@ -37,27 +41,32 @@ namespace {
 			return vertices.size();
 		}
 
-		int dfs(size_t id, size_t prevId) {
+		void dfs(size_t id, size_t prevId) {
 			// min start processing time, which we met during dfs from given vertex
 			_time += 1;
-			int minRevTime = _time; 
+			minRevTimes[id] = _time;
 			vertices[id]->tin = _time;
 
 			isUsed[id] = true;
+			int children = -1;
 			for (int i = 0; i < graph[id].size(); ++i) {
-				if (!isUsed[graph[id][i]->id]) {
-					int tmp = dfs(graph[id][i]->id, id);
-					if (tmp < minRevTime)
-						minRevTime = tmp;
+				size_t to = graph[id][i]->id;
+				if (to == prevId) continue;
+				if (isUsed[to]) {
+					minRevTimes[id] = std::min(minRevTimes[id], vertices[to]->tin);
+				} else {
+					dfs(graph[id][i]->id, id);
+					minRevTimes[id] = std::min(minRevTimes[id], minRevTimes[to]);
+					if (minRevTimes[to] >=  vertices[id]->tin && prevId != vNum() + 1)
+                        isArticPoint[id] = true;
+					++children;
 				}
 			}
 
-			if (minRevTime >= vertices[id]->tin && graph[id].size() != 1)
-				articulationPoints.push_back(id);
+			if (prevId == vNum() + 1 && children > 1)
+                isArticPoint[id] = true;
 
 			vertices[id]->tout = ++_time;
-
-			return minRevTime;
 		}
 
         ~Graph() {
@@ -76,22 +85,18 @@ int main() {
 	Graph graph = Graph();
 
 	size_t v, u;
-	int tmp = 0;
-	cin >> tmp;
 	while (cin >> v >> u) {
-		tmp -= 1;
 		while (graph.vNum() <= v || graph.vNum() <= u)
 			graph.addVertex();
 		graph.addEdge(v, u);
-
-		if (tmp == 0)
-			break;
 	}
 
 	graph.dfs(0, graph.vNum() + 1);
 
-	for (int i = 0; i < graph.articulationPoints.size(); ++i) {
-		cout << graph.articulationPoints[i] << " ";
+	for (int i = 0; i < graph.vNum(); ++i) {
+        if (graph.isArticPoint[i]) {
+            cout << i << " ";
+        }
 	}
 
 	return 0;
