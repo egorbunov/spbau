@@ -37,7 +37,7 @@ namespace au {
          * @return number of bits left in byte, where given bit was written
          */
         size_t write(bool bit);
-
+        void flush();
     private:
         FILE* outFile;
         byte_t byte; // byte, which we filling
@@ -46,7 +46,7 @@ namespace au {
 
     class BitReader : public MayFail {
     public:
-        BitReader(FILE* pFile) : inFile(pFile), byte(0), pos(BITS_IN_BYTE) {}
+        BitReader(FILE* pFile) : inFile(pFile), byte(0), pos(BITS_IN_BYTE), isEOF(false) {}
 
         /**
          * Read bit from input file stream
@@ -55,10 +55,26 @@ namespace au {
          */
         bool read();
 
+        /**
+         * returns number of bits left to read from byte
+         */
+        size_t bitsLeft() {
+            if (pos == au::BITS_IN_BYTE)
+                return au::BITS_IN_BYTE;
+            return au::BITS_IN_BYTE - pos - 1;
+        }
+
+        bool eof() {
+            return isEOF;
+        }
+
+        void finishByte();
+
     private:
         FILE* inFile;
         byte_t byte; // byte, which we reading
         size_t pos; // position in byte from where next bit will be read
+        bool isEOF;
     };
 }
 

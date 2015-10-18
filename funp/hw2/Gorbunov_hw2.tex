@@ -3,14 +3,29 @@
 \title{Haskell. Домашнее задание №2}
 \author{Горбунов Егор Алексеевич}
 
+\newcommand{\go}{\rightarrow}
+
 \begin{document}
 \maketitle
 
 
 \tasksection{Синтез термов}
-\task{}
-\task{}
-\task{}
-\task{}
+\task{$(d \go d \go a) \go (a \go b \go c) \go (d \go b) \go d \go c$}
+\[
+	\lambda x^{d \go d \go a}y^{a \go b \go c}z^{d \go b}l^{d}.y(xll)(zl)
+\]
+\task{$(a \go b) \go ((a \go b) \go b) \go b$, но не $a' \go (a' \go b) \go b$}
+\[
+	\lambda x^{a \go b} y^{(a \go b) \go b}.y(\lambda z^{a}.xz)
+\]
+\task{$((a \go b) \go a) \go (a \go a \go b) \go a$}
+\[
+	\lambda x^{(a \go b) \go a}y^{(a \go a \go b)}.x(\lambda z^a.yzz)
+\]
+\task{ещё $((a \go b) \go a) \go (a \go a \go b) \go a$}
+Воспользуемся тем, что терм, синтезированный в предыдущем задании --- это абстрация, тело которой имеет тем $a$.
+\[
+	\lambda x^{(a \go b) \go a}y^{(a \go a \go b)}.x(y(x(\lambda z^a.yzz)))
+\]
 
 \end{document}

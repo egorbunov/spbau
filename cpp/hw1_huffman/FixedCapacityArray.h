@@ -17,17 +17,17 @@ namespace au {
         }
 
         ~FixedCapacityArray() {
-            delete array;
+            delete [] array;
             array = nullptr;
         }
 
         T operator[](size_t i) const {
-            if (i < size) throw std::out_of_range("given index out of bounds!");
+            if (i >= size) throw std::out_of_range("given index out of bounds!");
             return array[i];
         }
 
         T &operator[](size_t i) {
-            if (i < size) throw std::out_of_range("given index out of bounds!");
+            if (i >= size) throw std::out_of_range("given index out of bounds!");
             return array[i];
         }
 
@@ -58,11 +58,18 @@ namespace au {
             return size;
         }
 
+        void copyTo(FixedCapacityArray& dest) {
+            if (dest.capacity < size) throw std::out_of_range("too little destination array!");
+            dest.size = size;
+            for (int i = 0; i < size; ++i) {
+                dest[i] = array[i];
+            }
+        }
+
     private:
         size_t capacity;
         size_t size;
         T *array;
-
     };
 }
 

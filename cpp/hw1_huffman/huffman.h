@@ -7,13 +7,16 @@
 #include <queue>
 #include <cstdint>
 #include "common_defs.h"
+#include "Result.h"
 
 namespace au {
-    void huffmanEncode(FILE* inFile, FILE* outFile);
-    void huffmanDecode(FILE* inFile, FILE* outFile);
+    /**
+     * @return Result<int> - Result object. It's template argument payload is just for...nothing. Use it only
+     *         for checking if no errors occurred during function call
+     */
+    Result<int> huffmanEncode(FILE* inFile, FILE* outFile);
+    Result<int> huffmanDecode(FILE* inFile, FILE* outFile);
 }
-
-
 
 
 #endif //HUFFMAN_H_INCLUDED__
