@@ -8,6 +8,11 @@ BLUE='\033[1;34m'
 PURPLE='\033[0;35m'
 NC='\033[0m'
 
+VALGRIND=""
+if [ "$1" == "valgrind" ]; then
+	VALGRIND="1"
+fi
+
 find . -regex ".*test[0-9]*\.txt" | sort | while read FILE; do
 	CF=$(mktemp) # compressed file name
  	UF=$(mktemp) # uncompressed file name
@@ -40,6 +45,14 @@ find . -regex ".*test[0-9]*\.txt" | sort | while read FILE; do
  	else
  		printf "${GREEN}PASSED on file: [ $FILE ]$NC\n"
  	fi
+
+
+ 	if [ ! -z "$VALGRIND" ]; then
+ 		printf "\n$PURPLE====================== VALGRIND test =====================> $NC \n"
+ 		valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all "$BINARY" -c -f "$FILE" -o "$CF"
+ 		valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all "$BINARY" -u -f "$CF" -o "$UF"
+ 	fi
+
 
  	rm "$CF" "$UF"
 
