@@ -52,7 +52,9 @@ minp p = minp' p 0 where
 --    Для реализации можете использовать метод трапеций.
 --    (2 балла)
 integral :: (Double -> Double) -> Double -> Double -> Double
-integral = undefined
+integral f a b 
+  | abs (b - a) < 1e-2 = (abs (b - a)) * ((f b) + (f a)) / 2
+  | otherwise = (integral f a ((a + b) / 2)) + (integral f ((a + b) / 2) b)
 
 -- 6. Определите функцию вычисляющую двойной факториал, то есть произведение натуральных чисел,
 --    не превосходящих заданного числа и имеющих ту же четность.
@@ -66,11 +68,8 @@ doubleFact n
 --    a_0 = 1, a_1 = 2, a_2 = 3, a_{k + 3} = a_{k + 2} + a_{k + 1} - 2a_k
 --    (1 балл)
 seqA :: Integer -> Integer
-seqA n 
-  | n == 0 = 1
-  | n == 1 = 2
-  | n == 2 = 3
-  | otherwise = (seqA (n - 1)) + (seqA (n - 2)) - (2 * (seqA (n - 3)))
+seqA n = seqAlist !! (fromIntegral n) where
+  seqAlist = 1 : 2 : 3 : zipWith (+) (map (\x->(-2*x)) seqAlist) (zipWith (+) (tail seqAlist) (tail (tail seqAlist)))
 
 
 -- 8. Реализуйте функцию, возвращающую 1, если число положительное;
