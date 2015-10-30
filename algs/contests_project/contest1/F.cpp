@@ -41,8 +41,3 @@ namespace contest1F {
         cout << endl;
     }
 }
-
-int main() {
-    contest1F::solve();
-    return 0;
-}
