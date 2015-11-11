@@ -13,7 +13,6 @@ static inline uint32_t readeflags(void)
 static inline uint32_t xchg(volatile uint32_t *addr, uint32_t newval)
 {
   uint32_t result;
-  
   // The + in "+m" denotes a read-modify-write operand.
    __asm__ __volatile__ ("lock; xchgl %0, %1" :
                "+m" (*addr), "=a" (result) :

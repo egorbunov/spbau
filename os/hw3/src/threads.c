@@ -4,6 +4,7 @@
 #include "pic.h"
 #include "pit.h"
 #include "spinlock.h"
+#include "x86.h"
 
 #define MAX_THREAD_NUM 10
 
@@ -13,20 +14,18 @@
 #define CODE_SEGMENT_SELECTOR 0x8
 
 extern void isr_wrapper();
+extern void asm_thread_switch(thread_context_t** old_context, thread_context_t* new_context);
+void cmain();
 
+static thread_context_t* g_threads_contexts[MAX_THREAD_NUM];
+static stack_t thread_stacks[MAX_THREAD_NUM + 1];
 
-static void *g_threads_stack_ptrs[MAX_THREAD_NUM];
-static uint16_t g_thread_num = 0;
-static uint16_t g_cur_thread_id = 0;
+static uint16_t g_thread_num = 0; // number of registered threads
+static uint16_t g_cur_thread_id = 0; // currently running thread id
 
-spinlock g_lock;
-
-void threads_prepare_scheduler()
+void threads_prepare()
 {
-    interrupts_off();
-
-    initlock(&g_lock);
-
+    // preparing main thread 
     setup_idt();
     add_irs(INTERRUPT_NUMBER, isr_wrapper, CODE_SEGMENT_SELECTOR);
     PIC_remap(MASTER_PIC_INTERRUPTS_OFFSET, SLAVE_PIC_INTERRUPTS_OFFSET);
@@ -34,67 +33,59 @@ void threads_prepare_scheduler()
     const char IRQ_LINE = INTERRUPT_NUMBER - MASTER_PIC_INTERRUPTS_OFFSET;
     IRQ_clear_mask(IRQ_LINE);
 
-    g_thread_num = 1;
-    g_cur_thread_id = 0;
+    g_cur_thread_id = threads_add(cmain);
 }
 
-__attribute__ ((fastcall)) int32_t threads_switch(int32_t current_stack)
+void threads_switch()
 {
-    acquire(&g_lock);
+    static int x = 2;
+    // putc(x, 2, BLUE, BLACK, 's');
+    // x += 1;
+    // putc(2, 1, YELLOW, BLACK, 'y');
 
     PIC_sendEOI(INTERRUPT_NUMBER - MASTER_PIC_INTERRUPTS_OFFSET);
-    if (g_thread_num <= 1)
-        return current_stack;
-
-    g_threads_stack_ptrs[g_cur_thread_id] = (void*) current_stack;
     set_PIT_reload_value(10000, 0x30);
-    g_cur_thread_id = (g_cur_thread_id + 1) % g_thread_num;
 
-    release(&g_lock);
-
-    return (int32_t) (g_threads_stack_ptrs[g_cur_thread_id]);
+    manual_thread_switch();
 }
 
 
-int32_t threads_add(thread_ptr pthread, void* stack) {
+int32_t threads_add(thread_fun_ptr thread_fun) {
+    pushcli();
+
     if (g_thread_num == MAX_THREAD_NUM)
         return -1;
-    if (0 == g_thread_num)
-        threads_prepare_scheduler();
 
+    int new_thread_id = g_thread_num;
+    thread_context_t* new_context = (thread_context_t*) (thread_stacks[new_thread_id + 1].data);
+    new_context->eip = (uint32_t) thread_fun;
+    new_context->eflags |= (1 << 9);
+    new_context->edi = 0;
+    new_context->esi = 0;
+    new_context->ebx = 0;
+    new_context->ebp = 0;
+    g_threads_contexts[new_thread_id] = new_context;
 
-    int32_t *ptr = (int32_t*) (((char*)stack));
-    ptr--; // push flags
-    *ptr = 0x202;
-    ptr--; // push cs
-    *ptr = 0x8;
-    ptr--; // push eip
-    *ptr = (int32_t) pthread;
-    ptr -= 4; // push eax ecx edx ebx
-    ptr--; // push esp 
-    *ptr = (int32_t) (( (char*) stack) - 12);
-    
-    ptr -= 3; // push ebp esi edi
-    
-    g_threads_stack_ptrs[g_thread_num] = (void*) (((int32_t) ptr));
+    g_thread_num += 1;
 
-    acquire(&g_lock);
-    int new_id = g_thread_num;
-    g_thread_num++;
-    release(&g_lock);
-    
-    return new_id;
-}
+    popcli();
+
+    static int32_t x = 10;
+
+    // putc(x, 2, BLUE, WHITE, '0' + new_thread_id);
+    // putc(x+1, 2, GREEN, WHITE, '0' + g_thread_num);
+    // x += 5;
+
+    return new_thread_id;
+}   
 
 void manual_thread_switch() {
-    __asm__ __volatile__("pusha");
-    int32_t cur_esp;
-    __asm__ __volatile__("movl %%esp, %0" :"=r"(cur_esp));
-    if (g_thread_num <= 1)
-        return;
-    g_threads_stack_ptrs[g_cur_thread_id] = (void*) cur_esp;
+    pushcli();
+
+    int32_t old_id = g_cur_thread_id;
     g_cur_thread_id = (g_cur_thread_id + 1) % g_thread_num;
-    int32_t new_esp = (int32_t) (g_threads_stack_ptrs[g_cur_thread_id]);
-    __asm__ __volatile__("mov %0, %%esp" : : "r"(new_esp) );
-    __asm__ __volatile__("popa");
-}
+    
+    asm_thread_switch(&g_threads_contexts[old_id], g_threads_contexts[g_cur_thread_id]);
+    popcli();
+}   
+    

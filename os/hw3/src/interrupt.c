@@ -6,21 +6,22 @@
 
 // interrupt descriptor structure
 // tells, where interrupt service routine (isr) is located
-typedef struct IDTDescriptor {
+struct IDTDescriptor {
    uint16_t routine_lo_offset; // offset bits 0..15
    uint16_t selector;          // a code segment selector in GDT or LDT
    uint8_t zero;               // unused, set to 0
    uint8_t type_attr;          // type and attributes, see below
    uint16_t routine_hi_offset; // offset bits 16..31
-} IDTDescriptor;
+} __attribute__ ((packed));
+typedef struct IDTDescriptor IDTDescriptor;
 
 static IDTDescriptor idt[IDT_SIZE];
 
-typedef struct IDTReg {
-    short limit;
-    long idt_ptr;
-} __attribute__ ((packed)) IDTReg;
-
+struct IDTReg {
+    uint16_t limit;
+    uint32_t idt_ptr;
+} __attribute__ ((packed));
+typedef struct IDTReg IDTReg;
 static IDTReg idt_reg;
 
 
@@ -28,7 +29,7 @@ void setup_idt()
 {
     memset(idt, 0, IDT_SIZE * sizeof(IDTDescriptor));
 
-    idt_reg.idt_ptr = (long)idt;
+    idt_reg.idt_ptr = (uint32_t) idt;
     idt_reg.limit = IDT_SIZE * 8 - 1;
      __asm__ __volatile__ ( "lidt (%0);" :: "r"(&idt_reg) );
 }
@@ -45,7 +46,7 @@ void add_irs(size_t interrupt_number, void *interrupt_handler_ptr, uint16_t segm
     descriptor.routine_lo_offset = ((int) (interrupt_handler_ptr)) & 0xFFFF; // 2 least signigicant bytes
     descriptor.selector = segment_selector;
     descriptor.zero = 0;
-    descriptor.type_attr = 0b10001110; // 0x8E ( P=1, DPL=00b, S=0, type=1110b => type_attr=1000_1110b=0x8E)
+    descriptor.type_attr = 0x8E; // 0x8E ( P=1, DPL=00b, S=0, type=1110b => type_attr=1000_1110b=0x8E)
     descriptor.routine_hi_offset = ((int) (interrupt_handler_ptr)) >> 16; // 2 most signigicant bytes
 
     idt[interrupt_number] = descriptor;

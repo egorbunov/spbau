@@ -6,17 +6,21 @@
 
 #define BUFFER_SIZE 1024
 
-extern void* stack_0; // stack ptr for main thread
-extern void* stack_1; // stack ptr for second thread
+extern void* stack_1; // stack ptr for first thread (not main one)
 
 volatile int producer_pos = 0;
 static volatile char buffer[BUFFER_SIZE];
+
 
 void writer()
 {
     int cons_pos = 0;
     static int x = 0;
     static int y = 0;
+
+    // putc(x, y, RED, BLACK, 'x');
+    // manual_thread_switch();
+
     for (;;) {
         if (producer_pos != cons_pos) {
             putc(x, y, WHITE, BLACK, buffer[cons_pos]);
@@ -31,8 +35,11 @@ void writer()
     }
 }
 
+
 void reader()
 {
+    // putc(1, 1, BLUE, BLACK, 'y');
+    // manual_thread_switch();
     uint8_t byte = 0;
     for (;;)
     {
@@ -43,11 +50,19 @@ void reader()
     }
 }
 
-int __attribute__((noreturn)) cmain() 
-{
-    clear(BLACK);   
+void cmain() {
     serial_init();
-    threads_add(writer, stack_1);
+    clear(BLACK);
+
+    threads_add(writer);
+    threads_add(reader);
+
+    // threads_add(stuff);
+    // manual_thread_switch();
+    // putc(2, 2, BLUE, BLACK, 'z');
+
     interrupts_on();
-    reader();
+
+    while(1) { manual_thread_switch(); };
+    // reader();
 }

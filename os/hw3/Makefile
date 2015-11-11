@@ -1,11 +1,11 @@
 zCzC=gcc
 LINKER_SCRIPT=src/lscript
-LFLAGS=-nostdlib -m elf_i386 -T $(LINKER_SCRIPT)
-CFLAGS=-ffreestanding -fno-builtin -O -ggdb -std=c99 -m32
-OBJECTS=bin/loader.o bin/main.o bin/pic.o bin/util.o bin/pit.o bin/interrupt.o bin/threads.o bin/serial.o bin/spinlock.o
+LFLAGS=-T $(LINKER_SCRIPT) -m elf_i386 -nostdlib -nodefaultlibs
+CFLAGS=-Wall -pedantic -MMD -I. -m32 -std=gnu99 -ffreestanding -g
+OBJECTS=bin/loader.o bin/main.o bin/pic.o bin/util.o bin/pit.o bin/interrupt.o bin/threads.o bin/serial.o bin/spinlock.o bin/asm_switch.o
 all: bin/threading
 
-bin/threading: $(OBJECTS) $(LINKER_SCRIPT)
+bin/threading: $(OBJECTS)
 	ld $(LFLAGS) $^ -o $@ 
 
 bin/%.o: src/%.S

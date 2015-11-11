@@ -1,8 +1,8 @@
-ENTRY(start)
+ENTRY (start)
+LMA = 0x00100000;
 SECTIONS
 {
-  . = 0;
-  .text : { *(.text) }
-  .data : { *(.data) }
-  .bss : { *(.bss) }
+    . = LMA + SIZEOF_HEADERS;
+    .multiboot ALIGN (0x1000) :   {  *( .multiboot ) }
+    .text      ALIGN (0x1000) :   {  *(.text)          }
 }

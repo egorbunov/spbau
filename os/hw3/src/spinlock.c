@@ -41,9 +41,9 @@ int holding(spinlock *lock) {
 int g_ncli = 0;
 
 void pushcli() {
-  int eflags;
+  // int eflags;
   
-  eflags = readeflags();
+  // eflags = readeflags();
   interrupts_off();
   g_ncli++;
 }
