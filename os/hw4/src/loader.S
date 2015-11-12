@@ -1,5 +1,5 @@
-    .set FLAGS,    0x0
-    .set MAGIC,    0x1BADB002
+    .set FLAGS,    0x00000003
+    .set MAGIC,    0x1BADB002 
     .set CHECKSUM, -(MAGIC + FLAGS)
 
     .set STACKSIZE, 0x1000
@@ -29,25 +29,12 @@ start:
     movw %ax, %fs
     movw %ax, %gs
 
-    call serial_init
-    call threads_prepare
     call cmain
     jmp .
 
 hang:
     hlt
     jmp hang
-
-
-.global isr_wrapper
-isr_wrapper:
-    pusha
-
-    call threads_switch
-    
-    popa
-
-    iret
 
 #include "asm.h"
 # GDT
