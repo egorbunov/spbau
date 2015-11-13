@@ -2,11 +2,13 @@
 #include "util.h"
 #include "vga.h"
 #include "serial.h"
+#include "string.h"
+#include "multiboot.h"
 
-void cmain() {
-    clear(BLACK);
+void cmain(unsigned long magic, multiboot_info_t* pmbinfo) {
+    init_vga();
 
-    prints(0, 0, WHITE, BLACK, "Hello, world!\nHello world!");
+    printf("Command line: %s\n", pmbinfo->cmdline);
 
     while(1) { };
 }

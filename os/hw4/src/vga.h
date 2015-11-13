@@ -14,6 +14,9 @@ enum size {
     ROWS = 25
 };
 
+void set_background_color(enum color bg);
+void set_foreground_color(enum color fg);
+void init_vga(void);
 void putc(uint8_t x, uint8_t y, enum color fg, enum color bg, char c);
 void clear(enum color bg);
 void prints(uint8_t x, uint8_t y, enum color fg, enum color bg, const char *c);

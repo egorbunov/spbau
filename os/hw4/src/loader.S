@@ -2,9 +2,7 @@
     .set MAGIC,    0x1BADB002 
     .set CHECKSUM, -(MAGIC + FLAGS)
 
-    .set STACKSIZE, 0x1000
-    .lcomm stack, STACKSIZE
-
+    .set STACKSIZE, 0x4000
 multiboot:
     .align 4
     .long MAGIC
@@ -16,7 +14,6 @@ multiboot:
 
 start:
     movl $(stack + STACKSIZE), %esp
-
     lgdt gdtdesc
     ljmp $0x08, $.continue
 .continue: 
@@ -29,8 +26,11 @@ start:
     movw %ax, %fs
     movw %ax, %gs
 
+    pushl $0
+    popf
+    pushl %ebx
+    pushl %eax
     call cmain
-    jmp .
 
 hang:
     hlt
@@ -38,7 +38,7 @@ hang:
 
 #include "asm.h"
 # GDT
-.p2align 2
+.align 4
 gdt:
   SEG_NULLASM                             # null seg
   SEG_ASM(STA_X | STA_R, 0x0, 0xffffffff)   # code seg
@@ -46,3 +46,6 @@ gdt:
 gdtdesc:
     .word (gdtdesc - gdt - 1)   # length of GDT minus 1
     .long gdt                   # base address of GDT
+
+.lcomm stack, STACKSIZE
+

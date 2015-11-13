@@ -17,7 +17,7 @@ bin/%.o: src/%.c
 .PHONY: clean run
 
 run: bin/mbinfo
-	qemu-system-i386 -kernel $<
+	qemu-system-i386 -kernel $< -append "param1,,param2"
 
 clean:
 	rm -f bin/* bin/mbinfo 
