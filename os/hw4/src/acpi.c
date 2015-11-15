@@ -49,7 +49,7 @@ bool acpi_get_rsd(rsdp_descriptor_t* prsdDescriptor) {
     return true;
 }
 
-void* acpi_get_sdt(rsdt_t* p_rsdt, const char* signature) {
+acpi_sdt_header_t* acpi_get_sdt(rsdt_t* p_rsdt, const char* signature) {
     int sdt_num = (p_rsdt->h.length - sizeof(acpi_sdt_header_t)) / 4;
     // printf("SDT NUM = %d\n", sdt_num);
 
@@ -63,14 +63,14 @@ void* acpi_get_sdt(rsdt_t* p_rsdt, const char* signature) {
         }
 
         if (strcmp(p_cur_sdt_h->signature, signature, 0, 4)) {
-            return (void*) p_cur_sdt_h;
+            return p_cur_sdt_h;
         }
 
         // printf("SIGNATURE #%d = \"", i);
         // prints((((acpi_sdt_header_t*) p_cur_sdt_h)->signature), 0, 4);
         // printf("\"; length = %d\n", ((acpi_sdt_header_t*) p_cur_sdt_h)->length);
 
-        p_cur_sdt_h = (((void*) p_cur_sdt_h) + ((acpi_sdt_header_t*) p_cur_sdt_h)->length);
+        p_cur_sdt_h = (acpi_sdt_header_t*) (((uint8_t*) p_cur_sdt_h) + ((acpi_sdt_header_t*) p_cur_sdt_h)->length);
     }
 
     return NULL;

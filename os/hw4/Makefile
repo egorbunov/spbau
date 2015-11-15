@@ -1,7 +1,7 @@
 zCzC=gcc
 LINKER_SCRIPT=src/lscript
 LFLAGS=-T $(LINKER_SCRIPT) -m elf_i386 -nostdlib -nodefaultlibs
-CFLAGS=-Wall -pedantic -MMD -I. -m32 -std=gnu99 -ffreestanding -g
+CFLAGS=-Wall -Werror -pedantic -MMD -I. -m32 -std=gnu99 -ffreestanding -g
 OBJECTS=bin/loader.o bin/main.o bin/util.o bin/serial.o bin/vga.o bin/string.o bin/acpi.o
 
 all: bin/kernel

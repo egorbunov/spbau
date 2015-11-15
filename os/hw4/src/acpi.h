@@ -101,6 +101,6 @@ typedef struct __attribute__ ((__packed__)) {
 
 bool acpi_do_checksum(acpi_sdt_header_t *table_header);
 bool acpi_get_rsd(rsdp_descriptor_t* prsd_descriptor);
-void* acpi_get_sdt(rsdt_t* p_rsdt, const char* signature);
+acpi_sdt_header_t* acpi_get_sdt(rsdt_t* p_rsdt, const char* signature);
 
 #endif

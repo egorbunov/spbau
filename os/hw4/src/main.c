@@ -66,17 +66,17 @@ void cmain(unsigned long magic, multiboot_info_t* pmbinfo) {
                     break;
                 }
                 case IO_APIC: {
-                    io_apic_t* p_apic = (proc_local_apic_t*) p_cur_apic_struct_head; 
+                    io_apic_t* p_apic = (io_apic_t*) p_cur_apic_struct_head; 
                     printf("IOAPIC [%d] at [0x%x] IRQs from [%d]\n", p_apic->id, p_apic->addr, p_apic->glob_sys_int_base);
                     break;
                 }
                 case LOCAL_APIC_ADDR_OVERRIDE: {
-                    loc_apic_addr_ov_t* p_apic = (proc_local_apic_t*) p_cur_apic_struct_head; 
+                    loc_apic_addr_ov_t* p_apic = (loc_apic_addr_ov_t*) p_cur_apic_struct_head; 
                     local_apics_addr = p_apic->addr;
                     break;
                 }
                 case PROC_LOCAL_x2APIC: {
-                    proc_local_x2apic_t* p_apic = (proc_local_apic_t*) p_cur_apic_struct_head; 
+                    proc_local_x2apic_t* p_apic = (proc_local_x2apic_t*) p_cur_apic_struct_head; 
                     printf("Processor Local x2APIC [id = %d]\n", p_apic->id);
                     break;
                 }
@@ -84,7 +84,8 @@ void cmain(unsigned long magic, multiboot_info_t* pmbinfo) {
                     break;
             }
             // next apic
-            p_cur_apic_struct_head = (((void*) p_cur_apic_struct_head) + p_cur_apic_struct_head->len);
+            p_cur_apic_struct_head =
+                 (apic_struct_header_t*) (((uint8_t*) p_cur_apic_struct_head) + p_cur_apic_struct_head->len);
         }
 
         printf("\n");
