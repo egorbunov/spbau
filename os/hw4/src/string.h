@@ -6,6 +6,7 @@
 #include <stdbool.h>
 
 void memset(void *ptr, int value, size_t num);
+void ltoa_hex(char* buf, uint64_t x);
 void itoa (char *buf, char base, int d);
 int strlen(const char* cstr);
 int str_find(const char* str, const char* what, int from, int to);

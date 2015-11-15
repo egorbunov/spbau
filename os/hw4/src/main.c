@@ -13,18 +13,21 @@ void print_mboot_info(multiboot_info_t* pmbinfo) {
         printf("Command line not passed\n");
     }
     printf("============================================\n");
+
+    char buf[100];
     /* Are mmap_* valid? */
     if (CHECK_FLAG (pmbinfo->flags, 6)) {
         multiboot_memory_map_t *mmap;
         for (mmap = (multiboot_memory_map_t *) pmbinfo->mmap_addr; 
             (unsigned long) mmap < pmbinfo->mmap_addr + pmbinfo->mmap_length;
-            mmap = (multiboot_memory_map_t *) ((uint32_t) mmap + mmap->size + sizeof(mmap->size)))
-            printf ("memory range = 0x%x%x - 0x%x%x, type = %d\n",
-                    (uint32_t) (mmap->base >> 32),
-                    (uint32_t) (mmap->base & 0xffffffff),
-                    (uint32_t) ((mmap->base + mmap->len - 1) >> 32),
-                    (uint32_t) ((mmap->base + mmap->len - 1) & 0xffffffff),
-                    mmap->type);
+            mmap = (multiboot_memory_map_t *) ((uint32_t) mmap + mmap->size + sizeof(mmap->size))) {
+
+            ltoa_hex(buf, mmap->base);
+            printf ("memory range = 0x%s - ", buf);
+            ltoa_hex(buf, mmap->base + mmap->len - 1);
+            printf ("0x%s, type = %d\n", buf, mmap->type);
+        }
+
     } else {
         printf("Memory info is not available\n");
     }
@@ -32,6 +35,15 @@ void print_mboot_info(multiboot_info_t* pmbinfo) {
 
 void cmain(unsigned long magic, multiboot_info_t* pmbinfo) {
     init_vga();
+
+    uint64_t x = 0x100000000;
+    uint64_t l = 0xffffffffff;
+
+    char buf[100];
+    ltoa_hex(buf, x);
+    printf ("memory range = 0x%s - ", buf);
+    ltoa_hex(buf, l);
+    printf ("0x%s, type = %d", buf, 2);
 
     printf("============================================\n");
     print_mboot_info(pmbinfo);
@@ -90,9 +102,9 @@ void cmain(unsigned long magic, multiboot_info_t* pmbinfo) {
 
         printf("\n");
         if (local_apics_addr > 0) {
-            printf("Local APICs accessible at [0x%x%x]\n", 
-                (uint32_t) (local_apics_addr >> 32), 
-                (uint32_t) (local_apics_addr & 0xffffffff));
+            char buf[100];
+            ltoa_hex(buf, local_apics_addr);
+            printf("Local APICs accessible at [0x%s]\n", buf);
         } else {
             printf("ERROR: Cannot get local apics address\n");
         }

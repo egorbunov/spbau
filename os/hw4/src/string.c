@@ -37,7 +37,18 @@ int str_find(const char* str, const char* what, int from, int to) {
 	return -1;
 }
 
-void itoa (char *buf, char base, int d)
+void ltoa_hex(char* buf, uint64_t x) {
+	const uint32_t BITS_IN_LONG = 64;
+	const char h_digits[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+	int idx = 0;
+
+	for (int i = 0; i < BITS_IN_LONG; i += 4) {
+		buf[idx++] = h_digits[(x >> (BITS_IN_LONG - 4 - i)) & 15];
+	}
+	buf[idx] = '\0';
+}
+
+void itoa(char *buf, char base, int d)
 {
 	char *p = buf;
 	char *p1, *p2;
