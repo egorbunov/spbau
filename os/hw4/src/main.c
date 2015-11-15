@@ -32,7 +32,8 @@ void print_mboot_info(multiboot_info_t* pmbinfo) {
 
 void cmain(unsigned long magic, multiboot_info_t* pmbinfo) {
     init_vga();
-
+    
+    printf("============================================\n");
     print_mboot_info(pmbinfo);
     printf("============================================\n");
 
@@ -41,14 +42,8 @@ void cmain(unsigned long magic, multiboot_info_t* pmbinfo) {
         printf("Cannot get RSD structure!\n");
     }
 
-    // printsn(rsd_descriptor.signature, 0, 8);
-
     // getting rsdt
     rsdt_t* p_rsdt = (rsdt_t*) rsd_descriptor.rsdt_address;
-    // printf("RSDT ADDR = %x [%d]\n", p_rsdt, p_rsdt);
-    // printf("SDTS ADDR = %x [%d]\n", (p_rsdt->sdts), (p_rsdt->sdts));
-
-
 
     // getting madt
     madt_t* p_madt = (madt_t*) acpi_get_sdt(p_rsdt, "APIC"); 
@@ -56,22 +51,13 @@ void cmain(unsigned long magic, multiboot_info_t* pmbinfo) {
     if (p_madt == NULL) {
         printf("ERROR: madt not found!\n");
     } else {
-        // iterating int controller structures list
-        // printsn(p_madt->h.signature, 0 , 4
-        // printf("MADT ADDR = %x [%d]\n", p_madt, p_madt);
-        // printf("ICTL ADDR v1 = %x [%d]\n", ((void*) p_madt) + 44, ((void*) p_madt) + 44);
-        // printf("ICTL ADDR v2 = %x [%d]\n", &(p_madt->first_int_controller), &(p_madt->first_int_controller));
-
+        
+        int64_t local_apics_addr = p_madt->local_apics_addr;
 
         apic_struct_header_t* p_cur_apic_struct_head = &(p_madt->first_int_controller);
         int apic_structs_len = (p_madt->h.length - sizeof(*p_madt) + sizeof(p_madt->first_int_controller));
-
-        // printf("APIC STRUCTS LEN = %d \n", apic_structs_len);
-
-        int64_t local_apics_addr = p_madt->local_apics_addr;
+        // iterating through int controller structures list
         while (apic_structs_len > 0) {
-            // printf("Len = %d; Type = %d ", p_cur_apic_struct_head->len, p_cur_apic_struct_head->type);
-
             apic_structs_len -= p_cur_apic_struct_head->len;
             switch (p_cur_apic_struct_head->type) {
                 case PROC_LOCAL_APIC: {
@@ -97,12 +83,11 @@ void cmain(unsigned long magic, multiboot_info_t* pmbinfo) {
                 default:
                     break;
             }
-
             // next apic
             p_cur_apic_struct_head = (((void*) p_cur_apic_struct_head) + p_cur_apic_struct_head->len);
         }
-        printf("\n");
 
+        printf("\n");
         if (local_apics_addr > 0) {
             printf("Local APICs accessible at [0x%x%x]\n", 
                 (uint32_t) (local_apics_addr >> 32), 
@@ -118,8 +103,7 @@ void cmain(unsigned long magic, multiboot_info_t* pmbinfo) {
             printf("PC/AT dual PIC not supported\n");
         }
     }
+
     printf("============================================\n");
-
-
     while(1) { };
 }
