@@ -1,4 +1,4 @@
-    .set FLAGS,    0x00000003
+    .set FLAGS,    0x00000002
     .set MAGIC,    0x1BADB002 
     .set CHECKSUM, -(MAGIC + FLAGS)
 

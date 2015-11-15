@@ -36,15 +36,6 @@ void print_mboot_info(multiboot_info_t* pmbinfo) {
 void cmain(unsigned long magic, multiboot_info_t* pmbinfo) {
     init_vga();
 
-    uint64_t x = 0x100000000;
-    uint64_t l = 0xffffffffff;
-
-    char buf[100];
-    ltoa_hex(buf, x);
-    printf ("memory range = 0x%s - ", buf);
-    ltoa_hex(buf, l);
-    printf ("0x%s, type = %d", buf, 2);
-
     printf("============================================\n");
     print_mboot_info(pmbinfo);
     printf("============================================\n");
