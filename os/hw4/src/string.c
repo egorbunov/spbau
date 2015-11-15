@@ -8,6 +8,35 @@ void memset(void *ptr, int value, size_t num)
     }
 }
 
+int strlen(const char* cstr) {
+	int len = 0;
+	while (cstr[len] != '\0')
+		len++;
+	return len;
+}
+
+bool strcmp(const char* str1, const char* str2, int from, int to) {
+	for (int i = from; i < to; ++i) {
+		if (str1[i] != str2[i])
+			return false;
+	}
+	return true;
+}
+
+int str_find(const char* str, const char* what, int from, int to) {
+	int what_len = strlen(what);
+	for (int i = from; i < to - what_len; ++i) {
+		int j = 0;
+		for (j = 0; j < what_len; ++j) {
+			if (what[j] != str[i + j])
+				break;
+		}
+		if (j == what_len)
+			return i;
+	}
+	return -1;
+}
+
 void itoa (char *buf, char base, int d)
 {
 	char *p = buf;

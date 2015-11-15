@@ -54,14 +54,12 @@ typedef struct multiboot_info
 } multiboot_info_t;
  
 /* The memory map. Be careful that the offset 0 is base_addr_low but no size. */
-typedef struct memory_map
+typedef struct multiboot_memory_map
 {
-	unsigned long size;
-	unsigned long base_addr_low;
-	unsigned long base_addr_high;
-	unsigned long length_low;
-	unsigned long length_high;
-	unsigned long type;
-} memory_map_t;
+	uint32_t size;
+	uint64_t base;
+	uint64_t len;
+	uint32_t type;
+} multiboot_memory_map_t;
 
 #endif

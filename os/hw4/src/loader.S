@@ -14,17 +14,17 @@ multiboot:
 
 start:
     movl $(stack + STACKSIZE), %esp
-    lgdt gdtdesc
-    ljmp $0x08, $.continue
+    # lgdt gdtdesc
+    # ljmp $0x08, $.continue
 .continue: 
-    # reloading segment registers
-    movw $(0x10), %ax # 16 bytes off
-    movw %ax, %ds 
-    movw %ax, %es
-    movw %ax, %ss
-    movw $0, %ax
-    movw %ax, %fs
-    movw %ax, %gs
+    # # reloading segment registers
+    # movw $(0x10), %ax # 16 bytes off
+    # movw %ax, %ds 
+    # movw %ax, %es
+    # movw %ax, %ss
+    # movw $0, %ax
+    # movw %ax, %fs
+    # movw %ax, %gs
 
     pushl $0
     popf
@@ -38,14 +38,14 @@ hang:
 
 #include "asm.h"
 # GDT
-.align 4
-gdt:
-  SEG_NULLASM                             # null seg
-  SEG_ASM(STA_X | STA_R, 0x0, 0xffffffff)   # code seg
-  SEG_ASM(STA_W, 0x0, 0xffffffff)         # data seg    
-gdtdesc:
-    .word (gdtdesc - gdt - 1)   # length of GDT minus 1
-    .long gdt                   # base address of GDT
+# .align 4
+# gdt:
+#   SEG_NULLASM                             # null seg
+#   SEG_ASM(STA_X | STA_R, 0x0, 0xffffffff)   # code seg
+#   SEG_ASM(STA_W, 0x0, 0xffffffff)         # data seg    
+# gdtdesc:
+#     .word (gdtdesc - gdt - 1)   # length of GDT minus 1
+#     .long gdt                   # base address of GDT
 
 .lcomm stack, STACKSIZE
 
