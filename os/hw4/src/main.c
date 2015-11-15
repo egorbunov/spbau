@@ -20,10 +20,10 @@ void print_mboot_info(multiboot_info_t* pmbinfo) {
             (unsigned long) mmap < pmbinfo->mmap_addr + pmbinfo->mmap_length;
             mmap = (multiboot_memory_map_t *) ((uint32_t) mmap + mmap->size + sizeof(mmap->size)))
             printf ("memory range = 0x%x%x - 0x%x%x, type = %d\n",
-                    (int32_t) (mmap->base >> 32),
-                    (int32_t) (mmap->base & 0xffffffff),
-                    (int32_t) ((mmap->base + mmap->len) >> 32),
-                    (int32_t) ((mmap->base + mmap->len) & 0xffffffff),
+                    (uint32_t) (mmap->base >> 32),
+                    (uint32_t) (mmap->base & 0xffffffff),
+                    (uint32_t) ((mmap->base + mmap->len - 1) >> 32),
+                    (uint32_t) ((mmap->base + mmap->len - 1) & 0xffffffff),
                     mmap->type);
     } else {
         printf("Memory info is not available\n");
@@ -32,7 +32,7 @@ void print_mboot_info(multiboot_info_t* pmbinfo) {
 
 void cmain(unsigned long magic, multiboot_info_t* pmbinfo) {
     init_vga();
-    
+
     printf("============================================\n");
     print_mboot_info(pmbinfo);
     printf("============================================\n");
