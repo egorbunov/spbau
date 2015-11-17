@@ -6,8 +6,6 @@ import Data.List (unfoldr)
 import Data.Foldable(Foldable, foldr, foldl)
 import Test.HUnit
 
--- Added imports
-
 -- 1. Используя unfoldr, реализуйте функцию, которая возвращает в обратном алфавитном порядке список
 -- символов, попадающих в заданный парой диапазон. (1 балл)
 revRange :: (Char, Char) -> [Char]
@@ -40,19 +38,23 @@ xs !!! n = foldr f z xs n
 foldl'' :: (b -> a -> b) -> b -> [a] -> b
 foldl'' f z xs = foldr (fun f) ini xs z
     where
-        fun f = (\b g -> (\x -> g (f x b)))
+        fun f b g = \x -> g (f x b)
         ini = id
 
 -- 5. Напишите для дерева два инстанса Foldable для деревьев: in-order и level-order (3 балла)
 data Tree a = Leaf | Branch a (Tree a) (Tree a)  deriving (Eq, Show)
 
 instance Foldable Tree where
-    foldr = undefined
+    foldr f z Leaf = z
+    foldr f z (Branch k l r) = foldr f (f k (foldr f z r)) l
 
 newtype LevelOrder a = LevelO (Tree a) deriving (Eq, Show)
 
 instance Foldable LevelOrder where
-    foldr = undefined
+    foldr f z t = Data.Foldable.foldr f z (bfs [t])
+      where bfs [] = []
+            bfs ((LevelO Leaf) : xs) = bfs xs
+            bfs (LevelO (Branch k l r) : xs) = k : bfs (xs ++ [LevelO l, LevelO r])
 
 ------------------------------------------------------------------------------
 -- main
