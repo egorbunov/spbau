@@ -8,12 +8,22 @@ data Tree a = Leaf | Branch a (Tree a) (Tree a)  deriving (Eq, Show)
 -- 1. Напишите инстанс Read для списков. (1 балл)
 
 instance (Read a) => Read (List a) where
-    readsPrec = undefined
+    readsPrec _ ('[':s) = readsList s where
+        readsList (' ':s) = readsList s
+        readsList (',':s) = readsList s
+        readsList (']':s) = [(Nil, s)]
+        readsList s = [ (Cons x (xs), u) | (x, t) <- reads s, 
+                                           (xs, u) <- readsList t ]
+
 
 -- 2. Напишите инстанс Read для бинарных деревьев. (2 балла)
 
 instance (Read a) => Read (Tree a) where
-    readsPrec = undefined
+    readsPrec d (' ':s) = readsPrec d s
+    readsPrec d ('<':s) = [(Branch k l r, w) | (l, t) <- readsPrec d s,
+                                               (k, u) <- reads t,
+                                               (r, w) <- readsPrec d u]
+
 
 -- 3. Рассмотрим тип Expr для нетипизированного лямбда-исчисления,
 -- напишите для него инстансы Read и Show. (2.5 балла)
