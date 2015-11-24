@@ -28,6 +28,7 @@ bool acpi_get_rsd(rsdp_descriptor_t* prsdDescriptor) {
     const int EBDA_PTR_LOCATION = 0x40e << 4; // mult with 16...
     int EBDA_ADDR = (* (int*)(EBDA_PTR_LOCATION));
     memptr = (char*)(EBDA_ADDR);
+
     rsd_start = str_find(memptr, RSD_PTR_STR, 0, 1024);
 
     if (rsd_start >= 0) {
