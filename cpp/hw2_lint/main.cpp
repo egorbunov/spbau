@@ -254,41 +254,44 @@ void x_test() {
 //    cout << abs(lint("-321111111111111111112231000000000000002312")) << endl;
 //    cout << pow(lint(132131), 0) << endl;
 
-    char str[] = "0123456789x";
+//    char str[] = "0123456789x";
+//
+//    lint y = 0;
+//    cout << str[(int) y++];
+//    cout << str[(int) y];
+//    cout << str[(int) ++y];
+//    cout << endl;
+//
+//    for (lint x = 0; x < 10; ++x) {
+//        cout << x << " ";
+//    }
+//    cout << endl;
+//    for (lint x = 0; x < 10; x++) {
+//        cout << x << " ";
+//    }
+//    cout << endl;
+//    for (lint x = 10; x >= 0; x--) {
+//        cout << x << " ";
+//    }
+//    cout << endl;
+//    for (lint x = 10; x >= 0; --x) {
+//        cout << x << " ";
+//    }
+//    cout << endl;
 
-    lint y = 0;
-    cout << str[(int) y++];
-    cout << str[(int) y];
-    cout << str[(int) ++y];
-    cout << endl;
-
-    for (lint x = 0; x < 10; ++x) {
-        cout << x << " ";
-    }
-    cout << endl;
-    for (lint x = 0; x < 10; x++) {
-        cout << x << " ";
-    }
-    cout << endl;
-    for (lint x = 10; x >= 0; x--) {
-        cout << x << " ";
-    }
-    cout << endl;
-    for (lint x = 10; x >= 0; --x) {
-        cout << x << " ";
-    }
-    cout << endl;
-
+    lint x;
+    cin >> x;
+    cout << x;
 }
 
 int main() {
-//    x_test();
-    div_test();
-    mul_test();
-    test_add();
-    test_sub();
-    test_ll_construct();
-    test_to_string();
-    test_small_compare();
+    x_test();
+//    div_test();
+//    mul_test();
+//    test_add();
+//    test_sub();
+//    test_ll_construct();
+//    test_to_string();
+//    test_small_compare();
     return 0;
 }

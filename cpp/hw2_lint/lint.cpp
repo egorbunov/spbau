@@ -394,7 +394,9 @@ namespace apa {
     }
 
     std::istream &operator>>(std::istream  &input, lint &x) {
-        // TODO: implement
+        std::string s;
+        input >> s;
+        x = lint(s);
         return input;
     }
 
