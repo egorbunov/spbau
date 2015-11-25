@@ -279,19 +279,18 @@ void x_test() {
 //    }
 //    cout << endl;
 
-    lint x;
-    cin >> x;
+    lint x(numeric_limits<int>::max());
     cout << x;
 }
 
 int main() {
-    x_test();
-//    div_test();
-//    mul_test();
-//    test_add();
-//    test_sub();
-//    test_ll_construct();
-//    test_to_string();
-//    test_small_compare();
+//    x_test();
+    div_test();
+    mul_test();
+    test_add();
+    test_sub();
+    test_ll_construct();
+    test_to_string();
+    test_small_compare();
     return 0;
 }

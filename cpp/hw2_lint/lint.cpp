@@ -47,12 +47,12 @@ apa::lint::lint(int inum) {
     else if (inum > 0)
         sign = 1;
 
-    inum = sign * inum;
+    long long ln = (sign * (long long) inum);
 
-    if (inum != 0) {
-        while (inum > 0) {
-            num.push_back((digit_t) (inum % BASE));
-            inum /= BASE;
+    if (ln != 0) {
+        while (ln > 0) {
+            num.push_back((digit_t) (ln % BASE));
+            ln /= BASE;
         }
     } else {
         num.push_back(0);
