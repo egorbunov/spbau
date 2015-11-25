@@ -7,7 +7,7 @@ from collections import Counter
 import csv
 
 
-def main(book_name):
+def solve(book_name):
     counts = {
         'ADJF': Counter(),
         'ADJS': Counter(),
@@ -44,4 +44,4 @@ def main(book_name):
 
 
 if __name__ == '__main__':
-    main(sys.argv[1])
+    solve(sys.argv[1])

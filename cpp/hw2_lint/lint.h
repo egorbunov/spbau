@@ -10,13 +10,13 @@
 
 namespace apa {
 
-    typedef unsigned long long digit_t;
+    typedef long long digit_t;
 
     class lint {
     public:
         lint();
         explicit lint(std::string snum);
-        lint(long long lnum);
+        lint(int inum);
         explicit lint(double dnum);
 
         std::string to_string() const;
@@ -31,11 +31,13 @@ namespace apa {
         friend bool operator==(const lint& a, const lint &b);
         friend bool operator<(const lint& a, const lint &b);
 
-
         // unary
         lint operator+() const;
         lint operator-() const;
 
+        // convertions
+        explicit operator int() const;
+        explicit operator bool() const;
 
     private:
         static const digit_t BASE = 10; // MUST BE POWER OF 10
@@ -48,7 +50,6 @@ namespace apa {
         int u_cmp(const lint& x) const;
         void u_add(const lint& x);
         void u_sub(const lint& x);
-
     };
 
     // unary operators
@@ -76,6 +77,9 @@ namespace apa {
     std::ostream &operator<<(std::ostream &output, const lint &x);
     std::istream &operator>>(std::istream  &input, lint &x);
 
+    // additional
+    lint abs(const lint &x);
+    lint pow(const lint &x, int pow);
 }
 
 

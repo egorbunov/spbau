@@ -8,10 +8,12 @@
 #include <algorithm>
 #include <sstream>
 #include <iomanip>
+#include <stdexcept>
+#include <limits>
 
 size_t apa::lint::DIG_LEN = std::to_string(lint::BASE - 1).length();
 
-apa::lint::lint() : lint((long long) 0) {
+apa::lint::lint() : lint(0) {
 }
 
 apa::lint::lint(std::string snum) {
@@ -38,19 +40,19 @@ apa::lint::lint(std::string snum) {
 
 }
 
-apa::lint::lint(long long lnum) {
+apa::lint::lint(int inum) {
     sign = 0;
-    if (lnum < 0)
+    if (inum < 0)
         sign = -1;
-    else if (lnum > 0)
+    else if (inum > 0)
         sign = 1;
 
-    lnum = sign * lnum;
+    inum = sign * inum;
 
-    if (lnum != 0) {
-        while (lnum > 0) {
-            num.push_back((digit_t) (lnum % BASE));
-            lnum /= BASE;
+    if (inum != 0) {
+        while (inum > 0) {
+            num.push_back((digit_t) (inum % BASE));
+            inum /= BASE;
         }
     } else {
         num.push_back(0);
@@ -58,6 +60,34 @@ apa::lint::lint(long long lnum) {
 }
 
 apa::lint::lint(double dnum) {
+    if (dnum == 0) {
+        sign = 0;
+        num.push_back(0);
+    } else if (dnum < 0)
+        sign = - 1;
+    else
+        sign = 1;
+    dnum *= sign;
+    dnum = floor(dnum);
+
+
+    while (dnum > 0) {
+//        std::cout << "XXX = " << (dnum - floor(dnum / BASE) * BASE) << std::endl;
+        num.push_back((digit_t) ((dnum - floor(dnum / BASE) * BASE) + 0.5));
+        dnum = floor(dnum / 10);
+    }
+}
+
+apa::lint::operator int() const {
+    if (*this < std::numeric_limits<int>::max() && *this > std::numeric_limits<int>::min()) {
+        return atoi(this->to_string().c_str());
+    } else {
+        throw std::overflow_error("Can't convert to int!");
+    }
+}
+
+apa::lint::operator bool() const {
+    return *this != 0;
 }
 
 apa::lint& apa::lint::operator+=(const apa::lint &rhs) {
@@ -73,6 +103,32 @@ apa::lint& apa::lint::operator+=(const apa::lint &rhs) {
 }
 
 apa::lint &apa::lint::operator*=(const apa::lint &rhs) {
+    sign = sign * rhs.sign;
+
+    // zero case
+    if (sign == 0) {
+        num.resize(1);
+        num[0] = 0;
+        return *this;
+    }
+
+    lint cpy(*this);
+
+    std::fill(num.begin(), num.end(), 0);
+
+    for (int i = 0; i < rhs.num.size(); ++i) {
+        digit_t rem = 0;
+        for (int j = 0; j < cpy.num.size() || rem != 0; ++j) {
+            if (i + j >= num.size())
+                num.push_back(0);
+            num[i + j] += (j < cpy.num.size() ? rhs.num[i] * cpy.num[j] : 0) + rem;
+            rem = num[i + j] / BASE;
+            num[i + j] %= BASE;
+        }
+    }
+
+    del_lead_zeros();
+
     return *this;
 }
 
@@ -90,6 +146,42 @@ apa::lint &apa::lint::operator-=(const apa::lint &rhs) {
 }
 
 apa::lint &apa::lint::operator/=(const apa::lint &rhs) {
+    if (rhs == 0)
+        throw std::overflow_error("Division by zero exception");
+    if (*this == 0)
+        return *this;
+    if (u_cmp(rhs) < 0) {
+        sign = 0;
+        num.resize(1);
+        num[0] = 0;
+        return *this;
+    }
+
+    sign *= rhs.sign;
+
+    lint tmp(0);
+    tmp.num.resize(num.size(), 0);
+
+    bool is_sum = rhs < 0;
+
+    for (int i = (int) (num.size() - 1); i >= 0; --i) {
+        tmp *= BASE;
+        tmp += num[i];
+        num[i] = 0;
+        while (tmp.u_cmp(rhs) >= 0) {
+            if (is_sum)
+                tmp += rhs;
+            else
+                tmp -= rhs;
+            num[i] += 1;
+        }
+    }
+
+    del_lead_zeros();
+
+    if (num.size() == 1 && num[0] == 0)
+        sign = 0;
+
     return *this;
 }
 
@@ -238,12 +330,12 @@ namespace apa {
     }
 
     lint& operator--(lint& x) {
-        x += 1;
+        x -= 1;
         return x;
     }
 
     lint& operator++(lint& x) {
-        x -= 1;
+        x += 1;
         return x;
     }
 
@@ -304,5 +396,26 @@ namespace apa {
     std::istream &operator>>(std::istream  &input, lint &x) {
         // TODO: implement
         return input;
+    }
+
+    lint abs(const lint &x) {
+        if (x < 0)
+            return -x;
+        else
+            return lint(x);
+    }
+
+    lint pow(const lint &x, int pow) {
+        lint result = 1;
+        lint value(x);
+        while(pow > 0)
+        {
+            if(pow & 1)
+                result = result * value;
+            value = value * value;
+            pow /= 2;
+            //power >>= 1;
+        }
+        return result;
     }
 }

@@ -2,23 +2,37 @@
 #include <sstream>
 #include <iomanip>
 #include <fstream>
+#include <limits>
+#include <random>
 #include "lint.h"
 
 using namespace std;
 
 void test_ll_construct() {
+    string test_name = "{ LL_CONSTRUCT_TEST }";
+    cout << "-------------------" << test_name << "-------------------------" << endl;
+    bool isFailed = false;
     long long nums[] = {0, -0, 1, -1, 123124, 1000000, -10000001};
 
-    for (long long x : nums) {
+    for (int x : nums) {
         string s = to_string(x);
         apa::lint lx(x);
         if (lx.to_string() != s) {
             cout << "FAILED on [ " << s << " ]" << " actual = " << lx.to_string() << endl;
+            isFailed = true;
         }
     }
+
+    if (isFailed)
+        cout << "       FAILED: " << test_name << endl;
+    else
+        cout << "       PASSED: " << test_name << endl;
 }
 
 void test_to_string() {
+    string test_name = "{ TO_STRING_TEST }";
+    cout << "-------------------" << test_name << "-------------------------" << endl;
+    bool isFailed = false;
     std::string strs[] = {"0",
                           "100002",
                           "1000000000000000000000000000000",
@@ -31,19 +45,30 @@ void test_to_string() {
         apa::lint x(s);
         if (x.to_string() != s) {
             cout << "FAILED on [ " << s << " ]" << " actual = " << x.to_string() << endl;
+            isFailed = true;
         }
     }
 
     apa::lint testNZ("-0");
     if (testNZ.to_string() != "0") {
         cout << "FAILED on [ -0 ]" << " actual = " << testNZ.to_string() << endl;
+        isFailed = true;
     }
+
+    if (isFailed)
+        cout << "       FAILED: " << test_name << endl;
+    else
+        cout << "       PASSED: " << test_name << endl;
 }
 
 void test_small_compare() {
-    vector<long long> numsA = {0, 1, 2, 3, -10, -20, -30, 123123, 1000000, -100000000};
-    vector<long long> numsB = {-0, -1000, 2200, 12312, 31231, 123123, 999999, 123, 111, -100000000};
+    string test_name = "{ COMPARE_TEST }";
+    cout << "-------------------" << test_name << "-------------------------" << endl;
 
+    vector<int> numsA = {0, 1, 2, 3, -10, -20, -30, 123123, 1000000, -100000000};
+    vector<int> numsB = {-0, -1000, 2200, 12312, 31231, 123123, 999999, 123, 111, -100000000};
+
+    bool isFailed = false;
     for (int i = 0; i < numsA.size(); ++i) {
         int expected;
         if (numsA[i] < numsB[i])
@@ -62,11 +87,15 @@ void test_small_compare() {
         else
             actual = 0;
 
-        if (actual != expected)
+        if (actual != expected) {
             cout << "COMPARE FAILED: expected = " << expected << " actual = " << actual << endl;
+            isFailed = true;
+        }
     }
-
-
+    if (isFailed)
+        cout << "       FAILED: " << test_name << endl;
+    else
+        cout << "       PASSED: " << test_name << endl;
 }
 
 void test_add() {
@@ -132,7 +161,130 @@ void test_sub() {
         cout << "       PASSED: " << test_name << endl;
 }
 
+void mul_test() {
+    string fname = "test_data/mul.test";
+    string test_name = "{ MUL_TEST }";
+
+    cout << "-------------------" << test_name << "-------------------------" << endl;
+
+    ifstream in(fname, ifstream::in);
+    if (!in) {
+        cout << "Cannot open test file!";
+        return;
+    }
+    int n;
+    in >> n;
+    string ex, ey, emul;
+    bool isFailed = false;
+    for (int i = 0; i < n; ++i) {
+        in >> ex >> ey >> emul;
+        apa::lint ax(ex), ay(ey), lmul(emul);
+        apa::lint amul = ax * ay;
+        if (amul != lmul) {
+            cout << i << " | FAILED.      Expected: " << ex << " * " << ey << " = " << emul << endl;
+            cout << "                     Actual:   " << ax << " * " << ay << " = " << amul << endl;
+            isFailed = true;
+        }
+    }
+    if (isFailed)
+        cout << "       FAILED: " << test_name << endl;
+    else
+        cout << "       PASSED: " << test_name << endl;
+}
+
+void div_test() {
+    string test_name = "{ DIV_TEST }";
+    cout << "-------------------" << test_name << "-------------------------" << endl;
+    using namespace apa;
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    long long from = numeric_limits<int>::min();
+    long long to = numeric_limits<int>::max();
+    std::uniform_int_distribution<int> dis(from, to);
+
+    // long long test
+
+    int num = 100000;
+
+    bool isFailed = false;
+    for (int i = 0; i < num; ++i) {
+        int a = dis(gen);
+        int b = 0;
+        while (b == 0) b = dis(gen);
+
+        lint la(a);
+        lint lb(b);
+        int expected = a / b;
+        lint actual = la / lb;
+//
+//        cout << "          expected [ " << a << " / " << b << " = " << a / b << " ] " << endl;
+//        cout << "            actual [ " << la << " / " << lb << " = " << la / lb << " ] " << endl;
+//        cout << endl;
+
+        if (expected != actual) {
+            cout << " FAILED : expected [ " << a << " / " << b << " = " << a / b << " ] " << endl;
+            cout << "            actual [ " << la << " / " << lb << " = " << la / lb << " ] " << endl;
+            isFailed = true;
+        }
+    }
+
+    if (isFailed)
+        cout << "       FAILED: " << test_name << endl;
+    else
+        cout << "       PASSED: " << test_name << endl;
+
+//    long long a = 6;
+//    long long b = -3;
+//    lint x(a);
+//    lint y(b);
+//    lint d = x / y;
+//
+//    cout << x / y << " [ " << a / b << " ] " << endl;
+}
+
+void x_test() {
+    using namespace apa;
+//    double dx = -123e3;
+//    lint x(dx);
+//    cout << x << " " << (int) dx;
+//    int p = 20;
+//    lint x("123123");
+//    cout << x << "^" << p << "=" << pow(x, p) << endl;
+//    cout << abs(lint("-321111111111111111112231000000000000002312")) << endl;
+//    cout << pow(lint(132131), 0) << endl;
+
+    char str[] = "0123456789x";
+
+    lint y = 0;
+    cout << str[(int) y++];
+    cout << str[(int) y];
+    cout << str[(int) ++y];
+    cout << endl;
+
+    for (lint x = 0; x < 10; ++x) {
+        cout << x << " ";
+    }
+    cout << endl;
+    for (lint x = 0; x < 10; x++) {
+        cout << x << " ";
+    }
+    cout << endl;
+    for (lint x = 10; x >= 0; x--) {
+        cout << x << " ";
+    }
+    cout << endl;
+    for (lint x = 10; x >= 0; --x) {
+        cout << x << " ";
+    }
+    cout << endl;
+
+}
+
 int main() {
+//    x_test();
+    div_test();
+    mul_test();
     test_add();
     test_sub();
     test_ll_construct();
