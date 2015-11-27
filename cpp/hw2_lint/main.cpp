@@ -284,13 +284,19 @@ void x_test() {
 }
 
 int main() {
+    apa::lint x("-100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001");
+    apa::lint y("-100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001");
+
+    x -= y;
+
+    cout << x;
 //    x_test();
-    div_test();
-    mul_test();
-    test_add();
-    test_sub();
-    test_ll_construct();
-    test_to_string();
-    test_small_compare();
+//    div_test();
+//    mul_test();
+//    test_add();
+//    test_sub();
+//    test_ll_construct();
+//    test_to_string();
+//    test_small_compare();
     return 0;
 }

@@ -27,7 +27,7 @@ apa::lint::lint(std::string snum) {
         std::string s = snum.substr((size_t) i, DIG_LEN);
         num.push_back(std::stoull(s));
     }
-    if (i != -DIG_LEN) {
+    if (i != (int) -DIG_LEN) {
         std::string s = snum.substr(0, DIG_LEN + i);
         num.push_back(std::stoull(s));
     }
@@ -79,7 +79,7 @@ apa::lint::lint(double dnum) {
 }
 
 apa::lint::operator int() const {
-    if (*this < std::numeric_limits<int>::max() && *this > std::numeric_limits<int>::min()) {
+    if (*this <= std::numeric_limits<int>::max() && *this >= std::numeric_limits<int>::min()) {
         return atoi(this->to_string().c_str());
     } else {
         throw std::overflow_error("Can't convert to int!");
@@ -116,12 +116,12 @@ apa::lint &apa::lint::operator*=(const apa::lint &rhs) {
 
     std::fill(num.begin(), num.end(), 0);
 
-    for (int i = 0; i < rhs.num.size(); ++i) {
+    for (int i = 0; i < (int) rhs.num.size(); ++i) {
         digit_t rem = 0;
-        for (int j = 0; j < cpy.num.size() || rem != 0; ++j) {
-            if (i + j >= num.size())
+        for (int j = 0; j < (int) cpy.num.size() || rem != 0; ++j) {
+            if (i + j >= (int) num.size())
                 num.push_back(0);
-            num[i + j] += (j < cpy.num.size() ? rhs.num[i] * cpy.num[j] : 0) + rem;
+            num[i + j] += (j < (int) cpy.num.size() ? rhs.num[i] * cpy.num[j] : 0) + rem;
             rem = num[i + j] / BASE;
             num[i + j] %= BASE;
         }
@@ -143,6 +143,7 @@ apa::lint &apa::lint::operator-=(const apa::lint &rhs) {
         if (init_sign < 0)
             sign *= -1;
     }
+    return *this;
 }
 
 apa::lint &apa::lint::operator/=(const apa::lint &rhs) {
@@ -202,8 +203,8 @@ void apa::lint::u_add(const lint &x) {
 
     digit_t rem = 0;
     int i;
-    for (i = 0; i < num.size(); ++i) {
-        num[i] += (i < x.num.size() ? x.num[i] : 0) + rem;
+    for (i = 0; i < (int) num.size(); ++i) {
+        num[i] += (i < (int) x.num.size() ? x.num[i] : 0) + rem;
         if (num[i] >= lint::BASE) {
             rem = num[i] / lint::BASE;
             num[i] %= lint::BASE;
@@ -233,8 +234,8 @@ void apa::lint::u_sub(const lint &x) {
     digit_t rem = 0;
     int i;
     long long new_digit;
-    for (i = 0; i < num.size(); ++i) {
-        new_digit = num[i] - (i < x.num.size() ? x.num[i] : 0) - rem;
+    for (i = 0; i < (int) num.size(); ++i) {
+        new_digit = num[i] - (i < (int) x.num.size() ? x.num[i] : 0) - rem;
         if (new_digit < 0) {
             new_digit += BASE;
             rem = 1;
