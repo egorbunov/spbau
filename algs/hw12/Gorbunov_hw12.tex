@@ -1,0 +1,126 @@
+\input{env.tex}
+\title{Алгоритмы. Домашнее задание №12}
+\author{Горбунов Егор Алексеевич}
+
+\begin{document}
+\maketitle
+
+\task{степень одиночества}
+\textit{
+$LR(T) = \frac{\text{Количество единственных детей в } T}{\text{Количество вершин в } T}$. Ребёнок единственный, если он один такой у своего родителя. Корень не является единственным ребёнком. 
+	\begin{enumerate}[label=(\alph*)]
+		\item \label{task1:a} Покажите, что в любом ненулевом $AVL$-дереве $T$ $LR(T)\leq \frac{1}{2}$
+		\item Правда ли, что если $LR(T) \leq \frac{1}{2}$, то $h(T) \leq \log{size(T)}$?
+		\item Пусть в дереве $T$ есть всего $\Theta(size(T))$ единственных детей и все они --- листья. Правда ли, что для любого такого дерева $h(T)~\leq~\log{size(T)}$?
+	\end{enumerate}
+}
+\underline{Решение:}
+Обозначим $LC(T)$ --- множество единственных детей в $T$.
+\begin{enumerate}[label=(\alph*)]
+% Пункт (а)
+	\item В $AVL$-дереве на $1$ вершине $LR(T)=0 \leq \frac{1}{2}$. На $2$ вершинах $LR(T) = \frac{1}{2}$. Пускай утверждение верно для всех $AVL$-деревьев на $1,2,\ldots,n-1$ вершине. Рассмотрим $AVL$-дерево $T$ на $n > 2$ вершинах пусть $T_l$ и $T_r$ --- это левое и правое поддерево, подвешенные к корню $T$. Т.к. высоты $T_l$ и $T_r$ отличаются максимум на $1$, а $n~>~2$, то оба $T_l$ и $T_r$ --- непустые $AVL$-деревья. Пусть размер $T_l$ --- $n_l < n$, а размер $T_r$ --- $n_r < n$. Заметим, что индукционное предположение для $T_l$ и $T_r$ верно и $n = n_l + n_r + 1$.
+	\begin{equation*}
+	\begin{split}
+		LR(T) &= \frac{|LC(T_l)| + |LC(T_r)|}{n} = \frac{n_ln_r}{n}\Big(\frac{|LC(T_l)|}{n_ln_r} + \frac{|LC(T_r)|}{n_ln_r}\Big) \leq^{по предположению} \frac{n_ln_r}{n}\Big(\frac{1}{2n_l} + \frac{1}{2n_r}\Big) =
+		\\ &= \frac{1}{2}\frac{n_l+n_r}{n} = \frac{1}{2}\frac{n - 1}{n} \leq \frac{1}{2} 
+	\end{split}
+	\end{equation*}
+	Итого по индукции показали, что утверждение \ref{task1:a} верно. \xqed
+% Пункт (b)
+	\item Нет, не правда. Рассмотрим дерево $T$ на $n$ вершинах (в данном случае $n$ чётное) изображённое на рисунке~\ref{fig:task1:b}. Высота этого дерева равна $\frac{n}{2}+1$, но при этом единственный ребёнок лишь один --- это лист $n$. Таким образом $LR(T) = \frac{1}{n} \leq {1}{2}$, но при этом высота $h(T) = \frac{n}{2} + 1 > \log{n}$ \xqed
+	\begin{figure}[ht!]
+	\centering
+	\begin{tikzpicture}[scale=0.85]
+	\GraphInit[vstyle=Classic]
+ 	\tikzstyle{every node}=[font=\scriptsize]
+	\begin{scope}[VertexStyle/.append style = {minimum size = 5pt, inner sep = 0pt, color=black}]
+        \Vertex[Math,x=0,y=0]{1}   
+        \Vertex[Math,x=1,y=-1]{3}
+        \Vertex[Math,x=3,y=-3]{n-3}
+        \Vertex[Math,x=4,y=-4]{n-1}
+		\Vertex[Math,x=-0.5,y=-1]{2}
+		\Vertex[Math,x=0.5,y=-2]{4}
+		\Vertex[Math,x=2.5,y=-4]{n-2}
+	\end{scope}
+	\begin{scope}[VertexStyle/.append style = {minimum size = 5pt, inner sep = 0pt, color=red}]
+		\Vertex[Math,x=3.5,y=-5]{n}
+	\end{scope}
+
+	\Edge(1)(3)
+	\Edge[style=dashed](3)(n-3)
+	\Edge(n-3)(n-1)
+	\Edge(1)(2)
+	\Edge(3)(4)
+	\Edge(n-3)(n-2)
+	\Edge(n-1)(n)
+
+	\end{tikzpicture}
+	\caption{К задаче 1 (b)}
+	\label{fig:task1:b}
+	\end{figure}
+
+% Пункт $(c)$
+	\item Обозначим $n = size(T)$. Рассмотрим дерево изображённое на рисунке~\ref{fig:task1:c}. В этом дереве $n = 3m+1$ вершина. Высота этого дерева равна $m+2$ ($m$ <<веточек>> влево и ещё 2 уровня под корень и его сына $2$). Ясно, что в таком графе одиноких детей ровно $m$, они выделены красным на изображении и каждый из них является листом, т.е. дерево $T$ удовлетворяет условию задачи ($m = \floor{\frac{n}{3}}$). Но, как было сказано выше, высота этого дерева равна $m+2= \floor{\frac{n}{3}} + 2 \geq \log{n}$ начиная с некоторого $n$. Таким образом утверждение пункта задачи неверно! \xqed
+
+	\begin{figure}[ht!]
+	\centering
+	\begin{tikzpicture}[scale=0.8]
+	\GraphInit[vstyle=Classic]
+ 	\tikzstyle{every node}=[font=\scriptsize]
+	\begin{scope}[VertexStyle/.append style = {minimum size = 5pt, inner sep = 0pt, color=black}]
+        \Vertex[Math,x=0,y=0]{1}  
+		\Vertex[Math,x=-0.5,y=-1]{2}
+        \Vertex[Math,x=1,y=-1]{4}
+		\Vertex[Math,x=0.5,y=-2]{5}
+        \Vertex[Math,x=3,y=-3]{3k+1}
+		\Vertex[Math,x=2.5,y=-4]{3k+2}
+        \Vertex[Math,x=5,y=-5]{n-3}
+		\Vertex[Math,x=4.5,y=-6]{n-2}
+		\Vertex[Math,x=7,y=-7]{n}
+	\end{scope}
+		\begin{scope}[VertexStyle/.append style = {minimum size = 5pt, inner sep = 0pt, color=red}]
+		\Vertex[Math,x=-1,y=-2]{3}
+		\Vertex[Math,x=0,y=-3]{6}
+		\Vertex[Math,x=2,y=-5]{3k+3}
+		\Vertex[Math,x=4,y=-7]{n-1}
+	\end{scope}
+
+	\Edge(1)(2)
+	\Edge(1)(4)
+	\Edge(2)(3)
+	\Edge(4)(5)
+	\Edge(5)(6)
+	\Edge[style=dashed](4)(3k+1)
+	\Edge(3k+1)(3k+2)
+	\Edge(3k+2)(3k+3)
+	\Edge[style=dashed](3k+1)(n-3)
+	\Edge(n-3)(n-2)
+	\Edge(n-2)(n-1)
+	\Edge(n-3)(n)
+	\end{tikzpicture}
+	\caption{К задаче 1 (с)}
+	\label{fig:task1:c}
+	\end{figure}
+\end{enumerate}
+
+\task{Слияния $AVL$-деревьев}
+\textit{
+Пусть даны $2$ $AVL$-дерева $T_1$ и $T_2$. Придумать, как построить $AVL$-дерево $T$, являющееся объединением деревьев $T_1$ и $T_2$ за время:
+	\begin{enumerate}[label=(\alph*)]
+		\item $\bigO{h(T_1)size(T_2)}$
+		\item $\bigO{\max{\lbrace size(T_1), size(T_2) \rbrace}}$
+	\end{enumerate}
+}
+\underline{Решение:}
+
+\task{Порядковые статистики}
+\textit{
+	\begin{enumerate}[label=(\alph*)]
+		\item Придумайте, как в $AVL$-дереве $T$ реализовать операцию получения $k$-ой порядковой статистики за $\bigO{h(T)}$
+		\item Придумайте, как в $AVL$-дереве $T$ найти $index(k)$ --- позицию ключа $k$ в отсортированном массиве ключей за $\bigO{h(T)}$
+		\item Придумайте, как в $AVL$-дереве $T$ найти количество ключей между $k_1$ и $k_2$ за $\bigO{h(T)}$
+	\end{enumerate}
+}
+\underline{Решение:}
+
+\end{document}
