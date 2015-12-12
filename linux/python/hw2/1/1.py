@@ -27,6 +27,8 @@ class WithFinals(type):
                                           .format(f_name, p_name, name))
 
 
+# ============================ TEST ===============================
+
 class A(metaclass=WithFinals):
     def f(self):
         pass
