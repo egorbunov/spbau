@@ -9,6 +9,9 @@ class FinalViolationError(Exception):
 
 
 class WithFinals(type):
+    """
+    Metaclass, which provides final constraint checking.
+    """
     def __init__(cls, name, bases, d):
         super(WithFinals, cls).__init__(name, bases, d)
 

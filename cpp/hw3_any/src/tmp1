@@ -1,0 +1,274 @@
+//
+//  test.cpp
+//  hw3
+//
+//  Created by Иван Дмитриевский on 08/12/2015.
+//  Copyright © 2015 idmit. All rights reserved.
+//
+
+#include <cassert>
+#include <string>
+#include <iostream>
+
+#include "any.h"
+using utils::any;
+using utils::any_cast;
+using utils::bad_any_cast;
+using std::string;
+using std::cout;
+using std::cerr;
+using std::endl;
+
+struct tom {
+    tom() : ctrl(0) {}
+    tom(std::size_t ctrl) : ctrl(ctrl) {}
+    std::size_t ctrl;
+};
+struct jerry {};
+
+void empty_test() {
+    any x;
+    assert(x.empty());
+}
+
+void val_constr_test() {
+    any x(5);
+    any y(5.);
+    any z("5");
+
+    tom tm;
+    any t(tm);
+}
+
+void cp_constr_test() {
+    any w;
+    any x(w);
+
+    any y(0);
+    any z(y);
+
+    any tm(0);
+    any t(tm);
+}
+
+void any_assign_test() {
+    any x(0);
+    any y("0");
+    any z(0.);
+    any e;
+
+    x = e;
+    y = z;
+    e = y;
+    e = e;
+
+    x = y = z;
+}
+
+void val_assign_test() {
+    int vx = 5;
+    double vd = 5.;
+    std::string vs = "5";
+    tom vt;
+
+    any x(0);
+    any y("0");
+    any z(0.);
+    any e;
+
+    x = vx;
+    y = vd;
+    (e = vs) = vt;
+}
+
+void ref_cast_test() {
+    tom t(99);
+    any x(t);
+
+    tom q = any_cast<tom>(x);
+    assert(q.ctrl == 99);
+
+    tom &p = t;
+    any y(p);
+    tom r = any_cast<tom>(y);
+    assert(r.ctrl == 99);
+
+    tom *s = &t;
+    any z(s);
+    tom *u = any_cast<tom *>(z);
+    assert(u->ctrl == 99);
+}
+
+void ref_const_cast_test() {
+    tom t(99);
+    const any x(t);
+
+    tom q = any_cast<tom>(x);
+    assert(q.ctrl == 99);
+
+    tom &p = t;
+    const any y(p);
+    tom r = any_cast<tom>(y);
+    assert(r.ctrl == 99);
+
+    tom const *s = &t;
+    const any z(s);
+    tom const *u = any_cast<tom const *>(z);
+    assert(u->ctrl == 99);
+}
+
+void bad_ref_cast_test() {
+    tom t(99);
+    any x(t);
+
+    bool thrown = false;
+    jerry q;
+    try {
+        q = any_cast<jerry>(x);
+    } catch (const bad_any_cast e) {
+        thrown = true;
+    }
+    assert(thrown);
+
+    tom &p = t;
+    any y(p);
+    thrown = false;
+    tom *r;
+    try {
+        r = any_cast<tom *>(y);
+    } catch (const bad_any_cast e) {
+        thrown = true;
+    }
+    assert(thrown);
+
+    tom *s = &t;
+    any z(s);
+    thrown = false;
+    tom **u;
+    try {
+        u = any_cast<tom **>(z);
+        (*u)->ctrl += 1;
+    } catch (const bad_any_cast e) {
+        thrown = true;
+    }
+    assert(thrown);
+}
+
+void ptr_cast_test() {
+    tom t(99);
+    any x(t);
+
+    tom *q = any_cast<tom>(&x);
+    assert(q->ctrl == 99);
+
+    tom &p = t;
+    any y(p);
+    tom *r = any_cast<tom>(&y);
+    assert(r->ctrl == 99);
+
+    tom *s = &t;
+    any z(s);
+    tom **u = any_cast<tom *>(&z);
+    assert((*u)->ctrl == 99);
+}
+
+void ptr_const_cast_test() {
+    tom t(99);
+    const any x(t);
+
+    tom const *q = any_cast<tom>(&x);
+    assert(q->ctrl == 99);
+
+    tom &p = t;
+    const any y(p);
+    tom const *r = any_cast<tom>(&y);
+    assert(r->ctrl == 99);
+
+    tom const *s = &t;
+    const any z(s);
+    tom const *const *u = any_cast<tom const *>(&z);
+    assert((*u)->ctrl == 99);
+}
+
+void bad_ptr_cast_test() {
+    tom t(99);
+    any x(t);
+
+    jerry *q = any_cast<jerry>(&x);
+    assert(q == nullptr);
+
+    tom &p = t;
+    any y(p);
+    jerry *r = any_cast<jerry>(&y);
+    assert(r == nullptr);
+
+    tom *s = &t;
+    any z(s);
+    jerry **u = any_cast<jerry *>(&z);
+    assert(u == nullptr);
+}
+
+void to_ref_cast_test() {
+    tom t(99);
+    any x(t);
+
+    tom &q = any_cast<tom &>(x);
+    q.ctrl = 88;
+    tom &r = any_cast<tom &>(x);
+    assert(r.ctrl == 88);
+}
+
+void contruct_test() {
+    any def;
+    any copy_on_type(42);
+    def = 3.14;
+    def = string("2.71");
+    any def_copy(def);
+    def = copy_on_type;
+    any e;
+    assert(e.empty());
+}
+
+template <class T>
+void check_cast(any &a, bool should_throw) {
+    bool thrown = false;
+    try {
+        double res = any_cast<T>(a);
+        std::cout << res;
+    } catch (bad_any_cast const &err) {
+        thrown = true;
+        std::cerr << err.what() << std::endl;
+    }
+    assert(should_throw == thrown);
+}
+void retrieve_value_test() {
+    any ia(42);
+    auto res = any_cast<double>(&ia);
+    assert(res == nullptr);
+    check_cast<double>(ia, true);
+    check_cast<int>(ia, false);
+}
+
+void swap_test(any &a, any &b) { std::swap(a, b); }
+
+int main(int argc, const char *argv[]) {
+    empty_test();
+    val_constr_test();
+    cp_constr_test();
+    any_assign_test();
+    val_assign_test();
+    ref_cast_test();
+    ref_const_cast_test();
+    ptr_cast_test();
+    ptr_const_cast_test();
+    bad_ref_cast_test();
+    bad_ptr_cast_test();
+    to_ref_cast_test();
+
+    contruct_test();
+    retrieve_value_test();
+    any a(5), b(string("6"));
+    swap_test(a, b);
+
+    return 0;
+}
