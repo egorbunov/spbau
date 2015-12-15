@@ -11,6 +11,12 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
+struct tom {
+  tom() : ctrl(0) {}
+  tom(std::size_t ctrl) : ctrl(ctrl) {}
+  std::size_t ctrl;
+};
+struct jerry {};
 
 void construct_test() {
     // value construction
@@ -94,7 +100,7 @@ void complex_test() {
     // val2 += 1;
     cout << val2 << endl;
 
-    int const * pval1 = new int(100);
+    int * pval1 = new int(100);
     any any_p(pval1);
     const int* pval2 = any_cast<const int*>(any_p);
     // *pval2 += 1;
@@ -122,6 +128,12 @@ void complex_test_2() {
     any tm(42);
     int tmx = any_cast<int>(std::move(tm));
     cout << tmx << endl;
+
+    tom t(99);
+    tom const *s = &t;
+    const any z(s);
+    tom const *const *u = any_cast<tom const *>(&z);
+    assert((*u)->ctrl == 99);
 }
 
 int main(int argc, const char *argv[]) {

@@ -32,35 +32,20 @@ class WithFinals(type):
 
 # ============================ TEST ===============================
 
-class A(metaclass=WithFinals):
-    def f(self):
-        pass
-
-    def g(self):
-        pass
-
+class B0(object, metaclass=WithFinals):
     @final
-    def fun(self):
+    def foo(self):
         pass
 
 
-class C(metaclass=WithFinals):
-    @final
-    def c_fun(self):
+class B1(B0):
+    pass
+
+class B2(B0):
+    pass
+
+class B3(B1, B2):
+    def foo(self):
         pass
-
-
-class FromA(A, C):
-    def x(self):
-        pass
-
-
-class FromFromA(FromA):
-    def f(self):
-        pass
-
-    def c_fun(self):
-        pass
-
 
 
