@@ -1,0 +1,114 @@
+%!TEX program = xelatex
+\input{./settings.tex}
+\input{./packages.tex}
+
+\usepackage[scale=2]{ccicons}
+
+\usepgfplotslibrary{dateplot}
+
+
+\title{SLAM в ROS}
+\author{
+Выполнил: \hfill студент Горбунов Е.А. \\
+Руководитель: \hfill Кринкин К.В.
+}
+\institute{СПбАУ}
+
+\begin{document}
+\maketitle
+
+\begin{frame}[fragile]{Предметная область}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.21]{data/slam_at_work_1}
+\end{figure}
+\begin{itemize}
+\item Визуальный SLAM (Simultaneous Localization and Mapping)
+\item Один из этапов алгоритма: извлечение особых точек (feature points detection)
+\item ROS (Robotics operating system) --- фрэймворк для программирования роботов
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Постановка задачи}
+\begin{enumerate}
+\item Изучить наиболее популярные подходы к извлечению особых точек
+\item Сделать утилиту, позволяющую извлекать и отображать особые точки на визуальных данных
+	\begin{itemize}
+		\item Поддержка загрузки картинок и видео
+		\item Поддержка извлечения точек из проигрываемых bag-файлов (rosplay)
+		\item Возможность менять параметры детекторов особых точек
+	\end{itemize}
+\item Провести сравнение изученных методов
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Что тут уже сделали?}
+
+\begin{itemize}
+	\item Про особые точки и методы их извлечения написано много статей
+	\item Поиски каких-то программ, чтобы на работу этих методов посмотреть не привели к результатам,
+	к тому же с поддержкой bag-файлов
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Извлечение особых точек}
+\begin{itemize}
+	\item Особые точки --- точки с сильным изменением яркости в более чем 1 направлении (угловые точки)
+	\item Характеристики:
+	\begin{itemize}
+		\item Устойчивость к масштабу, повороту
+		\item Устойчивость к изменению освещения
+		\item Сложность вычисления
+	\end{itemize}
+	\item Выбранные для изучения методы:
+	\begin{itemize}
+		\item SIFT (1999) --- классика
+		\item SURF (2006) --- наследник SIFT
+		\item FAST (2006)
+		\item ORB (2011) --- используется в ORB-SLAM, использует FAST
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Утилита для извлечения особых точек}
+\begin{figure}
+\centering
+\includegraphics[scale=0.32]{data/Feature_match}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Что утилита может?}
+\begin{itemize}
+	\item Сопоставление особых точек на оригинальном кадре и кадре с наложенными фильтрами 
+	\item Лёгкое добавление новых детекторов особых точек
+	\item Лёгкое добавление фильтров с возможностью настройки их параметров
+\end{itemize}
+% \begin{figure}
+% \centering
+% \includegraphics[scale=0.32]{data/Feature_match}
+% \end{figure}
+\end{frame}
+
+\begin{frame}{Результаты}
+\begin{enumerate}
+	\item Страничка c описанием методов извлечения особых точек \url{dev.osll.ru/projects/robotics/wiki/Visual_Features_Taxonomy}
+	\item Код утилиты для отображения особых точек в репозитории \url{dev.osll.ru/projects/robotics/repository} (robotics/utils/feature-detector)
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Что нового узнал?}
+\begin{itemize}
+	\item Методы извлечения особых точек
+	\item Работа с ROS (Robotics operating system)
+	\item CMake + OpenCV + Qt
+\end{itemize}
+% Qt, ROS, Feature Detectors guts
+\end{frame}
+
+\plain{Конец}
+
+
+\end{document}

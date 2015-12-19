@@ -1,0 +1,535 @@
+% ALERT: Almost all of the settings are copy-paste from https://github.com/matze/mtheme
+
+\documentclass{beamer}
+\mode<presentation>
+
+\usepackage[russian]{babel}
+\usepackage[no-math]{fontspec}
+\usepackage{xunicode}
+\usepackage{xltxtra}
+
+\usepackage{pdfpages}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usepackage{calc}
+
+\usepackage{etoolbox}
+\usepackage{pgfplots}
+\usepackage{ifxetex, ifluatex}
+
+\usepackage{pifont}% http://ctan.org/pkg/pifont
+
+% ============ LENGTHS ============
+\setlength{\parskip}{4pt plus 1pt minus 1pt}
+\linespread{1.15}
+
+% ============ ENVIRONMENTS ============
+
+
+% ============ COLORS, FONTS AND FONTS SETTINGS ============
+
+% colors
+\definecolor{cTitle}{HTML}{23373B}
+\definecolor{cBackground}{HTML}{FAFAFA}
+\definecolor{cSeparator}{HTML}{EB811B}
+\definecolor{cText}{HTML}{23373B}
+\definecolor{cFrameBackground}{HTML}{23373B}
+
+\definecolor{cGreen}{HTML}{007A29}
+\definecolor{cRed}{HTML}{CC3300}
+
+% new font families
+\newfontfamily\ExtraLight{Fira Sans ExtraLight}
+\newfontfamily\Light{Fira Sans Light}
+\newfontfamily\Book{Fira Sans}
+
+% setting spectial colors
+\setbeamercolor{background canvas}{bg=cBackground}
+\setbeamercolor{frametitle}{fg=cBackground,bg=cFrameBackground}
+\setbeamercolor{title}{fg=cTitle}
+\setbeamercolor{progress bar}{fg=cSeparator}
+\setbeamercolor{title separator}{fg=cSeparator}
+\setbeamercolor{section title}{fg=cTitle}
+\setbeamercolor{normal text}{fg=cText, bg=cBackground}
+\setbeamercolor{caption name}{fg=cText}
+\setbeamercolor{block title}{fg=cText}
+\setbeamercolor{block title alerted}{fg=cSeparator}
+\setbeamercolor{alerted text}{fg=cSeparator}
+\setbeamercolor{alerted text}{fg=cSeparator}
+\setbeamercolor{item projected}{fg=cText}
+\setbeamercolor{enumerate item}{fg=cText}
+\setbeamercolor{enumerate subitem}{fg=cText}
+\setbeamercolor{enumerate subsubitem}{fg=cText}
+\setbeamercolor{itemize item}{fg=cText}
+\setbeamercolor{itemize subitem}{fg=cText}
+\setbeamercolor{itemize subsubitem}{fg=cText}
+
+\setbeamercolor{palette primary}{
+  use=normal text,
+  fg=normal text.bg,
+  bg=normal text.fg
+}
+
+\setbeamercolor{bibliography item}{parent=palette primary}
+\setbeamercolor{bibliography entry author}{fg=cText}
+\setbeamercolor{bibliography entry title}{fg=cText}
+\setbeamercolor{bibliography entry location}{fg=cText}
+\setbeamercolor{bibliography entry note}{fg=cText}
+
+% setting spectial fonts
+\defaultfontfeatures{Mapping=tex-text}
+\setsansfont[BoldItalicFont={Fira Sans Italic},%
+             ItalicFont={Fira Sans Light Italic},%
+             BoldFont={Fira Sans}]{Fira Sans Light}
+\setmonofont{Fira Mono}
+
+\setbeamerfont{institute}{family=\ExtraLight, size=\footnotesize}
+\setbeamerfont{title}{family=\Book, size=\Large}
+\setbeamerfont{author}{family=\ExtraLight, size=\small}
+\setbeamerfont{date}{family=\ExtraLight, size=\small}
+\setbeamerfont{section title}{family=\Book, size=\Large}
+\setbeamerfont{block title}{family=\Book, size=\normalsize}
+\setbeamerfont{block title alerted}{family=\Book,size=\normalsize}
+\setbeamerfont{subtitle}{family=\Light, size=\fontsize{12}{14}}
+\setbeamerfont{frametitle}{family=\Book, size=\large}
+\setbeamerfont{framenumber}{family=\ExtraLight, size=\scriptsize}
+\setbeamerfont{caption}{size=\small}
+\setbeamerfont{caption name}{family=\Book}
+\setbeamerfont{description item}{family=\Book}
+\setbeamerfont{page number in head/foot}{size=\scriptsize}
+\setbeamerfont{bibliography entry author}{family=\Light, size=\normalsize}
+\setbeamerfont{bibliography entry title}{family=\Book, size=\normalsize}
+\setbeamerfont{bibliography entry location}{family=\Light, size=\normalsize}
+\setbeamerfont{bibliography entry note}{family=\Light, size=\small}
+
+% ============ NEW LENGTHS ============
+
+\makeatletter
+\newlength{\progressbar@percent}
+
+\newlength{\theme@voffset}
+\setlength{\theme@voffset}{2cm}
+\makeatother
+
+% ============ NEW COMMANDS ============
+\newcommand{\additionalbegin}{
+   \newcounter{finalframe}
+   \setcounter{finalframe}{\value{framenumber}}
+}
+\newcommand{\additionalend}{
+   \setcounter{framenumber}{\value{finalframe}}
+}
+
+
+\newcommand{\red}[1]{\textcolor{cRed}{#1}}
+\newcommand{\green}[1]{\textcolor{cGreen}{#1}}
+
+\newcommand{\iplus}{\item[\color{cGreen}$+$]} 
+\newcommand{\iminus}{\item[\color{cRed}$-$]} 
+
+\newcommand{\cmark}{\green{\ding{51}}}%
+\newcommand{\xmark}{\red{\ding{55}}}%
+
+\newcommand{\code}[1]{\colorbox{gray!15}{\footnotesize\texttt{#1}}}
+
+% plain slide
+\newcommand{\plain}[2][]{%
+  {
+    \setbeamercolor{background canvas}{bg=cText}
+    \begingroup
+      \begin{frame}{#1}
+        \centering
+        \vfill
+        \vspace{1em}
+        \usebeamercolor[fg]{palette primary}
+        \usebeamerfont{section title}
+        \scshape #2
+        \vfill
+      \end{frame}
+    \endgroup
+  }
+}
+
+% progress bar line
+\makeatletter
+\newcommand{\progressbar}[1]{%
+  \setlength{\progressbar@percent}{%
+    #1 * \ratio{\insertframenumber pt}{\inserttotalframenumber pt}%
+  }%
+  \begin{tikzpicture}
+    \usebeamercolor{progress bar}
+    \draw[bg, fill=bg] (0,0) rectangle (#1, 0.4pt);
+    \draw[fg, fill=fg] (0,0) rectangle (\progressbar@percent, 0.4pt);
+  \end{tikzpicture}%
+}
+
+\newif\if@notAddFrameNumberOnTitlePage
+\@notAddFrameNumberOnTitlePagetrue
+
+\def\maketitle{
+  {
+  \if@notAddFrameNumberOnTitlePage
+    \setbeamertemplate{navigation symbols}{}
+    \setbeamertemplate{footline}{}
+  \fi
+  \ifbeamer@inframe
+    \titlepage
+  \else
+    \frame{\titlepage}
+  \fi
+  }
+}
+\makeatother
+
+\newcommand{\insertsectionHEADaux}[3]{\scshape #3}
+\newcommand{\insertsectionHEAD}{\expandafter\insertsectionHEADaux\insertsectionhead}
+
+% PIE CHART
+\definecolor{rosso}{RGB}{220,57,18}
+\definecolor{giallo}{RGB}{255,153,0}
+\definecolor{blu}{RGB}{102,140,217}
+\definecolor{verde}{RGB}{16,150,24}
+\definecolor{viola}{RGB}{153,0,153}
+
+\makeatletter
+
+\tikzstyle{chart}=[
+    legend label/.style={font={\scriptsize},anchor=west,align=left},
+    legend box/.style={rectangle, draw, minimum size=5pt},
+    axis/.style={black,semithick,->},
+    axis label/.style={anchor=east,font={\tiny}},
+]
+
+\tikzstyle{bar chart}=[
+    chart,
+    bar width/.code={
+        \pgfmathparse{##1/2}
+        \global\let\bar@w\pgfmathresult
+    },
+    bar/.style={very thick, draw=white},
+    bar label/.style={font={\bf\small},anchor=north},
+    bar value/.style={font={\footnotesize}},
+    bar width=.75,
+]
+
+\tikzstyle{pie chart}=[
+    chart,
+    slice/.style={line cap=round, line join=round, very thick,draw=white},
+    pie title/.style={font={\bf}},
+    slice type/.style 2 args={
+        ##1/.style={fill=##2},
+        values of ##1/.style={}
+    }
+]
+
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,main,foreground}
+
+
+\newcommand{\pie}[3][]{
+    \begin{scope}[#1]
+    \pgfmathsetmacro{\curA}{90}
+    \pgfmathsetmacro{\r}{1}
+    \def\c{(0,0)}
+    \node[pie title] at (90:1.3) {#2};
+    \foreach \v/\s in{#3}{
+        \pgfmathsetmacro{\deltaA}{\v/100*360}
+        \pgfmathsetmacro{\nextA}{\curA + \deltaA}
+        \pgfmathsetmacro{\midA}{(\curA+\nextA)/2}
+
+        \path[slice,\s] \c
+            -- +(\curA:\r)
+            arc (\curA:\nextA:\r)
+            -- cycle;
+        \pgfmathsetmacro{\d}{max((\deltaA * -(.5/50) + 1) , .5)}
+
+        \begin{pgfonlayer}{foreground}
+        \path \c -- node[pos=\d,pie values,values of \s]{$\v\%$} +(\midA:\r);
+        \end{pgfonlayer}
+
+        \global\let\curA\nextA
+    }
+    \end{scope}
+}
+
+\newcommand{\legend}[2][]{
+    \begin{scope}[#1]
+    \path
+        \foreach \n/\s in {#2}
+            {
+                  ++(0,-10pt) node[\s,legend box] {} +(5pt,0) node[legend label] {\n}
+            }
+    ;
+    \end{scope}
+}
+
+% ============ OVERRIDED BEAMER TEMPLATES ============
+\makeatletter
+\newcommand{\itemBullet}{∙}
+\setbeamertemplate{itemize item}{\itemBullet}
+\setbeamertemplate{itemize subitem}{\itemBullet}
+\setbeamertemplate{itemize subsubitem}{\itemBullet}
+\makeatother
+
+% for progress bar better view (?)
+\def\inserttotalframenumber{100} 
+
+% section page template
+\AtBeginSection[]
+{
+  \frame{\sectionpage}
+}
+
+\makeatletter
+\setbeamertemplate{section page}
+{
+  \vspace{2em}
+  \centering
+  \begin{minipage}{22em}
+    \usebeamercolor[fg]{section title}
+    \usebeamerfont{section title}
+    \insertsectionHEAD\\[-1ex]
+    \progressbar{\textwidth}
+  \end{minipage}
+}
+\makeatother
+
+% frame title template
+\makeatletter
+\newif\if@useTitleProgressBar
+\@useTitleProgressBartrue
+% \@useTitleProgressBarfalse % uncomment to switch progress bar off on frame titles
+
+\setbeamertemplate{frametitle}
+{
+  \nointerlineskip
+  \begin{beamercolorbox}[wd=\paperwidth,leftskip=0.3cm,rightskip=0.3cm,ht=2.5ex,dp=1.5ex]{frametitle}
+    \usebeamerfont{frametitle}%
+    \scshape \protect\insertframetitle%
+  \end{beamercolorbox}%
+
+  \if@useTitleProgressBar
+    \nointerlineskip
+    \begin{beamercolorbox}[wd=\paperwidth,ht=0.4pt,dp=0pt]{frametitle}
+      \progressbar{\paperwidth}
+    \end{beamercolorbox}
+  \fi
+}
+\makeatother
+
+
+% title page template
+\makeatletter
+\setbeamertemplate{title page}
+{
+    \ifx\insertinstitute\@empty\else
+    % \insertinstitute is nonempty
+    \vspace*{0.5cm}
+    \begin{minipage}[b][\paperheight]{\textwidth}
+    \begin{minipage}[c]{\textwidth}
+      {{
+        \begin{center}
+        \usebeamerfont{institute}%
+        \usebeamercolor[fg]{institute}%
+        \insertinstitute%
+        \end{center}
+      }}
+    \end{minipage}
+    \fi
+
+  	\vspace*{1cm}
+
+    \ifx\inserttitlegraphic\@empty\else
+    {% \inserttitlegraphic is nonempty
+      \vbox to 0pt
+      {% display title graphic without changing the position of other elements
+        \vspace*{2em}
+        \usebeamercolor[fg]{titlegraphic}%
+        \inserttitlegraphic%
+      }%
+      \nointerlineskip%
+    }
+    \fi
+
+    \vfill%
+
+	\ifx\inserttitle\@empty\else
+    {{% \inserttitle is nonempty
+      \raggedright%
+      \linespread{1.0}%
+      \usebeamerfont{title}%
+      \usebeamercolor[fg]{title}%
+      \begin{center}
+      \scshape \inserttitle%
+      \end{center}
+    }}
+    \fi
+
+    \ifx\insertsubtitle\@empty\else
+    {{% \insertsubtitle is nonempty
+      \usebeamerfont{subtitle}%
+      \usebeamercolor[fg]{subtitle}%
+      \insertsubtitle%
+      \vspace*{0.5em}%
+    }}
+    \fi
+
+    \begin{tikzpicture}
+      \usebeamercolor{title separator}
+      \draw[fg] (0, 0) -- (\textwidth, 0);
+    \end{tikzpicture}%
+    \vspace*{1em}%
+
+    \ifx\beamer@shortauthor\@empty\else
+    {{% \insertauthor is always nonempty by beamer's definition, so we must
+      % test another macro which is initialized by \author{...}
+      % For details, see http://tex.stackexchange.com/questions/241306/
+      \usebeamerfont{author}%
+      \usebeamercolor[fg]{author}%
+      \insertauthor%
+      \par%
+      \vspace*{0.25em}
+    }}
+    \fi
+
+    \ifx\insertdate\@empty\else
+    {{% \insertdate is nonempty
+      \usebeamerfont{date}%
+      \usebeamercolor[fg]{date}%
+      \insertdate%
+      \par%
+    }}
+    \fi
+
+    \vfill
+    \vspace*{2cm}
+
+  \end{minipage}
+}
+\makeatother
+
+% footline
+\setbeamertemplate{footline}{
+  \begin{minipage}[b]{0.99\textwidth}
+    \flushright
+    \raisebox{0.15cm}[0pt][0pt]{
+      \usebeamerfont{framenumber}
+      \usebeamercolor[fg]{title}
+
+      \insertframenumber
+      % \insertframenumber/\inserttotalframenumber
+    }
+    \end{minipage}
+}
+
+% switching off navigation sybmols
+\makeatletter
+\setbeamertemplate{navigation symbols}{}
+\makeatother
+
+% cpation
+\setbeamertemplate{caption label separator}{: }
+\setbeamertemplate{caption}[numbered]
+
+% ============ PGFPLOTS ENVIRONMENTS ============
+\definecolor{TolDarkPurple}{HTML}{332288}
+\definecolor{TolDarkBlue}{HTML}{6699CC}
+\definecolor{TolLightBlue}{HTML}{88CCEE}
+\definecolor{TolLightGreen}{HTML}{44AA99}
+\definecolor{TolDarkGreen}{HTML}{117733}
+\definecolor{TolDarkBrown}{HTML}{999933}
+\definecolor{TolLightBrown}{HTML}{DDCC77}
+\definecolor{TolDarkRed}{HTML}{661100}
+\definecolor{TolLightRed}{HTML}{CC6677}
+\definecolor{TolLightPink}{HTML}{AA4466}
+\definecolor{TolDarkPink}{HTML}{882255}
+\definecolor{TolLightPurple}{HTML}{AA4499}
+\pgfplotscreateplotcyclelist{mbarplot cycle}{%
+  {draw=TolDarkBlue,    fill=TolDarkBlue!70},
+  {draw=TolLightBrown,  fill=TolLightBrown!70},
+  {draw=TolLightGreen,  fill=TolLightGreen!70},
+  {draw=TolDarkPink,    fill=TolDarkPink!70},
+  {draw=TolDarkPurple,  fill=TolDarkPurple!70},
+  {draw=TolDarkRed,     fill=TolDarkRed!70},
+  {draw=TolDarkBrown,   fill=TolDarkBrown!70},
+  {draw=TolLightRed,    fill=TolLightRed!70},
+  {draw=TolLightPink,   fill=TolLightPink!70},
+  {draw=TolLightPurple, fill=TolLightPurple!70},
+  {draw=TolLightBlue,   fill=TolLightBlue!70},
+  {draw=TolDarkGreen,   fill=TolDarkGreen!70},
+}
+\pgfplotscreateplotcyclelist{mlineplot cycle}{%
+  {TolDarkBlue, mark=*, mark size=1.5pt},
+  {TolLightBrown, mark=square*, mark size=1.3pt},
+  {TolLightGreen, mark=triangle*, mark size=1.5pt},
+  {TolDarkBrown, mark=diamond*, mark size=1.5pt},
+}
+\pgfplotsset{
+  compat=1.9,
+  mlineplot/.style={
+    mbaseplot,
+    xmajorgrids=true,
+    ymajorgrids=true,
+    major grid style={dotted},
+    axis x line=bottom,
+    axis y line=left,
+    legend style={
+      cells={anchor=west},
+      draw=none
+    },
+    cycle list name=mlineplot cycle,
+  },
+  mbarplot base/.style={
+    mbaseplot,
+    bar width=6pt,
+    axis y line*=none,
+  },
+  mbarplot/.style={
+    mbarplot base,
+    ybar,
+    xmajorgrids=false,
+    ymajorgrids=true,
+    area legend,
+    legend image code/.code={%
+      \draw[#1] (0cm,-0.1cm) rectangle (0.15cm,0.1cm);
+    },
+    cycle list name=mbarplot cycle,
+  },
+  horizontal mbarplot/.style={
+    mbarplot base,
+    xmajorgrids=true,
+    ymajorgrids=false,
+    xbar stacked,
+    area legend,
+    legend image code/.code={%
+      \draw[#1] (0cm,-0.1cm) rectangle (0.15cm,0.1cm);
+    },
+    cycle list name=mbarplot cycle,
+  },
+  mbaseplot/.style={
+    legend style={
+      draw=none,
+      fill=none,
+      cells={anchor=west},
+    },
+    x tick label style={
+      font=\footnotesize
+    },
+    y tick label style={
+      font=\footnotesize
+    },
+    legend style={
+      font=\footnotesize
+    },
+    major grid style={
+      dotted,
+    },
+    axis x line*=bottom,
+  },
+  disable thousands separator/.style={
+    /pgf/number format/.cd,
+      1000 sep={}
+  },
+}
+\endinput

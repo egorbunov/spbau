@@ -1,0 +1,51 @@
+\usepackage{tikz-qtree}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{tabu}
+\usepackage{graphicx}
+\usepackage{import}
+\usepackage{mathtools}
+\usepackage{hyphenat}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+
+\usepackage{ulem}
+\normalem
+
+% algorithms
+\makeatletter
+\renewcommand{\ALG@name}{Алгоритм}
+\renewcommand{\listalgorithmname}{Список алгроитмов}
+
+\newenvironment{procedure}[1]
+  {\renewcommand*{\ALG@name}{Процедура}
+  \algorithm\renewcommand{\thealgorithm}{\thechapter.\arabic{algorithm} #1}}
+  {\endalgorithm}
+
+\makeatother
+
+\algrenewcommand\algorithmicrequire{\textbf{Вход:}}
+\algrenewcommand\algorithmicensure{\textbf{Выход:}}
+\algnewcommand\True{\textbf{true}\space}
+\algnewcommand\False{\textbf{false}\space}
+\algnewcommand\And{\textbf{and}\space}
+
+
+\newcommand{\algFor}[3]{#1 \textbf{from} #2 \textbf{to} #3}
+\newcommand{\algAssign}[2]{\State #1 $\leftarrow$ #2}
+\newcommand{\algState}[1]{\State #1}
+
+\newcommand{\empht}[1]{\text{\emph{#1}}}
+\newcommand{\trule}[2]{\text{#1} \rightarrow \text{#2}} % rule with text-labels (no italic stuff)
+
+\newcommand{\inlineq}[1]{
+	\hfill \makebox[0pt][r]{%
+            \begin{minipage}[b]{\textwidth}
+              \begin{equation}
+                 #1
+              \end{equation}
+          \end{minipage}}
+}
