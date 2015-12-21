@@ -63,13 +63,17 @@ def fun(y):
 a = A()
 a.x = 5
 a.y = [1, 2, 3]
+a.d = {"key1": "value1", "key2": 5}
 a.f = fun
 
-a.store("x.txt")
-b = A("x.txt")
+a.store("A_FILE")
+b = A("A_FILE")
 print(b.__dict__)
 b.f("Hello world!")
 
 # test except
 
-b = B("x.txt")
+try:
+    b = B("x.txt")
+except InvalidClassStorageError as e:
+    print("OK: Exception handled [{}]".format(e.args[0]))

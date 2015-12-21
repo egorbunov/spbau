@@ -1,7 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <assert.h>
-#include <lint.h>
+#include "lint.h"
 
 using apa::lint;
 
@@ -43,7 +43,7 @@ static void failed_conversions_test()
 
 static void test_comparison()
 {
-    lint long_int1 = 2;
+    lint long_int1 = 10;
     lint long_int2 = 3.; // constructing from double value 
     // all comparisons
     bool check = false;

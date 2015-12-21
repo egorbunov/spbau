@@ -1,5 +1,5 @@
 import sys
-
+import pickle
 
 def printStack():
     if not hasattr(printStack, 'call_stack'):
@@ -47,7 +47,31 @@ def foo2(num):
     foo(num)
     test1(num)
 
+
+def deep_recursion(a, b):
+    if a > 0:
+        deep_recursion(a-1, b-1)
+    return
+
 foo2(1)
 foo(2)
+deep_recursion(10, 20)
+
+def xx(n):
+    print("hello")
+
+
+xx(10)
+
+lst = [1,2,3]
+lst.append(100)
+s = pickle.dumps(lst)
+
+def yy(xs):
+    print(xs)
+
+yy(lst)
 
 printStack()
+
+

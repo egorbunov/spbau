@@ -4,9 +4,80 @@
 #include <fstream>
 #include <limits>
 #include <random>
+#include <vector>
+#include <assert.h>
+#include "check.h"
 #include "lint.h"
 
 using namespace std;
+
+
+void vector_test() {
+    string test_name = "{ VECTOR_TEST }";
+    cout << "-------------------" << test_name << "-------------------------" << endl;
+    bool isPassed = true;
+    std::string msg;
+
+    au::vector<int> my_vec;
+    std::vector<int> std_vec;
+
+    // test push and compare
+
+    int N = 100000;
+    for (int i = 0; i < N; ++i) {
+        my_vec.push_back(i);
+        std_vec.push_back(i);
+    }
+    assert(my_vec.size() == std_vec.size());
+    for (int i = 0; i < N; ++i) {
+        if (my_vec[i] != std_vec[i]) {
+            isPassed = false;
+            msg = "error: comparing element per element failed";
+            break;
+        }
+    }
+
+    // test resize
+    my_vec.resize(2 * N, -1);
+    std_vec.resize(2 * N, -1);
+    assert(my_vec.size() == std_vec.size());
+    for (int i = 0; i < 2 * N; ++i) {
+        if (my_vec[i] != std_vec[i]) {
+            isPassed = false;
+            msg = "error: comparing element per element failed after resize";
+            break;
+        }
+    }
+
+    // test resize 2
+    N = 5;
+    my_vec.resize(N, -1);
+    std_vec.resize(N, -1);
+    assert(my_vec.size() == std_vec.size());
+    for (int i = 0; i < N; ++i) {
+        if (my_vec[i] != std_vec[i]) {
+            isPassed = false;
+            msg = "error: comparing element per element failed after resize";
+            break;
+        }
+    }
+
+    // test compare
+    N = 1000000;
+    my_vec.resize(0, 0);
+    assert(my_vec.size() == 0);
+    au::vector<int> my_vec_2;
+    for (int i = 0; i < N; ++i) {
+        my_vec.push_back(i);
+        my_vec_2.push_back(i);
+    }
+    assert(my_vec == my_vec_2);
+
+    if (isPassed)
+        cout << "       PASSED: " << test_name << endl;
+    else
+        cout << "       FAILED: " << test_name << " " << msg << endl;
+}
 
 void test_ll_construct() {
     string test_name = "{ LL_CONSTRUCT_TEST }";
@@ -69,7 +140,7 @@ void test_small_compare() {
     vector<int> numsB = {-0, -1000, 2200, 12312, 31231, 123123, 999999, 123, 111, -100000000};
 
     bool isFailed = false;
-    for (int i = 0; i < numsA.size(); ++i) {
+    for (size_t i = 0; i < numsA.size(); ++i) {
         int expected;
         if (numsA[i] < numsB[i])
             expected = -1;
@@ -286,17 +357,19 @@ void x_test() {
 int main() {
     apa::lint x("-100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001");
     apa::lint y("-100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001");
-
     x -= y;
-
     cout << x;
-//    x_test();
-//    div_test();
-//    mul_test();
-//    test_add();
-//    test_sub();
-//    test_ll_construct();
-//    test_to_string();
-//    test_small_compare();
+
+    vector_test();
+
+    x_test();
+    div_test();
+    mul_test();
+    test_add();
+    test_sub();
+    test_ll_construct();
+    test_to_string();
+    test_small_compare();
+
     return 0;
 }

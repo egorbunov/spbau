@@ -7,16 +7,19 @@
 namespace utils {
 
     const char* bad_any_cast::what() const noexcept {
-        std::ostringstream err;
-        err << "error: can't convert from type [ " << from.name() << " ] to [ " << to.name() << " ]";
-        return err.str().c_str();
+        return error_msg.c_str();
     }
 
-    bad_any_cast::bad_any_cast(const std::type_info &from, const std::type_info &to) : from(from), to(to) {
+    bad_any_cast::bad_any_cast(const std::type_info &from, const std::type_info &to) 
+    : from(from), to(to) {
+        std::ostringstream err;
+        err << "error: can't convert from type [ " <<
+                from.name() << " ] to [ " <<
+                to.name() << " ]";
+        error_msg = err.str();
     }
 
     // any
-
     utils::any::any(): value_holder(nullptr) { }
 
     any& any::swap(any &rhs) {

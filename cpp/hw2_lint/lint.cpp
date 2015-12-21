@@ -11,6 +11,8 @@
 #include <stdexcept>
 #include <limits>
 
+// LINT
+
 size_t apa::lint::DIG_LEN = std::to_string(lint::BASE - 1).length();
 
 apa::lint::lint() : lint(0) {
@@ -107,14 +109,13 @@ apa::lint &apa::lint::operator*=(const apa::lint &rhs) {
 
     // zero case
     if (sign == 0) {
-        num.resize(1);
-        num[0] = 0;
+        num.resize(1, 0);
         return *this;
     }
 
     lint cpy(*this);
 
-    std::fill(num.begin(), num.end(), 0);
+    num.fill(0);
 
     for (int i = 0; i < (int) rhs.num.size(); ++i) {
         digit_t rem = 0;
@@ -290,7 +291,7 @@ void apa::lint::del_lead_zeros() {
             break;
         }
     }
-    num.resize(num.size() - zeroCnt);
+    num.resize(num.size() - zeroCnt, 0);
 }
 
 namespace apa {

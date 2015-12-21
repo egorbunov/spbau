@@ -80,60 +80,60 @@ void swap_test(any &a, any &b) {
 }
 
 void complex_test() {
-    any empty;
-    any str(std::string("foobar"));
-    empty = str;
-    assert(any_cast<string&>(empty) == any_cast<string&>(str));
+    // any empty;
+    // any str(std::string("foobar"));
+    // empty = str;
+    // assert(any_cast<string&>(empty) == any_cast<string&>(str));
 
-    any x(123);
-    const int cx = any_cast<const int>(x);
-    cout << cx;
-    const int& rcx = any_cast<const int&>(x);
-    cout << rcx << endl;
+    // any x(123);
+    // const int cx = any_cast<const int>(x);
+    // cout << cx;
+    // const int& rcx = any_cast<const int&>(x);
+    // cout << rcx << endl;
 
 
-    const any const_any(42);
-    // int *p = any_cast<int>(&const_any);
-    // cout << *p << endl;
+    // const any const_any(42);
+    // // int *p = any_cast<int>(&const_any);
+    // // cout << *p << endl;
 
-    const int& val2 = any_cast<const int&>(const_any);
-    // val2 += 1;
-    cout << val2 << endl;
+    // const int& val2 = any_cast<const int&>(const_any);
+    // // val2 += 1;
+    // cout << val2 << endl;
 
-    int * pval1 = new int(100);
-    any any_p(pval1);
-    const int* pval2 = any_cast<const int*>(any_p);
-    // *pval2 += 1;
-    cout << *pval2 << endl;
-    delete pval1;
+    // int * pval1 = new int(100);
+    // any any_p(pval1);
+    // const int* pval2 = any_cast<const int*>(any_p);
+    // // *pval2 += 1;
+    // cout << *pval2 << endl;
+    // delete pval1;
 
-    int val1 = any_cast<int>(const_any);
-    cout << val1 << endl;
+    // int val1 = any_cast<int>(const_any);
+    // cout << val1 << endl;
 }
 
 void complex_test_2() {
-    any c(123);
-    int& n = any_cast<int&>(c);
-    std::cout << n << std::endl;
+    // any c(123);
+    // int& n = any_cast<int&>(c);
+    // std::cout << n << std::endl;
 
-    any empty;
-    any str(std::string("foobar"));
-    empty = str;
-    (void) any_cast<string&>(empty);
+    // any empty;
+    // any str(std::string("foobar"));
+    // empty = str;
+    // (void) any_cast<string&>(empty);
 
-    const any cc(243);
-    const int* ptr = any_cast<int>(&cc);
-    cout << *ptr << endl;
+    // const any cc(243);
+    // const int* ptr = any_cast<int>(&cc);
+    // cout << *ptr << endl;
 
-    any tm(42);
-    int tmx = any_cast<int>(std::move(tm));
-    cout << tmx << endl;
+    // any tm(42);
+    // int tmx = any_cast<int>(std::move(tm));
+    // cout << tmx << endl;
 
-    tom t(99);
-    tom const *s = &t;
-    const any z(s);
-    tom const *const *u = any_cast<tom const *>(&z);
-    assert((*u)->ctrl == 99);
+    // tom t(99);
+    // tom const *s = &t;
+    // const any z(s);
+    // tom const *const *u = any_cast<tom const *>(&z);
+    // assert((*u)->ctrl == 99);
 }
 
 int main(int argc, const char *argv[]) {

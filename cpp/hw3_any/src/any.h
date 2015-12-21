@@ -12,6 +12,7 @@ namespace utils {
     private:
         const std::type_info &from;
         const std::type_info &to;
+        std::string error_msg;
     };
 
     class any {
