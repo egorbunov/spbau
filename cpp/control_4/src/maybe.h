@@ -98,7 +98,9 @@ namespace utils {
 
         void swap(maybe<T> &other) {
             std::swap(is_empty, other.is_empty);
-            std::swap(v_place, other.v_place);
+            T& a = get();
+            T& b = other.get();
+            swap(a, b);
         }
     };
 }
