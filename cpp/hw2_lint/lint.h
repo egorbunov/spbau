@@ -30,8 +30,8 @@ namespace au {
         void push_back(T x);
         T at(size_t ind);
         size_t size() const;
-        void resize(size_t new_size, T val = T());
-        void fill(T val);
+        void resize(size_t new_size, const T &val = T());
+        void fill(const T &val);
 
         vector<T>& operator=(const vector& other);
         bool operator==(const vector& other) const;
@@ -123,7 +123,7 @@ bool au::vector<T>::operator==(const au::vector<T> &other) const {
 }
 
 template<typename T>
-void au::vector<T>::fill(T val) {
+void au::vector<T>::fill(const T &val) {
     for (size_t i = 0; i < _size; ++i) {
         data[i] = val;
     }
@@ -131,7 +131,7 @@ void au::vector<T>::fill(T val) {
 // LINT
 
 template<typename T>
-void au::vector<T>::resize(size_t new_size, T val) {
+void au::vector<T>::resize(size_t new_size, const T &val) {
     if (new_size < _capacity) {
         for (size_t i = _size; i < new_size; ++i)
             data[i] = val;
