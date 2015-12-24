@@ -36,12 +36,27 @@ class shuffle:
         self.buf[self.cur_p], self.buf[k] = self.buf[k], self.buf[self.cur_p]
         return self.buf[self.cur_p]
 
-sh = shuffle(itertools.count(0, 1), 10)
+
+# ======================================= test ====================================
+
+sh = shuffle(itertools.count(0, 1), 42)
 
 # print("len = {}".format(len(sh)))
 
 for i in range(0, 10):
-    print(next(sh))
-print("......................")
+    print(next(sh), end=' ')
+print()
 for i in range(0, 9):
-    print(sh.prev())
+    print(sh.prev(), end=' ')
+
+# print(len(sh))
+
+sh = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9], 2)
+
+# print("len = {}".format(len(sh)))
+
+for i in range(0, 5):
+    print(next(sh), end=' ')
+print()
+for i in range(0, 4):
+    print(sh.prev(), end=' ')
