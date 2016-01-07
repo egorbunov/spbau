@@ -8,6 +8,7 @@ class shuffle:
         self.n = n
         self.cur_p = -1 # current pos
         self.buf = []
+        self.is_shuffled = []
 
     def __iter__(self):
         return self
@@ -27,36 +28,22 @@ class shuffle:
         try:
             while len(self.buf) - self.cur_p <= self.n:
                 self.buf.append(next(self.it))
+                self.is_shuffled.append(False)
         except StopIteration:
             pass
         if self.cur_p >= len(self.buf):
             raise StopIteration
+        if self.is_shuffled[self.cur_p]:
+            return self.buf[self.cur_p]
         k = random.randint(self.cur_p, self.cur_p + self.n)
         k = min(k, len(self.buf) - 1)
         self.buf[self.cur_p], self.buf[k] = self.buf[k], self.buf[self.cur_p]
+        self.is_shuffled[k], self.is_shuffled[self.cur_p] = True, True
         return self.buf[self.cur_p]
 
 
 # ======================================= test ====================================
 
-sh = shuffle(itertools.count(0, 1), 42)
-
-# print("len = {}".format(len(sh)))
-
-for i in range(0, 10):
-    print(next(sh), end=' ')
-print()
-for i in range(0, 9):
-    print(sh.prev(), end=' ')
-
-# print(len(sh))
-
-sh = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9], 2)
-
-# print("len = {}".format(len(sh)))
-
-for i in range(0, 5):
-    print(next(sh), end=' ')
-print()
-for i in range(0, 4):
-    print(sh.prev(), end=' ')
+sh = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9], 1)
+for i in sh:
+    print(i, end=' ')

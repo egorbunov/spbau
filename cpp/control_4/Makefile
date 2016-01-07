@@ -23,7 +23,7 @@ TARGET    = au_maybe_test
 DEBUG     ?= 0
 ifeq ($(DEBUG), 1)
 	CFLAGS += -O0 -g -pg -DDEBUG
-	LDFLAGS = -O0 -g -pg -DDEBUG
+		AGS = -O0 -g -pg -DDEBUG
 else
 	CFLAGS += -O3
 	LDFLAGS = -O3
