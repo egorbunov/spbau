@@ -16,6 +16,8 @@ pip-selfcheck.json
 build
 .idea
 *.iml
+out
+*.class
 
 # haskell
 .stack-work
