@@ -10,11 +10,11 @@ import java.security.InvalidParameterException;
 /**
  * For now only one parameter function are used...
  */
-public enum Function {
+public enum MathFunction {
     LN("ln"),
     EXP("exp");
 
-    Function(String str) {
+    MathFunction(String str) {
         this.str = str;
     }
 
@@ -22,14 +22,14 @@ public enum Function {
         return str;
     }
 
-    static Function fromString(String str) {
+    static MathFunction fromString(String str) {
         switch (str) {
             case "ln":
                 return LN;
             case "exp":
                 return EXP;
             default:
-                throw new InvalidParameterException("Bad input parameter; can't interpret as Function.");
+                throw new InvalidParameterException("Bad input parameter; can't interpret as MathFunction.");
         }
     }
 

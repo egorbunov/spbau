@@ -47,7 +47,7 @@ public class Lexer {
                         break;
                     case ALPHABETIC:
                         boolean isFun = false;
-                        for (Function fun : Function.values()) {
+                        for (MathFunction fun : MathFunction.values()) {
                             if (curToken.equals(fun.getStr())) {
                                 tokens.add(new Token(TokenTag.FUN, curToken));
                                 isFun = true;

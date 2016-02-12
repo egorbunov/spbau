@@ -88,14 +88,14 @@ public class DerivativeCalculator {
                     return new MathExpressionTree(new Token(TokenTag.NUMBER, "0"));
                 }
             case FUN:
-                Function fun = Function.fromString(token.getTokenStr());
+                MathFunction fun = MathFunction.fromString(token.getTokenStr());
                 // TODO: unify composition derivative
                 switch (fun) {
                     case EXP:
                         return new MathExpressionTree(
                                 new Token(TokenTag.BINARY_OP, BinaryOperator.MUL.getString()),
                                 new MathExpressionTree(
-                                        new Token(TokenTag.FUN, Function.EXP.getStr()),
+                                        new Token(TokenTag.FUN, MathFunction.EXP.getStr()),
                                         expr.getLeft().copy()
                                 ),
                                 differentiate(expr.getLeft(), variable)
