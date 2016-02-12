@@ -17,7 +17,10 @@ build
 .idea
 *.iml
 out
+
+# ------------ MAVEN, JAVA --------
 *.class
+target
 
 # haskell
 .stack-work
