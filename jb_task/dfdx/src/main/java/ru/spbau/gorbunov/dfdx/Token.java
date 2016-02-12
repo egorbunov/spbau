@@ -18,8 +18,8 @@ public class Token {
         return type;
     }
 
-    private TokenTag type;
-    private String token;
+    private final TokenTag type;
+    private final String token;
 
     @Override
     public boolean equals(Object obj) {

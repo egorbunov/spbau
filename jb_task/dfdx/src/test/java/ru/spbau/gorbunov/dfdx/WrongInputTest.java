@@ -32,5 +32,5 @@ public class WrongInputTest {
         Parser.parse(tokens);
     }
 
-    private String expr;
+    private final String expr;
 }

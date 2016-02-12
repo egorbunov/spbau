@@ -19,10 +19,10 @@ import java.util.Collection;
 @RunWith(Parameterized.class)
 public class SimplifierTest {
 
-    public SimplifierTest(String expr, String expextedRPM) {
+    public SimplifierTest(String expr, String expectedRPM) {
 
         this.expr = expr;
-        this.expextedRPM = expextedRPM;
+        this.expectedRPM = expectedRPM;
     }
 
 
@@ -40,9 +40,9 @@ public class SimplifierTest {
     public void test() {
         MathExpressionTree tree = Parser.parse(Lexer.tokenize(expr));
         ExpressionSimplifier.simplify(tree);
-        Assert.assertEquals(expextedRPM, tree.buildRPNStr());
+        Assert.assertEquals(expectedRPM, tree.buildRPNStr());
     }
 
-    String expr;
-    private String expextedRPM;
+    private final String expr;
+    private final String expectedRPM;
 }

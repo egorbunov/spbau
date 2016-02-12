@@ -50,7 +50,7 @@ public enum BinaryOperator {
         }
     }
 
-    private char symbol;
-    private int priority;
-    private boolean assoc; // false --> left, true --> right
+    private final char symbol;
+    private final int priority;
+    private final boolean assoc; // false --> left, true --> right
 }

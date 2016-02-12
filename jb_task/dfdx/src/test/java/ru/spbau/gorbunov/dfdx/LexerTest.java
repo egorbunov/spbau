@@ -95,5 +95,5 @@ public class LexerTest {
 
 
     private final Token[] actualTokens;
-    private Token[] expectedTokens;
+    private final Token[] expectedTokens;
 }

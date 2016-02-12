@@ -33,5 +33,5 @@ public enum Function {
         }
     }
 
-    private String str;
+    private final String str;
 }

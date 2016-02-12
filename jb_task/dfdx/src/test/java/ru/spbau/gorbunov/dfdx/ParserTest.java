@@ -58,6 +58,6 @@ public class ParserTest {
     }
 
 
-    private String expression;
-    private String expectedRPN;
+    private final String expression;
+    private final String expectedRPN;
 }
