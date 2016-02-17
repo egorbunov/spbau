@@ -1,5 +1,0 @@
-!# /bin/bash
-
-make clean all
-qemu-system-i386 -kernel hello
-

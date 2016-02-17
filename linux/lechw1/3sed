@@ -1,4 +1,0 @@
-1 i <!DOCTYPE html>\n<html>\n<head>\n<title>Table</title>\n</head>\n<body>\n\n<table>
-$ a </table>\n\n</body>\n</html>
-s/\([^,]*\),\([^,]*\),\([^,]*\)/<tr>\n\t<td>\1<\/td>\n\t<td>\2<\/td>\n\t<td>\3<\/td>\n<\/tr>/;
-
