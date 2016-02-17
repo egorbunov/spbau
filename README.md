@@ -1,4 +1,4 @@
-##### Some home and class works from St. Petersburg Academic University
+##### First Fall term home assignments and stuff
 
 * [Algorithms](algs)
 * [C++](cpp)
