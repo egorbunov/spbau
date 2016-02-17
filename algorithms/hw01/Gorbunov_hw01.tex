@@ -1,0 +1,191 @@
+\input{env.tex}
+\title{Алгоритмы. Домашнее задание №1}
+\author{Горбунов Егор Алексеевич}
+
+\begin{document}
+\maketitle
+
+\begin{task}[1]
+	Пусть \texttt{splay}-дерево поддерживает множество $S$. Каждый элемент $x_i \in S$ был запрошен $p_im$ раз, где $m$~---~общее число запросов. Гарантируется, что $0 < p_i \leqslant 1$ и $\sum_i{p_i} = 1$. Докажите, что $\texttt{splay}$-дерево обрабатывает все запросы за время $\bigO{m \cdot \big[ 1 + \sum_i{p_i\cdot\log{\frac{1}{p_i}}} \big]}$.
+\end{task}
+\begin{solution}
+Время обработки запроса элемена равно времени работы операции $splay$. Посчитаем амортизационную стоимость этой операции.
+\begin{figure}[ht!]
+	\centering
+	\begin{tikzpicture}[scale=1, baseline=(current bounding box.center)]
+ 	\tikzstyle{every node}=[font=\scriptsize]
+	\begin{scope}[VertexStyle/.append style = {minimum size = 5pt}]
+        \Vertex[Math,x=0,y=0]{y}
+        \Vertex[Math,x=-0.5,y=-1]{x}   
+	\end{scope}
+	\begin{scope}[VertexStyle/.append style = {draw = none}]
+		\Vertex[Math,x=-1,y=-2]{A}
+		\Vertex[Math,x=0,y=-2]{B}
+		\Vertex[Math,x=0.5,y=-1]{C}
+	\end{scope}
+    \foreach \x/\y in {y/x,x/A,x/B,y/C} {\Edge(\x)(\y)}
+	\end{tikzpicture}
+	$\xrightarrow{~~Zig~~}$
+	\begin{tikzpicture}[scale=1, baseline=(current bounding box.center)]
+ 	\tikzstyle{every node}=[font=\scriptsize]
+	\begin{scope}[VertexStyle/.append style = {minimum size = 5pt}]
+        \Vertex[Math,x=0,y=0]{x}
+        \Vertex[Math,x=0.5,y=-1]{y}   
+	\end{scope}
+	\begin{scope}[VertexStyle/.append style = {draw = none}]
+		\Vertex[Math,x=-0.5,y=-1]{A}
+		\Vertex[Math,x=0,y=-2]{B}
+		\Vertex[Math,x=1,y=-2]{C}
+	\end{scope}
+    \foreach \x/\y in {y/x,x/A,y/B,y/C} {\Edge(\x)(\y)}
+	\end{tikzpicture}
+	\hspace{1cm}
+	\begin{tikzpicture}[scale=1, baseline=(current bounding box.center)]
+ 	\tikzstyle{every node}=[font=\scriptsize]
+	\begin{scope}[VertexStyle/.append style = {minimum size = 5pt}]
+        \Vertex[Math,x=0,y=0]{z}
+        \Vertex[Math,x=-0.5,y=-1]{y}  
+        \Vertex[Math,x=0,y=-2]{x}  
+	\end{scope}
+	\begin{scope}[VertexStyle/.append style = {draw = none}]
+		\Vertex[Math,x=-1,y=-2]{A}
+		\Vertex[Math,x=0.5,y=-3]{B}
+		\Vertex[Math,x=-0.5,y=-3]{C}
+		\Vertex[Math,x=0.5,y=-1]{D}
+	\end{scope}
+    \foreach \x/\y in {y/x,x/C,x/B,y/A,z/D,z/y} {\Edge(\x)(\y)}
+	\end{tikzpicture}
+	$\xrightarrow{ZigZag}$
+	\begin{tikzpicture}[scale=1, baseline=(current bounding box.center)]
+ 	\tikzstyle{every node}=[font=\scriptsize]
+		\begin{scope}[VertexStyle/.append style = {minimum size = 5pt}]
+        \Vertex[Math,x=0,y=0]{x}
+        \Vertex[Math,x=-1,y=-1]{y}  
+        \Vertex[Math,x=1,y=-1]{z}
+	\end{scope}
+	\begin{scope}[VertexStyle/.append style = {draw = none}]
+		\Vertex[Math,x=-1.5,y=-2]{A}
+		\Vertex[Math,x=-0.5,y=-2]{B}
+		\Vertex[Math,x=0.5,y=-2]{C}
+		\Vertex[Math,x=1.5,y=-2]{D}
+	\end{scope}
+    \foreach \x/\y in {x/y,x/z,y/A,y/B,z/C,z/D} {\Edge(\x)(\y)}
+	\end{tikzpicture}
+	\caption{Повороты}
+	\label{fig:task1}
+\end{figure}
+
+Всё дерево будем обозначать как $T$, а поддерево с корнем в $x$ как $T(x)$. Рассмотрим весовую функцию равную числу запросов на вершинах в поддереве $T(x)$:
+\[ \omega(x) = \sum_{i \in T(x)}{p_i m} \]
+Введём следующий потенциал для вершины и для дерева:
+\begin{align*}
+	\Phi(x) & = \log{\omega(x)} \\
+	\Phi(T) & = \sum_{x \in T}{\Phi(x)}
+\end{align*}
+Важно заметить, что если $x$ предок $y$, то $\Phi(x) \geqslant \Phi(y)$, а так же, функция $\omega(x)$ аддитивна. Таким образом, весь анализ, который мы проделывали для операций $Zig$, $ZigZag$ и $ZigZig$ с использованием весовой функции равной числу вершин в поддереве, верен и для введённых сейчас $\omega$ и $\Phi$. Т.е. легко показывается, что учётная стоимость операции $Zig$:
+\[
+	{\tilde c}(Zig) \leqslant 3(\Phi'(x) - \Phi(x)) + 1
+\]
+А учётная стоимость операции $ZigZag$ и $ZigZig$:
+\[
+	{\tilde c}(ZigZag) = {\tilde c}(ZigZig) \leqslant 3(\Phi'(x) - \Phi(x))
+\]
+Таким образом, учётная стоимость операции $splay(x)$ равна:
+\begin{align*}
+	{\tilde c}(Splay(x)) \leq 3(\Phi_{final}(x) - \Phi_{start}(x)) + 1  
+	= 3(\log{\sum_{i \in T}{p_im}} - \Phi_{start}(x)) + 1 
+	\\ = 3(\log{m}-\Phi_{start}(x)) + 1 \leqslant
+	\begin{Bmatrix}
+	\text{всяко: }\Phi_{start}(x) \geqslant \log{p_{x}m} \\
+	\end{Bmatrix} \\
+	\leqslant 3(\log{m}-\log{p_x m}) + 1 = 3\log{\frac{m}{p_xm}} + 1 = 1-3\log{p_x}
+\end{align*}
+Таким образом, амортизированная стоимость всех запросов элемента $x$ равна $p_xm \cdot (1 - 3\log{p_x})$, а тогда амортизированная стоимость всех запросов равна:
+\[
+	\sum_{i \in T}{p_i m \cdot (1 - 3\log{p_i})} = m - 3m\sum_{i\in T}{p_i\log{p_i}} = m + 3m\sum_{i\in T}{p_i\log{\frac{1}{p_i}}} = \bigO{m\cdot(1+\sum_{i\in T}{p_i\log{\frac{1}{p_i}}})} 
+\]
+\xqed
+\end{solution}
+
+\begin{task}[2]
+Придумать структуру, поддерживающую упорядоченный список $S$ целых чисел со следующими операциями с временем обработке $\bigO{\log{|S|}}:$
+\begin{itemize}
+	\item \texttt{insert(x)} --- встевить $x$ в $S$, если его там не было
+	\item \texttt{delete(x)} --- удалить $x$ из $S$, если он там был
+	\item \texttt{S[k]} --- вернуть $k$-тый по порядку элемент из $S$
+	\item \texttt{max(l,r)} --- найти $\max_{l \leqslant j < k \leqslant r}{|S[j]-S[k]|}$
+	\item \texttt{min(l,r)} --- найти $\min_{l \leqslant j < k \leqslant r}{|S[j]-S[k]|}$
+\end{itemize}
+\end{task}
+\begin{solution}
+Не умаляя общности будем считать, что $S$ упорядочен по возрастанию.
+Заметим, что тогда для любого отрезка $[l, r]$ верно:
+\[
+	S[l] \leqslant S[l + 1] \leqslant S[l + 2] \leqslant \ldots \leqslant S[r - 2] \leqslant S[r - 1] \leqslant S[r]
+\]
+Отсюда выполнение операции \texttt{max(l,r)} вырождается в нахождение разности:
+\[
+	\max_{l \leqslant j < k \leqslant r}{|S[j]-S[k]|} = S[r] - S[l]
+\]
+А выполнение операции \texttt{min(l,r)} вырождается в нахождение минимальной разности между лишь соседними элементами:
+\[
+	\min_{l \leqslant j < k \leqslant r}{|S[j]-S[k]|} = \min_{i \in [l, r)}{(S[i+1]-S[i])}
+\]
+Будем поступать так: заведём и будем поддерживать следующие структуры над $S$: 
+\begin{itemize}
+	\item $BT$ --- сбалансированное дерево поиска, ключом в котором являются элементы $S$. С таким деревом мы умеем проделывать операцию вставки $BT.insert(key)$, удаления $BT.delete(key)$, нахождения $BT[k]$ --- $k$-го по порядку элемента за $\bigO{\log{n}}$, где $n$ --- число элементов в дереве.
+	\item $CT$ --- декартово дерево по неявному ключу, моделирующее массив $S'$ такой, что $S'[i] = S[i + 1] - S[i]$. В этом дереве поддержим операцию минимума на подотрезке. Нам известно, что в таком дереве можно выполнять операции:
+		\begin{itemize}
+			\item $CT[k] = v$ --- изменения $k$-ого по порядку элемента
+			\item $CT.min(l, r)$ --- нахождение минимума на подотрезке
+			\item $CT.insert(k, value)$ --- вставка элемента $value$ на $k$-ую позицию
+			\item $CT.delete(k)$ --- удаление элементы на $k$-ой позиции
+		\end{itemize}
+	Причём асимптотическая сложность (в среднем) этих операций $\bigO{\log{n}}$, где $n$ --- число элементов в дереве.
+\end{itemize}
+Теперь покажем, как за $\bigO{\log{|S|}}$ выполнять операции из условия задачи:
+\begin{itemize}
+	\item \texttt{insert(x)}: При вставке $x$ на какую-то позицию $i$ массива $S$ у нас происходит вставка элемента в массив $S'$ на позицию $i$ и изменения $S'[i - 1]$. Т.е. последовательно выполняются операции: $i \leftarrow BT.insert(x);\ CT.insert(i, S[i + 1] - S[i]);\ CT[i - 1] = S[i] - S[i - 1]$. Видим, что все операции занимают $\bigO{\log{|S|}}$; ($size(CT) = |S'| = |S| - 1$)
+	\item \texttt{delete(x)}: $i \leftarrow BT.delete(x)$, где $i$ --- позиция, с которой был удалён $x$. Далее: $CT.delete(i);\ CT[i] = S[i + 1] - S[i]$
+	\item \texttt{S[k]}: просто выполняем $BT[k]$ (умеем)
+	\item \texttt{max(l,r)}: возвращаем $S[r] - S[l]$
+	\item \texttt{min(l,r)}: возвращаем $CT.min(l, r - 1)$
+\end{itemize}
+Видно, что все операции выполняются за $\bigO{\log{n}}$. \xqed
+\end{solution}
+
+\begin{task}[6]
+Придумайте структуру данных, которая поддерживает следующие операции за $\bigO{|text|}$:
+\begin{itemize}
+	\item Вставка символа на позицию $i$
+	\item Удаление символа с позиций $[l, r)$
+	\item Копирование подстроки $[l, r)$ в позицию $i$
+\end{itemize}
+\begin{solution}
+Рассмотрим декартово дерево по неявному ключу $CT$, в котором будем хранить текст $text$. Только условимся, что операции $split(CT, k)$ и $merge(T_1, T_2)$ всегда возвращают новое дерево и пересоздают все узлы, которые затрагивают.
+\begin{itemize}
+	\item Вставка на позицию $i$ будет выполняться как обычная вставка в декартово дерево по неявному ключу.
+	\item Удаление интервала $[l, r)$:
+	\[
+	\begin{array}{l}
+		T_1, T_2 \leftarrow split(CT, l) \\
+		T_3, T_4 \leftarrow split(T_2, r) \\
+		return(merge(T_1, T_4))
+	\end{array} 
+	\]
+	\item компирование подстроки $[l, r)$ в позицию $i$:
+		\[
+	\begin{array}{l}
+		T_{<i}, T_{\geqslant i} \leftarrow split(CT, i) \\
+		T_{<l}, T_{\geqslant l} \leftarrow split(CT, l) \\
+		T_{[l, r)}, T_{\geqslant r} \leftarrow split(T_{\geqslant l}, r) \\
+
+		return(merge(merge(T_{<i}, T_{[l, r)}), T_{\geqslant i}))
+	\end{array} 
+	\]
+	В силу того, что изменяемые элементы будут пересоздаваться, то при изменении одной части дерева другая не сможет испортиться.
+\end{itemize}
+Ясно, что по построению эти операции работают в среднем за $\bigO{\log{n}}$. \xqed
+\end{solution}
+\end{task}
+\end{document}
