@@ -37,7 +37,7 @@ public:
 	/**
 	 * Constructs linked_ptr which shares the object ownership, managed by r.
 	 */
-	explicit linked_ptr(const linked_ptr& r);
+	linked_ptr(const linked_ptr& r);
 
 	/**
 	 * Constructs linked_ptr which shares the object ownership, managed by r.
@@ -103,8 +103,31 @@ linked_ptr_node::linked_ptr_node(): prev(nullptr), next(nullptr) {
 }
 
 void linked_ptr_node::swap(linked_ptr_node& other) {
+	bool l = (this == other.prev);
+	bool r = (this == other.next);
 	std::swap(next, other.next);
 	std::swap(prev, other.prev);
+
+	if (l) {
+		other.next = this;
+		prev = &other;
+	}
+	if (r) {
+		next = &other;
+		other.prev = this;
+	}
+	if (prev != nullptr) {
+		prev->next = this;
+	}
+	if (next != nullptr) {
+		next->prev = this;
+	}
+	if (other.prev != nullptr) {
+		other.prev->next = &other;
+	}
+	if (other.next != nullptr) {
+		other.next->prev = &other;
+	}
 }
 
 bool linked_ptr_node::unique() const {
@@ -155,7 +178,6 @@ linked_ptr<T>::linked_ptr(const linked_ptr& r): ptr(r.get()) {
 template<class T>
 template<class U>
 linked_ptr<T>::linked_ptr(const linked_ptr<U>& r): ptr(r.get()) {
-
 	r.node.insert(&node);
 }
 
@@ -198,7 +220,7 @@ void linked_ptr<T>::swap(linked_ptr& r) {
 
 template<class T>
 bool linked_ptr<T>::unique() const {
-	return false;
+	return node.unique();
 }
 
 template<class T>
@@ -238,7 +260,7 @@ bool operator!=(const linked_ptr<T>& lhs, const linked_ptr<T>& rhs) {
 
 template<class T>
 bool operator<(const linked_ptr<T>& lhs, const linked_ptr<T>& rhs) {
-	return std::less<T*>(lhs.get(), rhs.get());
+	return std::less<T*>()(lhs.get(), rhs.get());
 }
 
 template<class T>
@@ -282,12 +304,12 @@ bool operator!=(const linked_ptr<T>& lhs, std::nullptr_t rhs) {
 
 template<class T>
 bool operator<(std::nullptr_t lhs, const linked_ptr<T>& rhs) {
-	return std::less<T*>(nullptr, rhs.get());
+	return std::less<T*>()(nullptr, rhs.get());
 }
 
 template<class T>
 bool operator<(const linked_ptr<T>& lhs, std::nullptr_t rhs) {
-	return std::less<T*>(lhs.get(), nullptr);
+	return std::less<T*>()(lhs.get(), nullptr);
 }
 
 template<class T>
@@ -321,4 +343,3 @@ bool operator>=(const linked_ptr<T>& lhs, std::nullptr_t rhs) {
 }
 
 }
-
