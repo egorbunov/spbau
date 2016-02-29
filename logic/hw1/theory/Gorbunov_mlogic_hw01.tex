@@ -1,0 +1,110 @@
+\input{env.tex}
+\title{Математическая логика. Домашнее задание №1}
+\author{Горбунов Егор Алексеевич}
+
+\begin{document}
+\maketitle
+
+\begin{task}[1]
+Определите множество частичных функций через множество их графиков.
+\end{task}
+\begin{solution}
+Множество частичный функций $A \rightarrow B$ --- это множество подмножеств $G \subseteq A \times B$ такое, что если $(a, b_1) \in G$ и $(a, b_2) \in G$, то $b_1 = b_2$. Т.е. множество частичных функций --- это просто множество графиков.
+\end{solution}
+
+\begin{task}[2]
+Пусть $f:A\rightarrow B$ и $g:B \rightarrow C$. Задайте графк функции $g \circ f$ через графики функций $g$ и $f$.
+\end{task}
+\begin{solution} Пусть $G_f$ и $G_g$ --- графики функций $f$ и $g$.
+$g\circ f: A \rightarrow C$ и её график: $G_{g\circ f}$ задаётся так:
+\[
+	(a, c) \in G_{g\circ f} \iff \exists b \in B : (b, c) \in G_g, (a, b) \in G_f
+\]
+\end{solution}
+
+\begin{task}[3]
+Докажите, что если $A$ вкладывается в $B$ и $B$ вкладывается в $C$, то $A$ вкладывается в $C$.
+\end{task}
+\begin{solution}
+По определению, т.к. $A$ вкладывается в $B$ существует инъекция (вложение) $f:A \rightarrow B$.
+Аналогично существует инъекция $g:B \rightarrow C$. Покажем, что $h = g \circ f: A \rightarrow C$ тоже является инъекцией. Пусть $h(a_1) = h(a_2)$, тогда:
+\begin{equation*}
+\begin{split}
+g(f(a_1)) = g(f(a_2)) \Rightarrow f(a_1) = f(a_2) \Rightarrow a_1 = a_2
+\end{split}
+\end{equation*}
+Оба перехода верны в силу тогоа, что $f$ и $g$ --- инъекции. Таким образом и $h$ --- инъекция. \xqed
+\end{solution}
+
+\begin{task}[4]
+Доказать, что если $A$ накрывает $B$ и $B$ накрывает $C$, то $A$ накрывает $C$.
+\end{task}
+\begin{solution}
+Аналогично предыдущей задаче определяем накрытие $f: A \rightarrow B$ и $g: B \rightarrow C$.
+Рассмотрим любой $a$. Точно существует $b \in B: f(a) = b$, тогда точно существует $c \in C: g(b) = c$, т.е. точно существует $c \in C: g(f(a)) = c$, т.е. $g \circ f: A \rightarrow C$ --- накрытие, а значит $A$ накрывает $C$. \xqed
+\end{solution}
+\newpage
+\begin{task}[5]
+Доказать:
+\begin{enumerate}[label=(\alph*)]
+	\item $A$ равномощно $A$
+	\item Если $A$ равномощно $B$, то $B$ равномощно $A$
+	\item Есди $A$ равномощно $B$ и $B$ равномощно $C$, то $A$ равномощно $C$
+\end{enumerate}
+\end{task}
+\begin{solution}
+\begin{enumerate}[label=(\alph*)]
+	\item Биекция $f:A \rightarrow A$: $f(a) = a$. \xqed
+	\item Существует биекция $f: A \rightarrow B$. Рассмотрим функцию $f^{-1}: B \rightarrow A$ такую, что $f^{-1}(b) = a \iff f(a) = b$. Заметим, что $f(f^{-1}(b)) = b$ и $f^{-1}(f(a)) = a$ в силу определения (достаточно походить по стрелке влево и вправо). Но тогда, по доказанному на лекции (характеристики биекции): $f^{-1}$ --- биекция, а значит $B$ равномощно $A$. \xqed
+	\item Существуют биекции: $f: A \rightarrow B$ и $g: B \rightarrow C$. Рассмотрим $g\circ f: A \rightarrow C$. Мы в заданиях $4$ и $3$ показали, что $g\circ f$ --- это накрытие и вложение, а значит это биекция, т.е. $A$ и $C$ равномощны \xqed
+\end{enumerate}
+\end{solution}
+
+\begin{task}[6]
+Доказать, что $A \amalg B \rightarrow C$ и $(A \rightarrow B) \times (B \rightarrow C)$ равномощны. 
+\end{task}
+\begin{solution} 
+Посмтроим $f : (A \amalg B \rightarrow C) \rightarrow (A \rightarrow B) \times (B \rightarrow C) $:
+\[
+	f(f') = (x \mapsto f'(Left(x)), x \mapsto f'(Right(x)))
+\]
+Теперь построим $g : (A \rightarrow B) \times (B \rightarrow C) \rightarrow (A \amalg B \rightarrow C)$:
+\[
+g((g_1, g_2)) = fun, \text{где} 
+\begin{cases}
+	fun(Left(a)) = g_1(a)\\
+	fun(Right(b)) = g_2(b) 
+\end{cases}
+\]
+Построили взаимнообратные функции, т.е. $f$ и $g$ --- биекции, а значит доказано. \xqed
+\end{solution}
+
+\begin{task}[7]
+Докажите, что $A \times B \rightarrow C$ и $A \rightarrow (B \rightarrow C)$ равномощны.
+\end{task}
+\begin{solution}
+Построим взаимнообратные $f$ и $g$.
+\begin{align*}
+f &: (A \times B \rightarrow C) \rightarrow (A \rightarrow (B \rightarrow C)) \\
+f&(f') = a \mapsto (b \mapsto f'((a, b))) \\
+g &: (A \rightarrow (B \rightarrow C)) \rightarrow (A \times B \rightarrow C) \\
+g&(g') = (a, b) \mapsto (g'(a))(b) \\
+\end{align*}
+\end{solution}
+
+\begin{task}[8]
+Докажите, что $|\mathcal{P}(A)| = 2^{|A|}$ и $|A \rightarrow B| = |B|^{|A|}$
+\end{task}
+\begin{solution}
+В лекции мы показывали, что есть биекция между $\mathcal{P}$ и $A \rightarrow \Omega$, т.е. достаточно доказать $|A \rightarrow B| = |B|^{|A|}$. А для этого достаточно доказать, что
+$|\overline{n} \rightarrow \overline{k}| = |\overline{k}|^|\overline{n}|$. Легко построить взаимнообратные функции для доказательства этого (код из задания в \texttt{car.hs}):
+\begin{lstlisting}[]
+exp_bij
+    :: Int 
+    -> Int
+    -> ((Int -> Int) -> Int, Int -> (Int -> Int)) 
+exp_bij n k = (\f -> sum $ zipWith (*) [k^i | i <- [0..n-1]] [f x | x <- [0..n]],
+               \x -> (\i -> (x `div` (k^i)) `mod` k))
+\end{lstlisting}
+\end{solution}
+\end{document}

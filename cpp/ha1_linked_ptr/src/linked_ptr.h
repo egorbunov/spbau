@@ -192,12 +192,16 @@ linked_ptr<T>::~linked_ptr() {
 
 template<class T>
 linked_ptr<T>& linked_ptr<T>::operator=(const linked_ptr& r) {
+	linked_ptr tmp(r);
+	swap(tmp);
 	return *this;
 }
 
 template<class T>
 template<class U>
 linked_ptr<T>& linked_ptr<T>::operator=(const linked_ptr<U>& r) {
+	linked_ptr<T> tmp(r);
+	swap(tmp);
 	return *this;	
 }
 
@@ -220,7 +224,7 @@ void linked_ptr<T>::swap(linked_ptr& r) {
 
 template<class T>
 bool linked_ptr<T>::unique() const {
-	return node.unique();
+	return ptr != nullptr && node.unique();
 }
 
 template<class T>
