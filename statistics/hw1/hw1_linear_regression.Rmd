@@ -1,0 +1,22 @@
+---
+title: "Статистика. Домашнее задание 1"
+author: "Егор Горбунов"
+date: '29 февраля 2016 г '
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+set.seed(42)
+library(ggplot2)
+library(GGally)
+library(lattice)
+```
+
+```{r}
+adv_data <- read.csv("Advertising.csv", header = TRUE, sep = ",", row.names = 1)
+pairs(adv_data)
+```
