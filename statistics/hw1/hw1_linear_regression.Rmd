@@ -4,7 +4,6 @@ author: "Егор Горбунов"
 date: '29 февраля 2016 г '
 output: html_document
 ---
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -14,9 +13,85 @@ set.seed(42)
 library(ggplot2)
 library(GGally)
 library(lattice)
+library(gridExtra)
 ```
 
-```{r}
+```{r reading data}
 adv_data <- read.csv("Advertising.csv", header = TRUE, sep = ",", row.names = 1)
-pairs(adv_data)
+head(adv_data)
+ggpairs(adv_data)
 ```
+
+Вспомогательные функции:
+```{r helper plot functions}
+fit_plot <- function (model, target, label) {
+  ggplot(mapping = aes(x = target, y = fitted(model))) + 
+    geom_point(color = "darkgreen") + 
+    stat_smooth(colour = "red", se = FALSE) +
+    stat_smooth(method = "lm", colour = "black") +
+    labs(x = label, y = paste("Modeled", label))
+}
+
+resid_plot <- function (model) {
+  ggplot(mapping = aes(x = fitted(model), y = residuals(model))) +
+    geom_point(color = "blue") +
+    stat_smooth(colour = "red") +
+    stat_smooth(method = "lm", colour = "black")
+}
+  
+```
+
+### Линейные модели
+
+Модель: $$ Sales \approx \beta_0 + \beta_1 TV + \beta_2 Radio + \beta_3 Newspaper $$
+```{r linear model 1}
+f1 = Sales ~ .
+model1 <- lm(formula = f1, data = adv_data)
+summary(model1)
+resid_plot(model1)
+fit_plot(model1, adv_data$Sales, "Sales")
+```
+
+Судя по парным графикам вначале видно, что между TV и Sales явно есть некая зависимость. С другими факторами у Sales какой-то особенной зависимости не наблюдается.
+
+```{r sales~tv plots}
+g1 <- ggplot(data = adv_data, mapping = aes(x = log(TV), y = Sales)) + geom_point(color = "red") +
+  stat_smooth(colour = "black") + stat_smooth(colour = "blue", method = "lm")
+g2 <- ggplot(data = adv_data, mapping = aes(x = sqrt(TV), y = Sales)) + geom_point(color = "red") +
+  stat_smooth(colour = "black") + stat_smooth(colour = "blue", method = "lm")
+grid.arrange(g1, g2, ncol=2)
+```
+
+Для демонстрации переобучения рассмотрим модель с кучей факторов:
+$$ Sales \sim (TV + Radio + Newspaper) ^ 2$$
+```{r model 2}
+f2 = Sales ~ poly(TV, Radio, Newspaper, degree = 2)
+model2 <- lm(formula = f2, data = adv_data)
+summary(model2)
+resid_plot(model2)
+fit_plot(model2, adv_data$Sales, "Sales")
+```
+
+Теперь выкинем из первой испытанной модели Newspaper, т.к. он получился статистически не значим для модели. И рассмотрим модель:
+$$ Sales \sim (\sqrt{TV} + Radio)^2$$
+```{r model 3}
+f3 = Sales ~ poly(sqrt(TV), Radio, degree = 2)
+model3 <- lm(formula = f3, data = adv_data)
+summary(model3)
+resid_plot(model3)
+fit_plot(model3, adv_data$Sales, "Sales")
+```
+
+Видим, что факторы `TV` и `Radio^2` не значимы. Поэтому окончательно строим модель:
+$$ Sales \sim \sqrt{TV} + Radio + \sqrt{TV}\cdot Radio$$
+```{r model 4}
+f4 = Sales ~ sqrt(TV) * Radio
+model4 <- lm(formula = f4, data = adv_data)
+summary(model4)
+resid_plot(model4)
+fit_plot(model4, adv_data$Sales, "Sales")
+```
+
+Лучшая по `R^2` модель -- 3-я (`model3`), а по смыслу 4-ая...(`model4`).
+
+### Кросс-валидация для сравнения моделей
