@@ -1,0 +1,306 @@
+\input{env.tex}
+\title{Домашнее задание №2 \\ Алгоритмы. 5 курс. Весенний семестр.}
+\author{Горбунов Егор Алексеевич}
+
+\begin{document}
+\maketitle
+
+\section{Мои решения}
+\begin{task}[1]
+	Построить минимальный полный ДКА для языка $L$ и доказать минимальность автомата.
+	\begin{enumerate}[label = (\alph*)]
+		\item $L = \lbrace \omega 0 0 | \omega \in \lbrace 0, 1 \rbrace^* \rbrace$
+		\item $L = \lbrace u01101v | u,v \in \lbrace 0, 1 \rbrace^* \rbrace$
+		\item $L = \lbrace \omega \in \lbrace a,b,c \rbrace^* | |\omega|_c \neq 1 \rbrace$
+	\end{enumerate}
+\end{task}
+\begin{solution}
+\begin{enumerate}[label = (\alph*)]
+	\item Автомат:
+	\begin{figure}[ht!]
+	\centering
+	\begin{tikzpicture}[scale=0.2]
+	\tikzstyle{every node}+=[inner sep=0pt]
+	\draw [black] (38.4,-15.5) circle (3);
+	\draw (38.4,-15.5) node {$S$};
+	\draw [black] (32.2,-25.6) circle (3);
+	\draw (32.2,-25.6) node {$A$};
+	\draw [black] (44.5,-25.6) circle (3);
+	\draw [black] (44.5,-25.6) circle (2.4);
+	\draw (44.5,-25.6) node {$B$};
+	\draw [black] (40.524,-13.398) arc (162.43495:-125.56505:2.25);
+	\draw (45.57,-12.66) node [right] {$1$};
+	\fill [black] (41.36,-15.91) -- (41.97,-16.63) -- (42.27,-15.67);
+	\draw [black] (38.4,-8.8) -- (38.4,-12.5);
+	\fill [black] (38.4,-12.5) -- (38.9,-11.7) -- (37.9,-11.7);
+	\draw [black] (32.317,-22.615) arc (-191.22771:-231.86061:9.563);
+	\fill [black] (32.32,-22.61) -- (32.96,-21.93) -- (31.98,-21.73);
+	\draw (32.91,-18.19) node [left] {$0$};
+	\draw [black] (37.846,-18.441) arc (-17.3832:-45.70512:12.79);
+	\fill [black] (37.85,-18.44) -- (37.13,-19.06) -- (38.08,-19.35);
+	\draw (37.18,-22.59) node [right] {$1$};
+	\draw [black] (42.95,-23.03) -- (39.95,-18.07);
+	\fill [black] (39.95,-18.07) -- (39.94,-19.01) -- (40.79,-18.49);
+	\draw (42.09,-19.28) node [right] {$1$};
+	\draw [black] (35.2,-25.6) -- (41.5,-25.6);
+	\fill [black] (41.5,-25.6) -- (40.7,-25.1) -- (40.7,-26.1);
+	\draw (38.35,-26.1) node [below] {$0$};
+	\draw [black] (47.108,-27.059) arc (88.50852:-199.49148:2.25);
+	\draw (49.33,-31.66) node [below] {$0$};
+	\fill [black] (44.93,-28.56) -- (44.41,-29.34) -- (45.41,-29.37);
+	\end{tikzpicture}
+	\end{figure}
+
+	Будем обозначать правый контекст состояния так: $C^R(S)$ (это для состояния $S$, например). Заметим:
+	\begin{align*}
+		0 \in C^R(A), \epsilon \nin C^R(A) \\
+		0 \nin C^R(S), \epsilon \in C^R(S) \\
+		0 \in C^R(B), \epsilon \in C^R(B) \\
+	\end{align*}
+	Откуда видно, что все состояния попарно различны. \xqed
+	\item Автомат (стартовая вершина --- $S$):
+	\begin{figure}[ht!]
+	\centering
+	\begin{tikzpicture}[scale=0.2]
+	\tikzstyle{every node}+=[inner sep=0pt]
+	\draw [black] (12.3,-21.9) circle (3);
+	\draw (12.3,-21.9) node {$S$};
+	\draw [black] (22.3,-21.9) circle (3);
+	\draw (22.3,-21.9) node {$A$};
+	\draw [black] (31.7,-21.9) circle (3);
+	\draw (31.7,-21.9) node {$B$};
+	\draw [black] (41.2,-21.9) circle (3);
+	\draw (41.2,-21.9) node {$C$};
+	\draw [black] (51.1,-21.9) circle (3);
+	\draw (51.1,-21.9) node {$D$};
+	\draw [black] (61.5,-21.9) circle (3);
+	\draw (61.5,-21.9) node {$E$};
+	\draw [black] (61.5,-21.9) circle (2.4);
+	\draw [black] (72.6,-21.9) circle (3);
+	\draw (72.6,-21.9) node {$F$};
+	\draw [black] (72.6,-21.9) circle (2.4);
+	\draw [black] (9.62,-23.223) arc (324:36:2.25);
+	\draw (5.05,-21.9) node [left] {$1$};
+	\fill [black] (9.62,-20.58) -- (9.27,-19.7) -- (8.68,-20.51);
+	\draw [black] (15.3,-21.9) -- (19.3,-21.9);
+	\fill [black] (19.3,-21.9) -- (18.5,-21.4) -- (18.5,-22.4);
+	\draw (17.3,-22.4) node [below] {$0$};
+	\draw [black] (25.3,-21.9) -- (28.7,-21.9);
+	\fill [black] (28.7,-21.9) -- (27.9,-21.4) -- (27.9,-22.4);
+	\draw (27,-22.4) node [below] {$1$};
+	\draw [black] (34.7,-21.9) -- (38.2,-21.9);
+	\fill [black] (38.2,-21.9) -- (37.4,-21.4) -- (37.4,-22.4);
+	\draw (36.45,-22.4) node [below] {$1$};
+	\draw [black] (44.2,-21.9) -- (48.1,-21.9);
+	\fill [black] (48.1,-21.9) -- (47.3,-21.4) -- (47.3,-22.4);
+	\draw (46.15,-22.4) node [below] {$0$};
+	\draw [black] (54.1,-21.9) -- (58.5,-21.9);
+	\fill [black] (58.5,-21.9) -- (57.7,-21.4) -- (57.7,-22.4);
+	\draw (56.3,-22.4) node [below] {$1$};
+	\draw [black] (64.5,-21.9) -- (69.6,-21.9);
+	\fill [black] (69.6,-21.9) -- (68.8,-21.4) -- (68.8,-22.4);
+	\draw (67.05,-22.4) node [below] {$1,0$};
+	\draw [black] (71.277,-19.22) arc (234:-54:2.25);
+	\draw (72.6,-14.65) node [above] {$0,\mbox{ }1$};
+	\fill [black] (73.92,-19.22) -- (74.8,-18.87) -- (73.99,-18.28);
+	\draw [black] (19.475,-20.926) arc (278.7141:-9.2859:2.25);
+	\draw (16.53,-16.63) node [above] {$0$};
+	\fill [black] (21.35,-19.07) -- (21.73,-18.2) -- (20.74,-18.35);
+	\draw [black] (24.257,-19.682) arc (121.97674:58.02326:5.179);
+	\fill [black] (24.26,-19.68) -- (25.2,-19.68) -- (24.67,-18.83);
+	\draw (27,-18.4) node [above] {$0$};
+	\draw [black] (38.895,-23.816) arc (-54.38413:-125.61587:20.855);
+	\fill [black] (14.6,-23.82) -- (14.96,-24.69) -- (15.55,-23.88);
+	\draw (26.75,-28.22) node [below] {$1$};
+	\draw [black] (23.525,-19.167) arc (150.19963:29.80037:15.183);
+	\fill [black] (23.52,-19.17) -- (24.36,-18.72) -- (23.49,-18.22);
+	\draw (36.7,-11.03) node [above] {$0$};
+	\end{tikzpicture}
+	\end{figure}
+
+	Тут аналогичным образом можно понять, что все состояния различимы исходя из того, что:
+	\begin{align*}
+		1 \in C^R(D), 01 \in C^R(C), 101 \in C^R(B), 1101 \in C^R(A), 01101 \in S, \epsilon \in C^R(E), C^R(F), 0 \in F
+	\end{align*}
+	Из этого можно понять, что все правые контекты попарно не совпадают. \xqed
+	\item Автомат:
+		\begin{figure}[ht!]
+	\centering
+	\begin{tikzpicture}[scale=0.2]
+	\tikzstyle{every node}+=[inner sep=0pt]
+	\draw [black] (19.3,-14.7) circle (3);
+	\draw (19.3,-14.7) node {$S$};
+	\draw [black] (19.3,-14.7) circle (2.4);
+	\draw [black] (30.4,-14.7) circle (3);
+	\draw (30.4,-14.7) node {$A$};
+	\draw [black] (42.3,-14.7) circle (3);
+	\draw (42.3,-14.7) node {$B$};
+	\draw [black] (42.3,-14.7) circle (2.4);
+	\draw [black] (22.3,-14.7) -- (27.4,-14.7);
+	\fill [black] (27.4,-14.7) -- (26.6,-14.2) -- (26.6,-15.2);
+	\draw (24.85,-15.2) node [below] {$c$};
+	\draw [black] (17.977,-12.02) arc (234:-54:2.25);
+	\draw (19.3,-7.45) node [above] {$a,b$};
+	\fill [black] (20.62,-12.02) -- (21.5,-11.67) -- (20.69,-11.08);
+	\draw [black] (29.077,-12.02) arc (234:-54:2.25);
+	\draw (30.4,-7.45) node [above] {$a,b$};
+	\fill [black] (31.72,-12.02) -- (32.6,-11.67) -- (31.79,-11.08);
+	\draw [black] (33.4,-14.7) -- (39.3,-14.7);
+	\fill [black] (39.3,-14.7) -- (38.5,-14.2) -- (38.5,-15.2);
+	\draw (36.35,-15.2) node [below] {$c$};
+	\draw [black] (40.977,-12.02) arc (234:-54:2.25);
+	\draw (42.3,-7.45) node [above] {$a,b,c$};
+	\fill [black] (43.62,-12.02) -- (44.5,-11.67) -- (43.69,-11.08);
+	\draw [black] (11.2,-14.7) -- (16.3,-14.7);
+	\fill [black] (16.3,-14.7) -- (15.5,-14.2) -- (15.5,-15.2);
+	\end{tikzpicture}
+	\end{figure}
+	Опять же, легко различить правые контексты:
+	\begin{align*}
+		a \in C^R(S), c \nin C^R(S) \\
+		a \nin C^R(A), c \in C^R(A) \\
+		a \in C^R(B), c \in C^R(B)
+	\end{align*}
+	Ясно, что из этого следует различимость состояний, т.е. автомат минимален. \xqed
+\end{enumerate}
+\end{solution}
+
+\begin{task}[2]
+Минимизировать ДКА:
+\begin{figure}[ht!]
+\centering
+\begin{tikzpicture}[scale=0.2]
+\tikzstyle{every node}+=[inner sep=0pt]
+\draw [black] (7.5,-10.5) circle (3);
+\draw (7.5,-10.5) node {$A$};
+\draw [black] (19.1,-10.5) circle (3);
+\draw (19.1,-10.5) node {$B$};
+\draw [black] (7.5,-21.3) circle (3);
+\draw (7.5,-21.3) node {$F$};
+\draw [black] (19.1,-21.3) circle (3);
+\draw (19.1,-21.3) node {$E$};
+\draw [black] (32.6,-10.5) circle (3);
+\draw (32.6,-10.5) node {$C$};
+\draw [black] (32.6,-10.5) circle (2.4);
+\draw [black] (32.6,-21.3) circle (3);
+\draw (32.6,-21.3) node {$G$};
+\draw [black] (43.1,-21.3) circle (3);
+\draw (43.1,-21.3) node {$H$};
+\draw [black] (43.1,-21.3) circle (2.4);
+\draw [black] (43.1,-10.5) circle (3);
+\draw (43.1,-10.5) node {$D$};
+\draw [black] (10.5,-10.5) -- (16.1,-10.5);
+\fill [black] (16.1,-10.5) -- (15.3,-10) -- (15.3,-11);
+\draw (13.3,-10) node [above] {$0$};
+\draw [black] (17.551,-23.851) arc (-41.33189:-224.57729:8.533);
+\fill [black] (17.55,-23.85) -- (16.65,-24.12) -- (17.4,-24.78);
+\draw (4.31,-24.95) node [below] {$1$};
+\draw [black] (8.846,-18.623) arc (148.73658:117.1726:18.806);
+\fill [black] (8.85,-18.62) -- (9.69,-18.2) -- (8.83,-17.68);
+\draw (11.09,-14.13) node [above] {$0$};
+\draw [black] (17.311,-12.907) arc (-39.0302:-55.06062:35.68);
+\fill [black] (17.31,-12.91) -- (16.42,-13.21) -- (17.2,-13.84);
+\draw (14.92,-17.04) node [below] {$0$};
+\draw [black] (19.1,-18.3) -- (19.1,-13.5);
+\fill [black] (19.1,-13.5) -- (18.6,-14.3) -- (19.6,-14.3);
+\draw (19.6,-15.9) node [right] {$0$};
+\draw [black] (10.5,-21.3) -- (16.1,-21.3);
+\fill [black] (16.1,-21.3) -- (15.3,-20.8) -- (15.3,-21.8);
+\draw (13.3,-21.8) node [below] {$1$};
+\draw [black] (0.8,-10.5) -- (4.5,-10.5);
+\fill [black] (4.5,-10.5) -- (3.7,-10) -- (3.7,-11);
+\draw [black] (22.1,-10.5) -- (29.6,-10.5);
+\fill [black] (29.6,-10.5) -- (28.8,-10) -- (28.8,-11);
+\draw (25.85,-10) node [above] {$1$};
+\draw [black] (45.566,-8.812) arc (152.1301:-135.8699:2.25);
+\draw (50.47,-9.37) node [right] {$0,1$};
+\fill [black] (45.94,-11.43) -- (46.41,-12.25) -- (46.88,-11.36);
+\draw [black] (43.1,-18.3) -- (43.1,-13.5);
+\fill [black] (43.1,-13.5) -- (42.6,-14.3) -- (43.6,-14.3);
+\draw (43.6,-15.9) node [right] {$0$};
+\draw [black] (35.353,-20.137) arc (104.36496:75.63504:10.064);
+\fill [black] (35.35,-20.14) -- (36.25,-20.42) -- (36,-19.45);
+\draw (37.85,-19.32) node [above] {$1$};
+\draw [black] (40.24,-22.184) arc (-79.42867:-100.57133:13.027);
+\fill [black] (40.24,-22.18) -- (39.36,-21.84) -- (39.55,-22.82);
+\draw (37.85,-22.9) node [below] {$1$};
+\draw [black] (32.6,-13.5) -- (32.6,-18.3);
+\fill [black] (32.6,-18.3) -- (33.1,-17.5) -- (32.1,-17.5);
+\draw (32.1,-15.9) node [left] {$1$};
+\draw [black] (35.6,-10.5) -- (40.1,-10.5);
+\fill [black] (40.1,-10.5) -- (39.3,-10) -- (39.3,-11);
+\draw (37.85,-10) node [above] {$0$};
+\draw [black] (21.78,-19.977) arc (144:-144:2.25);
+\draw (26.35,-21.3) node [right] {$1$};
+\fill [black] (21.78,-22.62) -- (22.13,-23.5) -- (22.72,-22.69);
+\draw [black] (34.238,-18.788) arc (144.16167:127.45219:31.579);
+\fill [black] (40.64,-12.21) -- (39.7,-12.3) -- (40.3,-13.09);
+\draw (36.67,-13.79) node [left] {$0$};
+\end{tikzpicture}
+\end{figure}
+\end{task}
+\begin{solution}
+Терминальные и не терминальные --- различимы. После легко рассматирвать пары: $(H, D)$ и $(C, D)$ т.к. $D$ --- сток (тупик). И так далее...расписывать это --- супер тупо.
+\begin{center}
+  \begin{tabular}{ c | c | c | c | c | c | c | c | c }
+    \hline
+      & A & B & C & D & E & F & G & H \\ \hline
+    A & - & x & x & x &   &   & x & x \\ \hline
+	B & x & - & x & x & x & x & x & x \\ \hline
+	C & x & x & - & x & x & x & x &   \\ \hline
+	D & x & x & x & - & x & x & x & x \\ \hline
+	E &   & x & x & x & - &   & x & x \\ \hline
+	F &   & x & x & x &   & - & x & x \\ \hline
+	G & x & x & x & x & x & x & - & x \\ \hline
+	H & x & x &   & x & x & x & x & - \\ \hline
+  \end{tabular}
+\end{center}
+Таким образом имеем следующий минимальный ДКА:
+\begin{figure}[ht!]
+\centering
+\begin{tikzpicture}[scale=0.2]
+\tikzstyle{every node}+=[inner sep=0pt]
+\draw [black] (14.2,-38) circle (3);
+\draw (14.2,-38) node {$AFE$};
+\draw [black] (24.6,-38.2) circle (3);
+\draw (24.6,-38.2) node {$B$};
+\draw [black] (36.2,-38.2) circle (3);
+\draw (36.2,-38.2) node {$CH$};
+\draw [black] (36.2,-38.2) circle (2.4);
+\draw [black] (45.5,-33.2) circle (3);
+\draw (45.5,-33.2) node {$D$};
+\draw [black] (45.5,-43.9) circle (3);
+\draw (45.5,-43.9) node {$G$};
+\draw [black] (11.52,-39.323) arc (324:36:2.25);
+\draw (6.95,-38) node [left] {$1$};
+\fill [black] (11.52,-36.68) -- (11.17,-35.8) -- (10.58,-36.61);
+\draw [black] (16.947,-36.825) arc (104.07214:73.72444:9.464);
+\fill [black] (21.9,-36.92) -- (21.27,-36.22) -- (20.99,-37.18);
+\draw (19.44,-36.02) node [above] {$0$};
+\draw [black] (21.749,-39.107) arc (-79.59893:-102.60449:11.873);
+\fill [black] (17.01,-39.02) -- (17.69,-39.68) -- (17.9,-38.7);
+\draw (19.37,-39.82) node [below] {$0$};
+\draw [black] (27.6,-38.2) -- (33.2,-38.2);
+\fill [black] (33.2,-38.2) -- (32.4,-37.7) -- (32.4,-38.7);
+\draw (30.4,-38.7) node [below] {$1$};
+\draw [black] (38.84,-36.78) -- (42.86,-34.62);
+\fill [black] (42.86,-34.62) -- (41.92,-34.56) -- (42.39,-35.44);
+\draw (39.85,-35.2) node [above] {$0$};
+\draw [black] (39.008,-39.248) arc (65.41379:51.57768:20.855);
+\fill [black] (43.29,-41.87) -- (42.98,-40.98) -- (42.35,-41.77);
+\draw (42.23,-39.93) node [above] {$1$};
+\draw [black] (42.667,-42.922) arc (-113.67682:-129.33171:18.56);
+\fill [black] (38.36,-40.28) -- (38.66,-41.17) -- (39.29,-40.4);
+\draw (39.42,-42.25) node [below] {$1$};
+\draw [black] (47.351,-30.854) arc (169.46335:-118.53665:2.25);
+\draw (52.3,-29.24) node [right] {$0,1$};
+\fill [black] (48.49,-33.24) -- (49.18,-33.88) -- (49.37,-32.9);
+\draw [black] (45.5,-40.9) -- (45.5,-36.2);
+\fill [black] (45.5,-36.2) -- (45,-37) -- (46,-37);
+\draw (46,-38.55) node [right] {$0$};
+\end{tikzpicture}
+\end{figure}
+
+Его состояния попарно различимы... \xqed
+\end{solution}
+\end{document}
