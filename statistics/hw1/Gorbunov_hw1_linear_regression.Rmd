@@ -12,7 +12,6 @@ knitr::opts_chunk$set(echo = TRUE)
 set.seed(42)
 library(ggplot2)
 library(GGally)
-library(lattice)
 library(gridExtra)
 ```
 
@@ -24,7 +23,7 @@ ggpairs(adv_data)
 
 Вспомогательные функции:
 ```{r helper plot functions}
-fit_plot <- function (model, target, label) {
+PlotFitted <- function (model, target, label) {
   ggplot(mapping = aes(x = target, y = fitted(model))) + 
     geom_point(color = "darkgreen") + 
     stat_smooth(colour = "red", se = FALSE) +
@@ -32,7 +31,7 @@ fit_plot <- function (model, target, label) {
     labs(x = label, y = paste("Modeled", label))
 }
 
-resid_plot <- function (model) {
+PlotResiduals <- function (model) {
   ggplot(mapping = aes(x = fitted(model), y = residuals(model))) +
     geom_point(color = "blue") +
     stat_smooth(colour = "red") +
@@ -48,8 +47,8 @@ resid_plot <- function (model) {
 f1 = Sales ~ .
 model1 <- lm(formula = f1, data = adv_data)
 summary(model1)
-resid_plot(model1)
-fit_plot(model1, adv_data$Sales, "Sales")
+PlotResiduals(model1)
+PlotFitted(model1, adv_data$Sales, "Sales")
 ```
 
 Судя по парным графикам вначале видно, что между TV и Sales явно есть некая зависимость. С другими факторами у Sales какой-то особенной зависимости не наблюдается.
@@ -68,8 +67,8 @@ $$ Sales \sim (TV + Radio + Newspaper) ^ 2$$
 f2 = Sales ~ poly(TV, Radio, Newspaper, degree = 2)
 model2 <- lm(formula = f2, data = adv_data)
 summary(model2)
-resid_plot(model2)
-fit_plot(model2, adv_data$Sales, "Sales")
+PlotResiduals(model2)
+PlotFitted(model2, adv_data$Sales, "Sales")
 ```
 
 Теперь выкинем из первой испытанной модели Newspaper, т.к. он получился статистически не значим для модели. И рассмотрим модель:
@@ -78,8 +77,8 @@ $$ Sales \sim (\sqrt{TV} + Radio)^2$$
 f3 = Sales ~ poly(sqrt(TV), Radio, degree = 2)
 model3 <- lm(formula = f3, data = adv_data)
 summary(model3)
-resid_plot(model3)
-fit_plot(model3, adv_data$Sales, "Sales")
+PlotResiduals(model3)
+PlotFitted(model3, adv_data$Sales, "Sales")
 ```
 
 Видим, что факторы `TV` и `Radio^2` не значимы. Поэтому окончательно строим модель:
@@ -88,10 +87,44 @@ $$ Sales \sim \sqrt{TV} + Radio + \sqrt{TV}\cdot Radio$$
 f4 = Sales ~ sqrt(TV) * Radio
 model4 <- lm(formula = f4, data = adv_data)
 summary(model4)
-resid_plot(model4)
-fit_plot(model4, adv_data$Sales, "Sales")
+PlotResiduals(model4)
+PlotFitted(model4, adv_data$Sales, "Sales")
 ```
 
 Лучшая по `R^2` модель -- 3-я (`model3`), а по смыслу 4-ая...(`model4`).
 
 ### Кросс-валидация для сравнения моделей
+```{r cross-validation routine}
+CalcCrossValidation <- function(formula, data, ratio = 1/3, n = 50) {
+  # Returns cross-validation for linear model described with
+  # given formula for given data
+  # Args:
+  #   formula: linar model formula
+  #   data   : data for training and testing
+  #   ratio  : nrows(data) * ratio = size of testing dataset
+  #   n      : number of train/test experiments 
+  # Returns:
+  #   Score, which is calculated as sum of MSE for all experiments divided by number
+  #   of model parameters and number of experiments
+  var.num = length(lm(formula, data)$coefficients) - 1
+  mses <- replicate(n, {
+    indices <- sample(nrow(data), ceiling(nrow(data) * ratio))
+    train <- data[-indices, ]
+    test  <- data[indices, ]
+    l <- lm(formula, train)
+    sum(((predict(l, test) - test$Sales) ^ 2)) / nrow(test)
+  })
+  sum(mses) / (n * var.num) # cv
+}
+formulas = c(f1, f2, f3, f4)
+cvs <- sapply(formulas, function(f) { CalcCrossValidation(f, adv_data) })
+fs.strs <- sapply(formulas, format)
+df <- data.frame(cv = cvs, model = c(1,2,3,4))
+require(reshape2)
+ggplot(melt(df, id.vars = "model"), aes(x = variable, y = value, fill=factor(model))) +
+  geom_bar(stat="identity",position="dodge") +
+  scale_fill_discrete(name = "Model", breaks = df$model, labels = fs.strs) +
+  xlab("Model")+ylab("Cross Validation")
+```
+
+По итогам скользящего контроля 3-я модель так же показала лучшие результаты!
