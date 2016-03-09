@@ -1,0 +1,90 @@
+\input{env.tex}
+\title{Математическая логика. Домашнее задание №2}
+\author{Горбунов Егор Алексеевич}
+
+\begin{document}
+\maketitle
+
+\begin{task}[1]
+Докажите, что $\mathbb{N}$ и $\{0,1\}^*$ разрешимо равномощны, где второе множество -- это множество последовательностей из 0 и 1.
+\end{task}
+\begin{solution}
+Будем показывать по теореме Кантора-Берштейна:
+\[
+	\begin{array}{l}
+		f:\mathbb{N} \rightarrow \{0,1\}^* \\
+		f(n) = \texttt{Integer.toBinaryString(n)}
+	\end{array}
+	\begin{array}{l}
+		g:\{0,1\}^* \rightarrow \mathbb{N} \\
+		g(bs) = 2^{length(bs)}\cdot 3^{\texttt{Integer.parseInt(bs, 2)}}
+	\end{array}
+\]
+Тут подразумевается, что под \texttt{Inteter...} подставится результат выполнения соответствующих функций.
+
+Ясно, что функции \texttt{fpi} и \texttt{gpi} (как в \texttt{cb.hs}) пишутся на хаскеле, первая будет возвращать \texttt{Nothing}, если строка содержит лидирующие нули (и длина более 1), а иначе будет интерпретировать строку как двочичную запись натурального числа; \texttt{gpi} же будет делить до упора на 2, чтобы получить длину, потом делить до упора на 3, чтобы получить число, которое будет переводить в двоичную систему счисления и добавлять нужное число нулей, в зависимости от длины (если на каком-то из шагов что-то не сходится, то \texttt{Nothing}).
+
+А так же можно заметить, что:
+\[
+		\forall a \in \mathbb{N}:  g(f(a)) > a
+\]
+А значит \texttt{dfc = const False}. \xqed
+\end{solution}
+
+\begin{task}[2]
+Докажите, что $\{0,1\}^*$ и $\mathbb{N}_2$ разрешимо равномощны, где второе множество -- это множество двоичных натуральных чисел,
+    то есть последовательностей 0 и 1 без ведущих нулей (кроме случая, когда последовательность состоит из одной цифры).
+\end{task}
+\begin{solution}
+Не вижу разницы с предыдущим заданием, так что: см. решение задания 1 (там просто не нужно будет делать лишних вызовав в духе <<найти двоичное представление числа>>. \xqed
+\end{solution}
+
+\begin{task}[3]
+Докажите, что $\{0,1\}^*$ и множество корректных программ на каком-либо (любом) языке программирования разрешимо равномощны.
+\end{task}
+\begin{solution}
+Обозначим множество корректных программ на \texttt{python} за $\mathbb{CP}$. Опять показываем по теореме Кантора-Берштейна вводя вложения туда и обратно.
+\begin{align*}
+	f&: \{0,1\}^* \rightarrow CP\\
+	f&(bs)=
+		\begin{rcases*}
+			\texttt{print("Hello!")} \\
+			\texttt{print("Hello!")} \\
+			\ldots \\
+			\texttt{print("Hello!")}
+		\end{rcases*}
+		length(bs) + 1 \text{ раз}
+\end{align*}
+\begin{align*}
+	g&: CP \rightarrow \{0,1\}^*\\
+	g&(s) = \texttt{unicode\_codes\_str(s)}
+\end{align*}
+Тут \texttt{unicode\_codes\_str(s)} возвращает строку, в которой каждый символ исходной строки программы $s$ был переведён в двухбайтовый код (т.е. строку из $\{0,1\}^{16}$).
+
+Эти функции реализуются на хаскеле достаточно просто, достаточно знать коды символов, чтобы написать $g$. Функции \texttt{fpi} и \texttt{gpi} тоже реализуемы на хаскеле, а ещё видно, что для любой строки $bs$ из $\{0,1\}^*$ в программе $f(bs)$ будет $15(length(bs) + 1)$ символов (не считая переводов строки), а значит в строке $g(f(bs))$ будет $16\cdot 15 \cdot(length(bs) + 1)$ символов, что точно больше $length(bs)$, а значит \texttt{dfc = const False}. \xqed
+\end{solution}
+
+\begin{task}[4]
+Определите множество простых чисел.
+\end{task}
+\begin{solution}
+$Prime = \{ p \in \mathbb{N}\ |\ (p \neq 1) \wedge (\forall n \in \{2,\ldots,p-1\} : p \mod n \neq 0) \} $ 
+\xqed
+\end{solution}
+
+\begin{task}[5]
+Определите следующие функции над $\mathbb{Q}$ и докажите их корректность:
+\begin{enumerate}[label=(\alph*)]
+	\item Функция $neg : \mathbb{Q} \to \mathbb{Q}$, возвращающая обратное по сложению число.
+	\item Функция $inv : \mathbb{Q}_{\neq 0} \to \mathbb{Q}_{\neq 0}$, возвращающая обратное по умножению число.
+	\item Функция $plus : \mathbb{Q} \times \mathbb{Q} \to \mathbb{Q}$, возвращающая сумму двух чисел.
+\end{enumerate}
+\end{task}
+\begin{solution}
+\begin{enumerate}[label=(\alph*)]
+	\item $neg([(x,y)]_{\sim}) = -(x / gcd(x,y) )/(y / gcd(x,y))$
+	\item $inv([(x,y)]_{\sim}) = (y / gcd(x,y) )/(x / gcd(x,y))$
+	\item $plus([(a_x,a_y)]_{\sim}, [(b_x,b_y)]_{\sim}) = \frac{(a_xb_y + b_xa_y) / gcd(a_xb_y + b_xa_y,b_xb_y)}{b_xb_y / gcd(a_xb_y + b_xa_y,b_xb_y)}$
+\end{enumerate}
+\end{solution}
+\end{document}
