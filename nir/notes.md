@@ -30,3 +30,5 @@
 * $support(X \rightarrow Y) = support(X \cup Y) = P(X \wedge Y)$
 * $confidence(X \rightarrow Y) = \frac{supprot(X \rightarrow Y)}{supprot(X)} = \frac{P(X \wedge Y)}{P(X)} = P(Y|X)$
 * $Conviction(X \rightarrow Y) = \frac{1 - support(Y)}{1 - confidence(X \rightarrow Y)} = \frac{P(\neg Y)}{P(\neg Y|X)}$
+
+### Биология
