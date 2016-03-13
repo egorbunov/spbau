@@ -1,3 +1,8 @@
+# -------------- CMAKE ----------------
+CMakeCache.txt
+CMakeFiles
+
+
 # R
 .RData
 .RHistory
