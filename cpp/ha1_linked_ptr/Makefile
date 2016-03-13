@@ -15,7 +15,7 @@ TEST_SOURCES = $(wildcard $(TEST_DIR)/*.cpp)
 TEST_OBJECTS = $(patsubst $(TEST_DIR)/%.cpp, $(BIN_DIR)/%.o, $(TEST_SOURCES))
 GTEST_LIBS = -lgtest_main -lpthread
 GTEST_LIB_PATH = /usr/lib
-GTEST_INCLUDE = /usr/src/googletest-release-1.7.0/include
+GTEST_INCLUDE = /usr/src/gtest/include
 
 
 DEBUG     ?= 0
