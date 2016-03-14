@@ -19,7 +19,6 @@ struct tree_t {
     vector<node_t> all_nodes;
     node_idx root;
 
-
     tree_t(size_t node_number): all_nodes(node_number) {}
 
     void set_child(node_idx parent, node_idx child) {
