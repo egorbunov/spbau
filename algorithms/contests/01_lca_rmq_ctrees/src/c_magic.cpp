@@ -2,10 +2,14 @@
 #include <vector>
 #include <limits>
 #include <algorithm>
+#include <stack>
 #include <cassert>
 #include <array>
 
 using std::vector;
+using std::stack;
+
+typedef int idx_t;
 
 struct Tree {
 	static const int NO_PARENT;
@@ -13,30 +17,34 @@ struct Tree {
 	size_t vNum;
 	vector<int> parents;
 	vector<int> depths;
-	int root;
-	vector<int[10]> jumps;
+    idx_t root;
+	vector<int[DEGREES_OF_TWO.size()]> jumps;
 
-	Tree(size_t vNum): vNum(vNum), parents(vNum, NO_PARENT), depths(vNum, 0), root(-1) {}
+	Tree(size_t vNum): vNum(vNum), parents(vNum, NO_PARENT), depths(vNum, 0), root(-1), jumps(vNum) {}
 	
 	/**
 	 * p, x in [0, vNum)
+	 *
+	 * 1) p is treated is root if no nodes in tree
+	 * 2) if tree is not empty, p must have parent in tree
 	 */
-	void hang(size_t p, size_t x) {
+	void hang(idx_t p, idx_t x) {
 		if (root == -1) {
 			root = p;
 			parents[root] = -1;
-			depths[root] = 0;
+            jumps[root][0] = -1;
+            depths[0] = 0;
 		}
 		parents[x] = p;
 		jumps[x][0] = p; // jum to 2^0
-		depths[x] = depths[p] + 1;
+        depths[x] = depths[p] + 1;
 	}
 
-	int parent(size_t x) {
+	int parent(idx_t x) {
 		return parents[x];
 	}
 
-	int dep(size_t x) {
+	int dep(idx_t x) {
 		return depths[x];
 	}
 
@@ -53,9 +61,9 @@ struct Tree {
 	}
 
 	// level of {b} ancestor of {a}, level(a) > level(b)
-	size_t LA(size_t a, size_t b) {
-		size_t cur = a;
-		int deg = DEGREES_OF_TWO.size() - 1;
+    idx_t LA(idx_t a, idx_t b) {
+        idx_t cur = a;
+		int deg = (int) DEGREES_OF_TWO.size() - 1;
 		while (depths[cur] != depths[b]) {
 			auto jmp = jumps[cur][deg];
 			if (jmp < 0 || depths[jmp] < depths[b]) {
@@ -67,14 +75,14 @@ struct Tree {
 		return cur;
 	}
 
-	size_t LCA(size_t a, size_t b) {
+    idx_t LCA(idx_t a, idx_t b) {
 		if (depths[a] > depths[b]) {
             a = LA(a, b);
         } else {
             b = LA(b, a);
         }
 
-        int deg = DEGREES_OF_TWO.size() - 1;
+        int deg = (int) DEGREES_OF_TWO.size() - 1;
         while (a != b) {
         	if (jumps[a][deg] == jumps[b][deg]) {
         		deg--;
@@ -89,7 +97,7 @@ struct Tree {
         return a;
 	}
 };
-const int Tree::NO_PARENT = -1;
+const idx_t Tree::NO_PARENT = -1;
 const std::array<int, 17>  Tree::DEGREES_OF_TWO = { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536 };
 
 /**
@@ -97,106 +105,88 @@ const std::array<int, 17>  Tree::DEGREES_OF_TWO = { 1, 2, 4, 8, 16, 32, 64, 128,
  */
 struct Graph {
 	struct Edge {
-		size_t from;
-		size_t to;
+        idx_t from;
+        idx_t to;
 		bool isDeleted;
-		size_t rev; // reverse edge index
-		Edge(int from, int to, size_t rev): from(from), to(to), isDeleted(false), rev(rev) {}
+        size_t rev; // reverse edge index
+		Edge(idx_t from, idx_t to, size_t rev): from(from), to(to), isDeleted(false), rev(rev) {}
 	};
 
 	vector<vector<Edge>> graph;
-	vector<size_t> labels;
+	vector<idx_t> labels;
 	vector<bool> isVisited;
 	vector<Edge*> bridges;
-	vector<int> components;
-	size_t componentNum;
-    
-    Graph(size_t vNum): graph(vNum), labels(vNum), isVisited(vNum, false), components(vNum, -1), componentNum(1) {}
+	vector<idx_t> components;
+
+    Graph(size_t vNum): graph(vNum), labels(vNum), isVisited(vNum, false), components(vNum, -1) {}
     
 	/**
 	 * from, to in [0, vNum)
 	 */
-	void addEdge(size_t from, size_t to) {
+	void addEdge(idx_t from, idx_t to) {
 		graph[from].push_back(Edge(from, to, graph[to].size()));
 		graph[to].push_back(Edge(to, from, graph[from].size() - 1));
 	}
 
 	void deleteBridges() {
-		dfsDeleteBridges(-1, 0);
+		dfsDeleteBridges(labels.size(), 0);
 	}
 
-	void markComponents() {
-		int mark = 0;
-		for (size_t v = 0; v < graph.size(); ++v) {
-			if (components[v] < 0) {
-				dfsMarkComponents(v, mark++);
-			}
-		}
-		componentNum = mark;
-	}
-
-	Tree buildBridgeComponentTree(int root) {
+    /**
+     * use after deleteBridges()
+     */
+	Tree buildBridgeComponentTree(idx_t root) {
+        size_t componentNum = bridges.size() + 1; // V(T) = E(T) + 1
 		Tree t = Tree(componentNum);
-		int skip = -1;
-		for (size_t i = 0; i < bridges.size(); ++i) {
-			if (bridges[i]->to == (size_t) root) {
-				t.hang(components[bridges[i]->to], components[bridges[i]->from]); // makes root component root in tree
-				skip = i;
-				break;
-			}
-			if (bridges[i]->from == (size_t) root) {
-				t.hang(components[bridges[i]->from], components[bridges[i]->to]); 
-				skip = i;
-				break;
-			}
-		}
-		for (size_t i = 0; i < bridges.size(); ++i) {
-			if (i == (size_t) skip)
-				continue;
-			Edge* e = bridges[i];
-			if (t.parent(components[e->to]) == Tree::NO_PARENT) {
-				t.hang(components[e->from], components[e->to]);
-			} else if (t.parent(components[e->from]) == Tree::NO_PARENT) {
-				t.hang(components[e->to], components[e->from]);
-			} else {
-				assert(true);
-			}
-		}
+        dfsBuildComponentTree(root, 0, t);
 		return t;
 	}
 
-	size_t getComponent(size_t v) {
+	int getComponent(idx_t v) {
 		return components[v];
 	}
 
 
 private:
-	void dfsMarkComponents(size_t v, int mark) {
-		components[v] = mark;
-		for (Edge &e : graph[v]) {
-			if (components[e.to] >= 0 || e.isDeleted) 
-				continue;
-			dfsMarkComponents(e.to, mark);
-		}
-	}
+    void dfsBuildComponentTree(idx_t v, int mark, Tree &tree) {
+        static int nextMark = mark;
+        components[v] = mark;
+        for (Edge &e : graph[v]) {
+            if (components[e.to] >= 0)
+                continue;
+            if (e.isDeleted) {
+                nextMark += 1;
+                tree.hang(components[v], nextMark);
+                dfsBuildComponentTree(e.to, nextMark, tree);
+                continue;
+            }
+            dfsBuildComponentTree(e.to, mark, tree);
+        }
+    }
 
-	size_t dfsDeleteBridges(size_t from, size_t v) {
-		labels[v] = labels[from] + 1;
+	int dfsDeleteBridges(idx_t from, idx_t v) {
+		if (from >= (int) labels.size()) {
+            labels[v] = 0;
+        } else {
+            labels[v] = labels[from] + 1;
+        }
 		isVisited[v] = true;
-		size_t minUp = std::numeric_limits<size_t>::max();
+        int minUp = std::numeric_limits<int>::max();
 		for (Edge &e : graph[v]) {
 			if (e.isDeleted)
 				continue;
-			if (isVisited[e.to] && e.to != from) {
-				minUp = std::min(minUp, labels[e.to]);
-				continue;
-			}
-			size_t minUpTo = dfsDeleteBridges(v, e.to);
-			minUp = std::min(minUp, minUpTo);
-			if (minUpTo > labels[v]) {
-				bridges.push_back(&e);
-				delEdge(e);
-			}
+			if (isVisited[e.to]) {
+                if (e.to != from) {
+                    minUp = std::min(minUp, labels[e.to]);
+                }
+			} else {
+                int minUpTo = dfsDeleteBridges(v, e.to);
+                minUp = std::min(minUp, minUpTo);
+                if (minUpTo > labels[v]) {
+                    bridges.push_back(&e);
+                    delEdge(e);
+                }
+            }
 		}
 		return minUp;
 	}
@@ -209,25 +199,40 @@ private:
 
 
 int main() {
-	int n = 10; // number of cities
-	int root = 1; // conference city
-	int a = 0, b = 1; // magicians
+	std::ios_base::sync_with_stdio(false);
+
+	int n; // number of cities
+	int m; // number of roads
+	int root; // conference city
+
+	std::cin >> n >> m >> root;
+    root--; // all in [0, ...) !
+
 
 	Graph g(n);
 
-	// fill graph here
-	
+	// reading graph
+	for (int i = 0; i < m; ++i) {
+		int a, b;
+		std::cin >> a >> b;
+		g.addEdge(a - 1, b - 1);
+	}
 
-	// prepare graph
+	// prepare graph and build 2-connect component tree
 	g.deleteBridges();
-	g.markComponents();
 	Tree t = g.buildBridgeComponentTree(root);
-
 	t.preprocess();
 
-	// answering query
-	size_t lca = t.LCA(g.getComponent(a), g.getComponent(b));
-	std::cout << t.dep(lca) << std::endl;
+	int queryNum;
+	std::cin >> queryNum;
+
+	for (int i = 0; i < queryNum; ++i) {
+		// answering query
+		int a, b;
+		std::cin >> a >> b;
+		idx_t lca = t.LCA(g.getComponent(a - 1), g.getComponent(b - 1));
+		std::cout << t.dep(lca) << std::endl;
+	}
 
 	return 0;
 }
