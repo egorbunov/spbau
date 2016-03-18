@@ -16,10 +16,7 @@ template<typename T>
 struct SegmentTree {
     static const size_t INF = std::numeric_limits<size_t>::max();
 
-	SegmentTree(size_t size): root(0), arraySize(size) {
-        nodes.reserve(2 * size);
-        nodes.push_back(Node(0, size - 1));
-        build(nodes[0]);
+	SegmentTree(size_t size): root(0), arraySize(size), nodes(4 * size) {
 	}
 
 	T get(size_t idx) {
@@ -30,7 +27,7 @@ struct SegmentTree {
 	// sum on segment [from, to]
 	T sum(size_t from, size_t to) {
 //        assert(from <= to && to < arraySize);
-        return sum(nodes[root], from, to);
+        return sum(root, 0, arraySize - 1, from, to);
     }
 
 	/**
@@ -46,7 +43,7 @@ struct SegmentTree {
 	 */
 	void set(size_t from, size_t to, T value) {
 //        assert(from <= to && to < arraySize);
-        set(nodes[root], from, to, value);
+        set(root, 0, arraySize - 1, from, to, value);
 	}
 
     void print() {
@@ -61,70 +58,56 @@ private:
 		T val;
         T sum;
 		bool isPushed;
-        size_t l, r, lc, rc;
-		Node(): val(), sum(), isPushed(false), l(INF), r(INF), lc(INF), rc(INF) {}
-        Node(size_t l, size_t r): val(), sum(), isPushed(false), l(l), r(r), lc(INF), rc(INF) {}
+		Node(): val(), sum(), isPushed(false) {}
     };
-
-    void build(Node &node) {
-        if (node.l == node.r)
-            return;
-        size_t m = (node.l + node.r) / 2;
-        nodes.push_back(Node(node.l, m));
-        nodes.push_back(Node(m + 1, node.r));
-        node.lc = (nodes.size() - 2);
-        node.rc = (nodes.size() - 1);
-        build(nodes[node.lc]);
-        build(nodes[node.rc]);
-    }
 
 	size_t root;
 	size_t arraySize;
 	vector<Node> nodes; // segment tree nodes
 
-	void push(Node &node) {
-        if (!node.isPushed) {
-            node.isPushed = true;
-            auto& lc = nodes[node.lc];
-            auto& rc = nodes[node.rc];
-            lc.val = rc.val = node.val;
-            lc.sum = lc.val * (lc.r - lc.l + 1);
-            rc.sum = rc.val * (rc.r - rc.l + 1);
+	void push(size_t id, size_t l, size_t r, size_t m) {
+        if (!nodes[id].isPushed) {
+            nodes[id].isPushed = true;
+            auto& lc = nodes[id * 2 + 1];
+            auto& rc = nodes[id * 2 + 2];
+            lc.val = rc.val = nodes[id].val;
+            lc.sum = lc.val * (m - l + 1);
+            rc.sum = rc.val * (r - m);
             lc.isPushed = rc.isPushed = false;
         }
     }
 
-	void set(Node &node, size_t from, size_t to, T value) {
+	void set(size_t id, size_t l, size_t r, size_t from, size_t to, T value) {
 		if (from > to) {
 			return;
 		}
-		if (node.l == from && node.r == to) {
-			node.isPushed = false;
-            node.val = value;
-            node.sum = (to - from + 1) * value;
+		if (l == from && r == to) {
+			nodes[id].isPushed = false;
+            nodes[id].val = value;
+            nodes[id].sum = (to - from + 1) * value;
 		} else {
-			push(node);
-			size_t m = (size_t) ((node.l + node.r) / 2);
-			set(nodes[node.lc], from, std::min(to, m), value);
-			set(nodes[node.rc], std::max(from, m + 1), to, value);
+			size_t m = (size_t) ((l + r) / 2);
+            push(id, l, r, m);
+            set(id * 2 + 1, l, m, from, std::min(to, m), value);
+			set(id * 2 + 2, m + 1, r, std::max(from, m + 1), to, value);
 
 //            assert(node.lc < nodes.size() && node.lc >= 0);
 //            assert(node.rc < nodes.size() && node.rc >= 0);
-            node.sum = nodes[node.lc].sum + nodes[node.rc].sum;
+            nodes[id].sum = nodes[id * 2 + 1].sum + nodes[id * 2 + 2].sum;
 		}
 	}
 
-	T sum(Node& node, size_t from, size_t to) {
+	T sum(size_t id, size_t l, size_t r, size_t from, size_t to) {
 		if (from > to) {
 			return 0;
 		}
-		if (node.l == from && node.r == to) {
-			return node.sum;
+		if (l == from && r == to) {
+			return nodes[id].sum;
 		} else {
-			push(node);
-			size_t m = (size_t) ((node.l + node.r) / 2);
-			return sum(nodes[node.lc], from, std::min(to, m))
-				 + sum(nodes[node.rc], std::max(from, m + 1), to);
+            size_t m = (size_t) ((l + r) / 2);
+            push(id, l, r, m);
+			return sum(id * 2 + 1, l, m, from, std::min(to, m))
+				 + sum(id * 2 + 2, m + 1, r, std::max(from, m + 1), to);
 		}
 	}
 };
@@ -262,7 +245,6 @@ int main() {
     const size_t MAX_ARRAY_SIZE = SHIFT * 2 + 1000;
 
     SegmentTreeSolver segmentTreeSolver(MAX_ARRAY_SIZE);
-    NaiveSolver naiveSolver(MAX_ARRAY_SIZE);
 
     // reading and answering
     int qNum;
@@ -276,10 +258,8 @@ int main() {
         size_t from = left + SHIFT;
         size_t to = from + len - 1;
         if (color == 'W') { // white == 0
-            naiveSolver.paint(0, from, to);
             segmentTreeSolver.paint(0, from, to);
         } else if (color == 'B') {
-            naiveSolver.paint(1, from, to);
             segmentTreeSolver.paint(1, from, to);
         } else {
             cout << "UPS" << endl;
