@@ -2,3 +2,7 @@
 add_executable(a_ancestor a_ancestor.cpp)
 add_executable(c_magic c_magic.cpp)
 add_executable(d_artist d_artist.cpp)
+add_executable(e_gooddays e_gooddays.cpp)
+add_executable(g_swapper g_swapper.cpp)
+add_executable(g_swapper2 g_swapper2.cpp)
+add_executable(h_keyinsert h_keyinsert.cpp)
