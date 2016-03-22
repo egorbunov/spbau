@@ -1,0 +1,201 @@
+\input{env.tex}
+\title{Математическая логика. Домашнее задание №4}
+\author{Горбунов Егор Алексеевич}
+
+\begin{document}
+\maketitle
+
+\begin{task}[1]
+Опишите 2-сортную сигнатуру и теорию коммутативных колец с единицей и модулей над ними (определение этих понятий легко найти в интернете).
+\end{task} 
+\begin{solution}
+Алгебраическая сигнатура $(\mathcal{S}, \mathcal{F})$:
+\[
+	\mathcal{S} = \xbrace{R, M},\
+	\mathcal{F} = 
+		\xbrace{
+			\begin{array}{l}
+				  *_R: R\times R \xret R, \\
+	              +:R\times R \xret R, \\
+	              neg:R\xret R,\\
+	              0:R,\\
+	              1_R:R
+	        \end{array}
+	    }
+	    \cup
+		\xbrace{
+			\begin{array}{l}
+				  *_M: M\times M \xret M,\\
+	              1_M:M,\\
+	              inv:M\xret M
+	        \end{array}
+	    }
+	    \cup
+		\xbrace{
+			\begin{array}{l}
+				  *_{RM}: R\times M \xret M
+	        \end{array}
+	    }    
+\]
+Теория.
+Коммутативное кольцо с 1:
+\begin{equation*}
+\begin{split}
+	x + y &= y + x\\
+	x + (y + z) &= (x + y) + z\\
+	0 + x &= x\\
+	neg(x) + x &= 0\\
+	(x *_R y) *_R z &= x *_R (y *_R z)\\
+	x *_R y &= y *_R x\\
+	1_R *_R x &= x\\
+	x *_R (y + z) &= x *_R y + x *_R z\\
+\end{split}
+\end{equation*}
+Абелева группа:
+\begin{equation*}
+\begin{split}
+	(x *_M y) *_M z &= x *_M (y *_M z)\\
+	x *_M y &= y *_M x\\
+	1_M *_M x &= x\\
+	inv(x) *_M x &= 1_M\\
+\end{split}
+\end{equation*}
+Модуль над кольцом:
+\begin{equation*}
+\begin{split}
+	(x *_R y) *_{RM} m &= x *_{RM} (y *_{RM} m)\\
+	x *_{RM} (a *_M b) &= (x *_{RM} a) *_M (x *_{RM} b)\\
+	(x + y) *_{RM} m &= (x *_{RM} m) *_M (y *_{RM} m)
+\end{split}
+\end{equation*}
+\xqed
+\end{solution}
+
+\begin{task}[2]
+Рассмотрим сигнатуру $(\{N\}, \{ 0 : N, S : N \to N, + : N \times N \to N \})$.
+    Рассмотрим следующую теорию:
+\begin{align*}
+0 + y & = y \\
+S(x) + y & = S(x + y)
+\end{align*}
+Докажите, что следующие формулы невыводимы в этой теории
+\begin{itemize}
+\item $(x + y) + z = x + (y + z)$
+\item $x + y = y + x$
+\end{itemize}
+\end{task}
+
+\begin{solution}
+Рассмотрим такую интерпретацию $M$ данной сигнатуры:
+\[
+	(\mathbb{R}, 0, id, /) = \xintrp{N} = \mathbb{R}, \xintrp{0} = 0, \xintrp{S} = id, \xintrp{+} = /
+\]
+Для этой интерпретации аксиомы выполняются, т.к. для $\forall x, y \in \mathbb{R}$ верно, что $0 + y = y$ и $id(x) / y = x / y = id(x / y)$, т.е. $M$ --- модель данной теории.
+
+Теперь рассмотрим следующее означивание: $\rho(x) = 1, \rho(y) = 2, \rho(z) = 3$. Тогда:
+\begin{align*}
+	\xintrp{(x + y) + z}_{\rho} = (1 / 2) / 3 = \frac{1}{6} &\neq \frac{3}{2} = 1 / (2 / 3) = \xintrp{x + (y + z)}_{\rho}  \\
+	\xintrp{x+y}_{\rho} = 1 / 2 = \frac{1}{2} &\neq 2 = 2 / 1 = \xintrp{y+x}_{\rho}
+\end{align*}
+Получили, что для выбранного означивания $\xintrp{(x + y) + z}_{\rho} \neq \xintrp{x + (y + z)}_{\rho}$ и $\xintrp{x+y}_{\rho} \neq \xintrp{y+x}_{\rho}$, а значит формулы невыводимы в теории. \xqed
+\end{solution}
+\newpage
+\begin{task}[3]
+Рассмотрим сигнатуру
+\[ (\{D\}, \{ * : D \times D \to D, 1 : D, f : D \to D, g : D \to D, i_1 : D \to D, i_2 : D \to D \}) \]
+Рассмотрим следующую теорию в ней:
+\begin{align*}
+(x * y) * z & = x * (y * z) \\
+x * 1 & = x \\
+1 * x & = x \\
+f(f(x)) & = f(x) \\
+g(g(x)) & = g(x) \\
+f(g(x)) & = g(f(x)) \\
+i_1(f(x)) * g(x) & = 1 \\
+f(x) * i_2(g(x)) & = 1
+\end{align*}
+Какие из следующих утверждений являются теоремами этой теории? Докажите это.
+\begin{enumerate}
+\item $i_1(x) = i_2(x)$ \label{task3:t1}
+\item $i_1(x) * x = 1$  \label{task3:t2}
+\item $f(x) = g(x)$     \label{task3:t3}
+\item $f(x) = x$        \label{task3:t4}
+\end{enumerate}
+При доказательстве выводимости можно опускать очевидные шаги, такие как применения ассоциативности и аксиом $1 * x = x$ и $x * 1 = x$.
+\end{task}
+\begin{solution}
+Рассмотрим такую интерпретацию сигнатуры:
+\[
+	\xparen{ \mathbb{R},\ *,\ 1,\ f(x) = 1,\ g(x) = 1,\ i_1(x) = x,\ i_2(x) = x^2}
+\]
+Эта интерпретация --- модель, т.к. первые 3 аксиомы выполняются по свойству операции умножения над $\mathbb{R}$ и далее для любой означивающей функции будет верно:
+\begin{align*}
+	\xintrp{f(f(x))}  = 1 &= \xintrp{f(x)}  \\
+	\xintrp{g(g(x))}  = 1 &= \xintrp{g(x)}  \\
+	\xintrp{f(g(x))}  = 1 &= \xintrp{g(f(x))}  \\
+	\xintrp{i_1(f(x)) * g(x)} = \xintrp{i_1}(1) * 1 = 1 * 1 & = \xintrp{1} \\
+	\xintrp{f(x) * i_2(g(x))} = 1 * \xintrp{i_2}(1) = 1 * 1^2 &= \xintrp{1}
+\end{align*}
+Выберем означивающую функцию $\rho{(x)} = 2$, тогда:
+\begin{align*}
+	\xintrp{i_1(x)} = 2 &\neq 2^2 = \xintrp{i_2(x)} \\
+	\xintrp{i_1(x) * x} = 2 * 2 &\neq 1 = \xintrp{1} \\
+	\xintrp{f(x)} = 1 &\neq 2 = \xintrp{x}
+\end{align*}
+Таким образом утверждения~\ref{task3:t1}, \ref{task3:t2}, \ref{task3:t4} не являются теоремами в данной теории.
+
+
+Осталось разобраться с утверждением~\ref{task3:t3}. Не вышло у меня.
+\end{solution}
+
+\begin{task}[4]
+Рассмотрим сигнатуру 
+\[ (\{D\}, \{ * : D \times D \to D, + : D \times D \to D, 1 : D, 0 : D, - : D \to D \}) \].
+    Теория колец с единицей выглядит следующим образом:
+\begin{align*}
+(x + y) + z & = x + (y + z) \\
+x + 0 & = x \\
+0 + x & = x \\
+x + y & = y + x \\
+x + -x & = 0 \\
+(x * y) * z & = x * (y * z) \\
+x * 1 & = x \\
+1 * x & = x \\
+x * (y + z) & = (x * y) + (x * z) \\
+(y + z) * x & = (y * x) + (z * x)
+\end{align*}
+Добавим к этой теории следующую аксиому:
+\[ x * x = x \]
+Докажите, что в этой расширенной теории выводимы следующие формулы:
+\begin{enumerate}
+\item $x * y = y * x$
+\item $x + x = 0$
+\end{enumerate}
+\end{task}
+\begin{solution}
+
+\begin{enumerate}
+	\item Будем считать, что уже доказали следующий пункт, т.е. $x + x = 0$, т.е. $x = -x$. Тогда:
+	\begin{align*}
+		(x + y) * (x + y) &=^{\text{дистрибутивность}} x*x + x*y + y*x + y*y = \\
+ 				          &= x + x*y + y*x + y
+	\end{align*}
+	С другой стороны $(x+y)*(x+y) = x+y$, т.е: 
+	\begin{align*}
+		x + y = x + y + x*y + y*x &\Rightarrow x + -x + y + -y = x + -x + y + -y +  x*y + y*x \\
+							      &\Rightarrow 0 = x*y + y*x \Rightarrow x*y = -y*x
+	\end{align*}
+	И в силу того, что $x = -x$: $x*y = y*x$.
+	\item 
+	Покажем, что $0*x = 0$. $x + 0 = x \Rightarrow x*x + 0*x = x*x \Rightarrow x + 0*x = x$, прибавляем слева и справа $-x$ и полчаем, что $0*x = 0$.
+	Теперь покажем то, что нужно:
+	\begin{align*}
+		x + -x = 0 &\Rightarrow x*x + -x*x = 0*x \Rightarrow x + -x*x = 0 \Rightarrow -x*x + -x*(-x*x) = 0 \Rightarrow \\
+				   &\Rightarrow -x*(x + x) = 0 \Rightarrow x + x = 0
+	\end{align*}
+\end{enumerate}
+
+\end{solution}
+
+
+\end{document}

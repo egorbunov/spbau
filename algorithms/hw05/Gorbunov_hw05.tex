@@ -1,0 +1,104 @@
+\input{env.tex}
+\title{Домашнее задание №5 \\ Алгоритмы. 5 курс. Весенний семестр.}
+\author{Горбунов Егор Алексеевич}
+
+\begin{document}
+\maketitle
+
+\begin{task}[1]
+Дана матрица $A$ размера $n \times m$. Найти такое представление $A = B \cdot C$, что $B$ имеет размер $n \times k$
+и $k$ минимально.
+\end{task}
+\begin{solution} Пусть у нас есть какое-то разложение $A = B \cdot C$, что размер $B$ равен $n \times k$, а размер $C$, соответственно $k \times m$. Известно тогда, что $rang(A) \leqslant rang(B)$ и $rang(A) \leqslant rang(C)$, но тогда имеем:
+\[
+	rang(A) \leqslant rang(B) \leqslant \min{(n, k)} \Rightarrow rang(A) \leqslant k
+\]
+Таким образом, вообще самым минимальным возможным $k$ может быть $rang(A)$ --- ранг исходной матрицы. Покажем, что этот минимально возможный $k$ достигается.
+
+Обозначим ранг матрицы $A$ за $r$ и выберем, соответственно, $r$ линейно независимых стобцов матрицы $A$. Не умаляя общности считаем, что это первые $r$ стобцов матрицы.
+\[
+	A = \left[ \bm{a_1}, \bm{a_2}, \ldots, \bm{a_r}, \bm{a_{r+1}}, \bm{a_{r+2}}, ..., \bm{a_{m}} \right]
+\]
+Знаем, что любой столбец матрицы $A$ выражается через $a_1, a_2, \ldots, a_r$ линейной комбинацией, т.е:
+\[
+	\bm{a_j} = \bm{a_1} \cdot c_{1j} + \bm{a_2} \cdot c_{2j} + \bm{a_3} \cdot c_{3j} + \ldots + \bm{a_r} \cdot c_{rj}
+\]
+Или раскрывая:
+\begin{equation}
+\label{eq:t1}
+	\begin{pmatrix}
+		a_{1j}\\
+		a_{2j}\\
+		\vdots\\
+		a_{nj} 
+	\end{pmatrix}
+	=
+	\begin{pmatrix}
+		a_{11}c_{1j} + a_{12}c_{2j} + \ldots a_{1r}c_{rj}\\
+		a_{21}c_{1j} + a_{22}c_{2j} + \ldots a_{2r}c_{rj}\\
+		\vdots\\
+		a_{n1}c_{1j} + a_{n2}c_{2j} + \ldots a_{nr}c_{rj}
+
+	\end{pmatrix}
+\end{equation}
+Это очень похоже на процесс перемножения матриц! Ясно теперь, что если взять:
+\[
+	B = \left[ \bm{a_1}, \bm{a_2}, \ldots, \bm{a_r} \right],\ C = 
+	\begin{pmatrix}
+		1 & 0 & \ldots 0 & c_{1,{r + 1}} & \ldots & c_{1n} \\
+		0 & 1 & \ldots 0 & c_{2,r + 1} & \ldots & c_{2n} \\
+		\ldots \\
+		0 & 0 & \ldots 1 & c_{r,r + 1} & \ldots & c_{rn}
+	\end{pmatrix}
+\]
+Находить коэффициенты $c_{ij}$ можно, например, решая системы линейных уравнений~\ref{eq:t1} для каждого столбца известными методами.
+\xqed
+\end{solution}
+
+\begin{task}[2]
+Для заданного $n$ и простого $p$ найти число таких $k \in [0, n]$, что ${n \choose k} \mod{p} = 0$
+Можно считать, что все операции по модулю p происходят за $\bigO{1}$. Придумайте алгоритм, который работает за:
+	\begin{enumerate}[label=(\alph*)]
+		\item $\bigO{n}$
+		\item $\bigO{poly{(\log{n})}}$
+	\end{enumerate}
+\end{task}
+\begin{solution}
+
+\begin{enumerate}[label=(\alph*)]
+	\item Запишем биномиальный коэффициент: 
+	\[ 
+		{n \choose k} = \frac{n\cdot(n-1)\cdot(n-2)\cdot \ldots \cdot (n-k+1)}{1\cdot2\cdot\ldots\cdot(k-2)\cdot(k-1)\cdot k}
+	\]
+\end{enumerate}
+Будем поддерживать степень, в которой входит $p$ в числитель и знаменатель, последовательно перебирая все биномиальные коэффициенты:
+\[
+	\frac{n}{1},\ \frac{n\cdot(n-1)}{1\cdot2},\ \frac{n\cdot(n-1)\cdot(n-2)}{1\cdot2\cdot3}, \ldots
+\]
+Т.е. вначале мы должны знать степень, в которой $p$ входит в $n$ для числителя и в $1$ для знаменателя. И так далее. Пусть на $i$-ом шаге мы знаем степень $d^1_i$, в которой $p$ входит в числитель $n\cdot(n-1)\cdot\ldots\cdot(n-i+1)$ и в степень $d^2_i$, в которой $p$ входит в знаменатель $1\cdot2\cdot\ldots \cdot i$. Тогда на следующем шаге они пересчитываются так: $d^1_{i+1} = d^1_i + degree_p(n - i)$, $d^2_{i+1} = d^2_i + degree_p(i + 1)$, где $degree_p(x)$ --- степень, в которой $p$ входит в $x$ (тут в дело вступает простота $p$). Чтобы суммарно это дело работало за $\bigO{n}$ нам нужно уметь быстро находить $degree_p(x)$ для $x \in [1, n]$. Как? Предподсчитаем его за $\bigO{n}$ так:
+\[
+	\begin{array}{lcl}
+		degree_p(p)  & = & 1\\
+		degree_p(2p) & = & 1\\
+		\ldots\\
+		degree_p((p-1)p) & = & 1\\
+		degree_p(p^2 + p) & = & 1 \\
+		degree_p(p^2 + 2p) & = & 1 \\
+		\ldots\\
+		degree_p(p^2) & = & 2 \\
+		degree_p(2p^2) & = & 2 \\
+		\ldots\\
+		degree_p(p^3 + p^2) & = & 2\\
+		\ldots
+		degree_p(p^3) & = & 3\\
+		\ldots
+	\end{array}
+\] 
+Такю процедуру точно можно за линию организовать, посчитав степени $p$, пока они меньше $n$ и далее рекурсивно это дело строить...
+\xqed
+\end{solution}
+
+
+
+
+\end{document}

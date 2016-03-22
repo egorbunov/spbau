@@ -1,0 +1,89 @@
+\documentclass[draft]{article}
+\usepackage[russian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{cmap}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage[all]{xy}
+
+\newenvironment{tolerant}[1]{\par\tolerance=#1\relax}{\par}
+
+\begin{document}
+
+\title{Задания}
+\maketitle
+
+\begin{enumerate}
+
+\item Опишите 2-сортную сигнатуру и теорию коммутативных колец с единицей и модулей над ними (определение этих понятий легко найти в интернете).
+
+\item Рассмотрим сигнатуру $(\{N\}, \{ 0 : N, S : N \to N, + : N \times N \to N \})$.
+    Рассмотрим следующую теорию:
+\begin{align*}
+0 + y & = y \\Рассмотрим сигнатуру $(\{N\}, \{ 0 : N, S : N \to N, + : N \times N \to N \})$.
+    Рассмотрим следующую теорию:
+\begin{align*}
+0 + y & = y \\
+S(x) + y & = S(x + y)
+\end{align*}
+Докажите, что следующие формулы невыводимы в этой теории
+\begin{itemize}
+\item $(x + y) + z = x + (y + z)$
+\item $x + y = y + x$
+\end{itemize}
+S(x) + y & = S(x + y)
+\end{align*}
+Докажите, что следующие формулы невыводимы в этой теории
+\begin{itemize}
+\item $(x + y) + z = x + (y + z)$
+\item $x + y = y + x$
+\end{itemize}
+Напомню, что для доказательства невыводимости формулы достаточно привести пример модели в которой эта формула не верна.
+
+\item Рассмотрим сигнатуру $(\{D\}, \{ * : D \times D \to D, 1 : D, f : D \to D, g : D \to D, i_1 : D \to D, i_2 : D \to D \})$.
+    Рассмотрим следующую теорию в ней:
+\begin{align*}
+(x * y) * z & = x * (y * z) \\
+x * 1 & = x \\
+1 * x & = x \\
+f(f(x)) & = f(x) \\
+g(g(x)) & = g(x) \\
+f(g(x)) & = g(f(x)) \\
+i_1(f(x)) * g(x) & = 1 \\
+f(x) * i_2(g(x)) & = 1
+\end{align*}
+Какие из следующих утверждений являются теоремами этой теории? Докажите это.
+\begin{enumerate}
+\item $i_1(x) = i_2(x)$
+\item $i_1(x) * x = 1$
+\item $f(x) = g(x)$
+\item $f(x) = x$
+\end{enumerate}
+При доказательстве выводимости можно опускать очевидные шаги, такие как применения ассоциативности и аксиом $1 * x = x$ и $x * 1 = x$.
+
+\item Рассмотрим сигнатуру $(\{D\}, \{ * : D \times D \to D, + : D \times D \to D, 1 : D, 0 : D, - : D \to D \})$.
+    Теория колец с единицей выглядит следующим образом:
+\begin{align*}
+(x + y) + z & = x + (y + z) \\
+x + 0 & = x \\
+0 + x & = x \\
+x + y & = y + x \\
+x + -x & = 0 \\
+(x * y) * z & = x * (y * z) \\
+x * 1 & = x \\
+1 * x & = x \\
+x * (y + z) & = (x * y) + (x * z) \\
+(y + z) * x & = (y * x) + (z * x)
+\end{align*}
+Добавим к этой теории следующую аксиому:
+\[ x * x = x \]
+Докажите, что в этой расширенной теории выводимы следующие формулы:
+\begin{enumerate}
+\item $x * y = y * x$
+\item $x + x = 0$
+\end{enumerate}
+
+\end{enumerate}
+
+\end{document}
