@@ -97,27 +97,11 @@ struct Treap {
     }
 
     static void erase(Treap* &t, size_t pos) {
-//        std::cout << "Erasing: " << pos << std::endl;
-
         Treap *l = NULL, *r = NULL, *m = NULL;
         split(t, pos + 1, l, r);
-
-
-
         split(l, pos, l, m);
-
-//        std::cout << "LEFT = ";
-//        print(l);
-//        std::cout << "MID = ";
-//        print(m);
-//        std::cout << "RIGHT = ";
-//        print(r);
-
         merge(l, r, t);
         t->update();
-
-//        std::cout << "RESULT = ";
-//        print(t);
     }
 
     static void print(Treap*& t) {
@@ -176,19 +160,14 @@ int main() {
             node->data = (int) i;
             zeroPoses.erase(arr[i - 1]);
         } else {
-            auto it = lower_bound(zeroPoses.begin(), zeroPoses.end(), arr[i - 1]);
+            auto it = zeroPoses.lower_bound(arr[i - 1]);
             if (it != zeroPoses.end()) {
                 Treap::erase(treap, *it);
                 zeroPoses.erase(it);
             }
-//            Treap::print(treap);
             NODES[ndi].prior = rand();
             Treap::insert(treap, &NODES[ndi++], arr[i - 1]);
         }
-//        cout << "Treap after insert = ";
-//        Treap::print(treap);
-//        cout << endl;
-
     }
     cout << treap->size << endl;
     for (size_t i = 0; i < (size_t) treap->size; ++i) {
