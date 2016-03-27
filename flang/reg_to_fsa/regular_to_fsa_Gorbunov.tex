@@ -1,0 +1,327 @@
+\input{env.tex}
+\title{Домашнее задание №2 \\ Формальные языки. 5 курс. Весенний семестр.}
+\author{Горбунов Егор Алексеевич}
+
+\begin{document}
+\maketitle
+
+\FloatBarrier
+\section{Регулярное выражение $(a|b)^*$}
+
+	\begin{figure}[hbtb]
+	\centering
+	\begin{tikzpicture}[>={Stealth[width=6pt,length=9pt]}, accepting/.style={double distance = 2pt, outer sep = 1pt + \pgflinewidth}, shorten >=1pt, auto]
+	  \draw (207.0pt, -203.0pt)node[state, initial, initial text =](0){$q_{0}$};
+	  \draw (30.0pt, -278.0pt)node[state, accepting](1){$q_{1}$};
+	  \draw (367.0pt, -128.0pt)node[state](2){$q_{2}$};
+	  \draw (121.0pt, -369.0pt)node[state](3){$q_{3}$};
+	  \draw (422.0pt, -297.0pt)node[state](4){$q_{4}$};
+	  \draw (295.0pt, -421.0pt)node[state](5){$q_{5}$};
+	  \draw (221.0pt, -30.0pt)node[state](6){$q_{6}$};
+	  \draw (93.0pt, -161.0pt)node[state](7){$q_{7}$};
+	  \path[->] (3) edge node{$\lambda$}(1);
+	  \path[->] (4) edge node{a}(5);
+	  \path[->] (0) edge[bend left] node{$\lambda$}(1);
+	  \path[->] (1) edge[bend left] node{$\lambda$}(0);
+	  \path[->] (2) edge node{$\lambda$}(6);
+	  \path[->] (7) edge node{$\lambda$}(3);
+	  \path[->] (5) edge node{$\lambda$}(3);
+	  \path[->] (2) edge node{$\lambda$}(4);
+	  \path[->] (6) edge node{b}(7);
+	  \path[->] (0) edge node{$\lambda$}(2);
+	\end{tikzpicture}
+	\caption{($(a|b)^*$) Недетерминированный автомат}
+	\end{figure}
+	\begin{figure}[ht!]
+	\centering
+	\begin{tikzpicture}[>={Stealth[width=6pt,length=9pt]}, accepting/.style={double distance = 2pt, outer sep = 1pt + \pgflinewidth}, shorten >=1pt, auto]
+	  \draw (159.0pt, -168.0pt)node[state, initial, initial text =, accepting](0){$q_{0}$};
+	  \draw (161.0pt, -30.0pt)node[state, accepting](1){$q_{1}$};
+	  \draw (30.0pt, -111.0pt)node[state, accepting](2){$q_{2}$};
+	  \path[->] (1) edge[loop above] node{a}(1);
+	  \path[->] (2) edge[loop above] node{b}(2);
+	  \path[->] (0) edge node{a}(1);
+	  \path[->] (0) edge node{b}(2);
+	  \path[->] (2) edge[bend left] node{a}(1);
+	  \path[->] (1) edge[bend left] node{b}(2);
+	\end{tikzpicture}
+	\caption{($(a|b)^*$) Детерминированный автомат}
+	\end{figure}
+	\begin{figure}[ht!]
+	\centering
+	\begin{tikzpicture}[>={Stealth[width=6pt,length=9pt]}, accepting/.style={double distance = 2pt, outer sep = 1pt + \pgflinewidth}, shorten >=1pt, auto]
+	  \draw (30.0pt, -30.0pt)node[state, initial, initial text =, accepting](0){$q_{0}$};
+	  \path[->] (0) edge[loop above] node{a, b}(0);
+	\end{tikzpicture}
+	\caption{($(a|b)^*$) Минимальный автомат}
+	\end{figure}
+
+\FloatBarrier
+\section{Для списков. Тут автомат для числа заменен на $N$.}
+
+\begin{figure}[ht!]
+\centering
+\begin{tikzpicture}[scale = 0.7, >={Stealth[width=6pt,length=9pt]}, accepting/.style={double distance = 2pt, outer sep = 1pt + \pgflinewidth}, shorten >=1pt, auto]
+    \draw (30.0pt, -459.0pt)node[state, initial, initial text =](0){$q_{0}$};
+  \draw (378.0pt, -30.0pt)node[state, accepting](1){$q_{1}$};
+  \draw (156.0pt, -642.0pt)node[state](2){$q_{2}$};
+  \draw (197.0pt, -163.0pt)node[state](3){$q_{3}$};
+  \draw (76.0pt, -297.0pt)node[state](4){$q_{4}$};
+  \draw (569.0pt, -163.0pt)node[state](5){$q_{5}$};
+  \draw (320.0pt, -329.0pt)node[state](6){$q_{6}$};
+  \draw (196.0pt, -431.0pt)node[state](7){$q_{7}$};
+  \draw (264.0pt, -188.0pt)node[state](8){$q_{8}$};
+  \draw (459.0pt, -45.0pt)node[state](9){$q_{9}$};
+  \draw (411.0pt, -625.0pt)node[state](10){$q_{10}$};
+  \draw (483.0pt, -474.0pt)node[state](11){$q_{11}$};
+  \draw (690.0pt, -343.0pt)node[state](12){$q_{12}$};
+  \draw (646.0pt, -229.0pt)node[state](13){$q_{13}$};
+  \draw (553.0pt, -472.0pt)node[state](14){$q_{14}$};
+  \draw (563.0pt, -688.0pt)node[state](15){$q_{15}$};
+  \draw (341.0pt, -690.0pt)node[state](16){$q_{16}$};
+  \draw (298.0pt, -424.0pt)node[state](17){$q_{17}$};
+  \draw (466.0pt, -237.0pt)node[state](18){$q_{18}$};
+  \draw (561.0pt, -421.0pt)node[state](19){$q_{19}$};
+  \draw (322.0pt, -150.0pt)node[state](20){$q_{20}$};
+  \draw (236.0pt, -360.0pt)node[state](21){$q_{21}$};
+  \draw (343.0pt, -592.0pt)node[state](22){$q_{22}$};
+  \draw (471.0pt, -674.0pt)node[state](23){$q_{23}$};
+  \path[->] (3) edge node{$\lambda$}(1);
+  \path[->] (20) edge node{N}(21);
+  \path[->] (9) edge node{$\lambda$}(5);
+  \path[->] (19) edge node{$\lambda$}(13);
+  \path[->] (4) edge node{$\lambda$}(6);
+  \path[->] (8) edge node{]}(9);
+  \path[->] (0) edge node{$\lambda$}(2);
+  \path[->] (6) edge node{[}(7);
+  \path[->] (12) edge node{$\lambda$}(18);
+  \path[->] (18) edge node{$\lambda$}(20);
+  \path[->] (11) edge node{$\lambda$}(12);
+  \path[->] (12) edge[bend left] node{$\lambda$}(13);
+  \path[->] (13) edge[bend left] node{$\lambda$}(12);
+  \path[->] (0) edge node{$\lambda$}(4);
+  \path[->] (7) edge node{$\lambda$}(8);
+  \path[->] (22) edge node{;}(23);
+  \path[->] (13) edge node{$\lambda$}(14);
+  \path[->] (2) edge node{$\lambda$}(10);
+  \path[->] (10) edge node{[}(11);
+  \path[->] (14) edge node{N}(15);
+  \path[->] (15) edge node{$\lambda$}(16);
+  \path[->] (5) edge node{$\lambda$}(1);
+  \path[->] (16) edge node{]}(17);
+  \path[->] (21) edge node{$\lambda$}(22);
+  \path[->] (17) edge node{$\lambda$}(3);
+  \path[->] (23) edge node{$\lambda$}(19);
+	\end{tikzpicture}
+	\caption{(Списки) Недетерминированный автомат}
+	\end{figure}
+
+	\begin{figure}[ht!]
+	\centering
+	\begin{tikzpicture}[scale=0.6, >={Stealth[width=6pt,length=9pt]}, accepting/.style={double distance = 2pt, outer sep = 1pt + \pgflinewidth}, shorten >=1pt, auto]
+	  \draw (75.0pt, -279.0pt)node[state, initial, initial text =](0){$q_{0}$};
+	  \draw (30.0pt, -162.0pt)node[state](1){$q_{1}$};
+	  \draw (206.0pt, -184.0pt)node[state](2){$q_{2}$};
+	  \draw (40.0pt, -30.0pt)node[state, accepting](3){$q_{3}$};
+	  \draw (302.0pt, -81.0pt)node[state](4){$q_{4}$};
+	  \draw (343.0pt, -242.0pt)node[state, accepting](5){$q_{5}$};
+	  \path[->] (0) edge node{[}(1);
+	  \path[->] (2) edge[bend left] node{;}(4);
+	  \path[->] (1) edge node{]}(3);
+	  \path[->] (4) edge[bend left] node{N}(2);
+	  \path[->] (1) edge node{N}(2);
+	  \path[->] (2) edge node{]}(5);
+	\end{tikzpicture}
+	\caption{(Списки) Детерминированный автомат}
+	\end{figure}
+
+
+	\begin{figure}[ht!]
+	\centering
+	\begin{tikzpicture}[scale=0.6, >={Stealth[width=6pt,length=9pt]}, accepting/.style={double distance = 2pt, outer sep = 1pt + \pgflinewidth}, shorten >=1pt, auto]
+	  \draw (315.0pt, -30.0pt)node[state](0){$q_{0}$};
+	  \draw (30.0pt, -87.0pt)node[state, initial, initial text =](1){$q_{1}$};
+	  \draw (279.0pt, -170.0pt)node[state](2){$q_{2}$};
+	  \draw (119.0pt, -200.0pt)node[state](3){$q_{3}$};
+	  \draw (220.0pt, -304.0pt)node[state, accepting](4){$q_{4}$};
+	  \path[->] (3) edge node{N}(2);
+	  \path[->] (3) edge node{]}(4);
+	  \path[->] (0) edge[bend left] node{N}(2);
+	  \path[->] (2) edge[bend left] node{;}(0);
+	  \path[->] (1) edge node{[}(3);
+	  \path[->] (2) edge node{]}(4);
+	\end{tikzpicture}
+	\caption{(Списки) Минимальный автомат}
+	\end{figure}
+
+\FloatBarrier
+\section{Для идентификаторов. Тут вместо маленьких латинских --- $l$, больших --- $L$, а цифр --- $d$.}
+	\begin{figure}[ht!]
+	\centering
+	\begin{tikzpicture}[scale=0.7, >={Stealth[width=6pt,length=9pt]}, accepting/.style={double distance = 2pt, outer sep = 1pt + \pgflinewidth}, shorten >=1pt, auto]
+  \draw (249.0pt, -244.0pt)node[state, initial, initial text =](0){$q_{0}$};
+  \draw (1073.0pt, -619.0pt)node[state, accepting](1){$q_{1}$};
+  \draw (313.0pt, -407.0pt)node[state](2){$q_{2}$};
+  \draw (655.0pt, -448.0pt)node[state](3){$q_{3}$};
+  \draw (832.0pt, -475.0pt)node[state](4){$q_{4}$};
+  \draw (1028.0pt, -490.0pt)node[state](5){$q_{5}$};
+  \draw (249.0pt, -528.0pt)node[state](6){$q_{6}$};
+  \draw (456.0pt, -662.0pt)node[state](7){$q_{7}$};
+  \draw (571.0pt, -202.0pt)node[state](8){$q_{8}$};
+  \draw (693.0pt, -302.0pt)node[state](9){$q_{9}$};
+  \draw (484.0pt, -386.0pt)node[state](10){$q_{10}$};
+  \draw (461.0pt, -520.0pt)node[state](11){$q_{11}$};
+  \draw (761.0pt, -343.0pt)node[state](12){$q_{12}$};
+  \draw (1289.0pt, -375.0pt)node[state](13){$q_{13}$};
+  \draw (916.0pt, -282.0pt)node[state](14){$q_{14}$};
+  \draw (1035.0pt, -255.0pt)node[state](15){$q_{15}$};
+  \draw (904.0pt, -392.0pt)node[state](16){$q_{16}$};
+  \draw (1035.0pt, -387.0pt)node[state](17){$q_{17}$};
+  \draw (813.0pt, -108.0pt)node[state](18){$q_{18}$};
+  \draw (1080.0pt, -87.0pt)node[state](19){$q_{19}$};
+  \draw (884.0pt, -202.0pt)node[state](20){$q_{20}$};
+  \draw (1091.0pt, -196.0pt)node[state](21){$q_{21}$};
+  \path[->] (0) edge node{$\lambda$}(2);
+  \path[->] (17) edge node{$\lambda$}(13);
+  \path[->] (7) edge node{$\lambda$}(3);
+  \path[->] (9) edge node{$\lambda$}(3);
+  \path[->] (21) edge node{$\lambda$}(13);
+  \path[->] (12) edge node{$\lambda$}(18);
+  \path[->] (6) edge node{\_}(7);
+  \path[->] (5) edge node{$\lambda$}(1);
+  \path[->] (8) edge node{l}(9);
+  \path[->] (12) edge node{$\lambda$}(14);
+  \path[->] (3) edge node{$\lambda$}(4);
+  \path[->] (15) edge node{$\lambda$}(13);
+  \path[->] (2) edge node{$\lambda$}(6);
+  \path[->] (10) edge node{L}(11);
+  \path[->] (18) edge node{L}(19);
+  \path[->] (2) edge node{$\lambda$}(10);
+  \path[->] (4) edge[bend left] node{$\lambda$}(5);
+  \path[->] (5) edge[bend left] node{$\lambda$}(4);
+  \path[->] (12) edge node{$\lambda$}(20);
+  \path[->] (20) edge node{d}(21);
+  \path[->] (16) edge node{l}(17);
+  \path[->] (14) edge node{\_}(15);
+  \path[->] (4) edge node{$\lambda$}(12);
+  \path[->] (13) edge node{$\lambda$}(5);
+  \path[->] (11) edge node{$\lambda$}(3);
+  \path[->] (12) edge node{$\lambda$}(16);
+  \path[->] (2) edge node{$\lambda$}(8);
+  \path[->] (19) edge node{$\lambda$}(13);
+\end{tikzpicture}
+	\caption{(Идентификаторы) Недетерминированный автомат}
+	\end{figure}
+
+	\begin{figure}[ht!]
+	\centering
+	\begin{tikzpicture}[scale = 0.7, >={Stealth[width=6pt,length=9pt]}, accepting/.style={double distance = 2pt, outer sep = 1pt + \pgflinewidth}, shorten >=1pt, auto]
+  \draw (537.0pt, -67.0pt)node[state, initial, initial text =](0){$q_{0}$};
+  \draw (329.0pt, -400.0pt)node[state, accepting](1){$q_{1}$};
+  \draw (534.0pt, -222.0pt)node[state, accepting](2){$q_{2}$};
+  \draw (1286.0pt, -334.0pt)node[state, accepting](3){$q_{3}$};
+  \draw (741.0pt, -210.0pt)node[state, accepting](4){$q_{4}$};
+  \draw (766.0pt, -392.0pt)node[state, accepting](5){$q_{5}$};
+  \draw (528.0pt, -656.0pt)node[state, accepting](6){$q_{6}$};
+  \draw (1012.0pt, -430.0pt)node[state, accepting](7){$q_{7}$};
+  \path[->] (3) edge node{L}(4);
+  \path[->] (7) edge[bend left] node{d}(5);
+  \path[->] (0) edge node{\_}(3);
+  \path[->] (6) edge[bend left] node{d}(5);
+  \path[->] (4) edge[loop above] node{L}(4);
+  \path[->] (2) edge node{\_}(7);
+  \path[->] (5) edge[bend left] node{l}(6);
+  \path[->] (1) edge node{\_}(7);
+  \path[->] (3) edge node{l}(6);
+  \path[->] (1) edge node{d}(5);
+  \path[->] (2) edge node{d}(5);
+  \path[->] (5) edge[bend left] node{L}(4);
+  \path[->] (4) edge[bend left] node{l}(6);
+  \path[->] (6) edge[bend left] node{\_}(7);
+  \path[->] (0) edge node{l}(2);
+  \path[->] (7) edge[loop above] node{\_}(7);
+  \path[->] (5) edge[loop above] node{d}(5);
+  \path[->] (3) edge node{\_}(7);
+  \path[->] (1) edge node{L}(4);
+  \path[->] (2) edge node{L}(4);
+  \path[->] (4) edge[bend left] node{\_}(7);
+  \path[->] (6) edge[loop above] node{l}(6);
+  \path[->] (7) edge[bend left] node{l}(6);
+  \path[->] (4) edge[bend left] node{d}(5);
+  \path[->] (7) edge[bend left] node{L}(4);
+  \path[->] (6) edge[bend left] node{L}(4);
+  \path[->] (3) edge node{d}(5);
+  \path[->] (1) edge node{l}(6);
+  \path[->] (5) edge[bend left] node{\_}(7);
+  \path[->] (0) edge node{L}(1);
+  \path[->] (2) edge node{l}(6);
+	\end{tikzpicture}
+	\caption{(Идентификаторы) Детерминированный автомат}
+	\end{figure}
+
+
+	\begin{figure}[ht!]
+	\centering
+	\begin{tikzpicture}[scale=0.6, >={Stealth[width=6pt,length=9pt]}, accepting/.style={double distance = 2pt, outer sep = 1pt + \pgflinewidth}, shorten >=1pt, auto]
+  \draw (115.0pt, -23.0pt)node[state, initial, initial text =](0){$q_{0}$};
+  \draw (243.0pt, -24.0pt)node[state, accepting](1){$q_{1}$};
+  \path[->] (0) edge node{L, l, \_}(1);
+  \path[->] (1) edge[loop above] node{d, L, l, \_}(1);
+	\end{tikzpicture}
+	\caption{(Идентификаторы) Минимальный автомат}
+	\end{figure}
+
+
+\FloatBarrier
+\section{Для чисел. Тут вместо знака $+$ --- p, вместо $-$ --- m, а вместо $\varepsilon$ --- $\_$.}
+	\begin{figure}[ht!]
+	\centering
+	\begin{tikzpicture}[scale=0.6, >={Stealth[width=6pt,length=9pt]}, accepting/.style={double distance = 2pt, outer sep = 1pt + \pgflinewidth}, shorten >=1pt, auto]
+	\input{num_nfa}
+\end{tikzpicture}
+	\caption{(Числа) Недетерминированный автомат}
+	\end{figure}
+
+	\begin{figure}[ht!]
+	\centering
+	\begin{tikzpicture}[scale = 0.4, >={Stealth[width=6pt,length=9pt]}, accepting/.style={double distance = 2pt, outer sep = 1pt + \pgflinewidth}, shorten >=1pt, auto]
+	\input{num_dfa}
+	\end{tikzpicture}
+	\caption{(Числа) Детерминированный автомат}
+	\end{figure}
+
+
+	\begin{figure}[ht!]
+	\centering
+	\begin{tikzpicture}[scale=0.7, >={Stealth[width=6pt,length=9pt]}, accepting/.style={double distance = 2pt, outer sep = 1pt + \pgflinewidth}, shorten >=1pt, auto]
+	  \draw (1244.0pt, -201.0pt)node[state](0){$q_{0}$};
+  \draw (794.0pt, 64.0pt)node[state](1){$q_{1}$};
+  \draw (717.0pt, -201.0pt)node[state](2){$q_{2}$};
+  \draw (1094.0pt, 7.0pt)node[state, initial, initial text =](3){$q_{3}$};
+  \draw (735.0pt, -67.0pt)node[state](4){$q_{4}$};
+  \draw (574.0pt, -276.0pt)node[state](5){$q_{5}$};
+  \draw (939.0pt, -253.0pt)node[state, accepting](6){$q_{6}$};
+  \draw (520.0pt, 30.0pt)node[state, accepting](7){$q_{7}$};
+  \draw (435.0pt, -273.0pt)node[state, accepting](8){$q_{8}$};
+  \path[->] (4) edge node{p, \_}(6);
+  \path[->] (4) edge node{.}(7);
+  \path[->] (5) edge node{0}(6);
+  \path[->] (5) edge node{8, 9, 2, 3, 1, 6, 7, 4, 5}(8);
+  \path[->] (2) edge node{\_}(6);
+  \path[->] (4) edge[loop above] node{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}(4);
+  \path[->] (7) edge[loop above] node{0}(7);
+  \path[->] (8) edge[loop above] node{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}(8);
+  \path[->] (0) edge node{0}(6);
+  \path[->] (3) edge node{.}(1);
+  \path[->] (4) edge node{m}(5);
+  \path[->] (3) edge node{m}(0);
+  \path[->] (1) edge node{0}(7);
+  \path[->] (4) edge node{e}(2);
+  \path[->] (3) edge node{p, \_}(6);
+  \path[->] (3) edge node{9, 8, 5, 4, 7, 6, 1, 3, 2}(4);
+	\end{tikzpicture}
+	\caption{(Числа) Минимальный автомат}
+	\end{figure}
+
+
+\end{document}
