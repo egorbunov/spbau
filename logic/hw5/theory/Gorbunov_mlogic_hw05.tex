@@ -1,0 +1,366 @@
+\input{env.tex}
+\title{Математическая логика. Домашнее задание №5}
+\author{Горбунов Егор Алексеевич}
+
+\begin{document}
+\maketitle
+
+\begin{task}[1]
+	Между правилами вывода логики и конструкциями в лямбда исчислении существует естественная биекция.
+    Например, $\to\!\!I$ соответствует абстракции, а $\to\!\!E$ соответствует аппликации.
+    Запишите эту биекцию для остальных правил и конструкций.
+\end{task}
+
+\begin{solution}
+\begin{enumerate}
+
+\item 
+\AxiomC{}
+\RightLabel{, $(x : \varphi) \in \Gamma$}
+\UnaryInfC{$\Gamma \vdash x : \varphi$}
+\DisplayProof
+\qquad
+$\eqsim$
+\qquad
+\AxiomC{}
+\RightLabel{(var)}
+\UnaryInfC{$\phi_1, \ldots, \phi_n \vdash \phi_i$}
+\DisplayProof
+
+\item 
+\AxiomC{$\Gamma \vdash b : \bot$}
+\UnaryInfC{$\Gamma \vdash absurd_\varphi\,b : \varphi$}
+\DisplayProof
+\qquad
+$\eqsim$
+\qquad
+\AxiomC{$\Gamma \vdash \bot$}
+\RightLabel{ $\bot E$}
+\UnaryInfC{$\Gamma \vdash \varphi$}
+\DisplayProof
+
+\item
+\AxiomC{$\Gamma, x : \varphi \vdash b : \psi$}
+\UnaryInfC{$\Gamma \vdash \lambda x.\,b : \varphi \to \psi$}
+\DisplayProof
+\qquad
+$\eqsim$
+\qquad
+\AxiomC{$\Gamma, \varphi \vdash \psi$}
+\RightLabel{ $\to I$}
+\UnaryInfC{$\Gamma \vdash \varphi \to \psi$}
+\DisplayProof
+
+\item
+\AxiomC{$\Gamma \vdash f : \varphi \to \psi$}
+\AxiomC{$\Gamma \vdash a : \varphi$}
+\BinaryInfC{$\Gamma \vdash f\,a : \psi$}
+\DisplayProof
+\qquad
+$\eqsim$
+\qquad
+\AxiomC{$\Gamma \vdash \varphi \to \psi$}
+\AxiomC{$\Gamma \vdash \varphi$}
+\RightLabel{ $\to E$}
+\BinaryInfC{$\Gamma \vdash \psi$}
+\DisplayProof
+
+\item
+\AxiomC{$\Gamma \vdash a : \varphi$}
+\AxiomC{$\Gamma \vdash b : \psi$}
+\BinaryInfC{$\Gamma \vdash (a,b) : \varphi \times \psi$}
+\DisplayProof
+\qquad
+$\eqsim$
+\qquad
+\AxiomC{$\Gamma \vdash \varphi$}
+\AxiomC{$\Gamma \vdash \psi$}
+\RightLabel{ $\land I$}
+\BinaryInfC{$\Gamma \vdash \varphi \land \psi$}
+\DisplayProof
+
+\item
+\AxiomC{$\Gamma \vdash p : \varphi \times \psi$}
+\UnaryInfC{$\Gamma \vdash fst\,p : \varphi$}
+\DisplayProof
+\qquad
+$\eqsim$
+\qquad
+\AxiomC{$\Gamma \vdash \varphi \land \psi$}
+\RightLabel{ $\land E_1$}
+\UnaryInfC{$\Gamma \vdash \varphi$}
+\DisplayProof
+
+\item
+\AxiomC{$\Gamma \vdash p : \varphi \times \psi$}
+\UnaryInfC{$\Gamma \vdash snd\,t : \psi$}
+\DisplayProof
+\qquad
+$\eqsim$
+\qquad
+\AxiomC{$\Gamma \vdash \varphi \land \psi$}
+\RightLabel{ $\land E_2$}
+\UnaryInfC{$\Gamma \vdash \psi$}
+\DisplayProof
+
+\item
+\AxiomC{$\Gamma \vdash a : \varphi$}
+\UnaryInfC{$\Gamma \vdash Left\,a : \varphi \amalg \psi$}
+\DisplayProof
+\qquad
+$\eqsim$
+\qquad
+\AxiomC{$\Gamma \vdash \varphi$}
+\RightLabel{ $\lor I_1$}
+\UnaryInfC{$\Gamma \vdash \varphi \lor \psi$}
+\DisplayProof
+
+\item
+\AxiomC{$\Gamma \vdash b : \psi$}
+\UnaryInfC{$\Gamma \vdash Right\,b : \varphi \amalg \psi$}
+\DisplayProof
+\qquad
+$\eqsim$
+\qquad
+\AxiomC{$\Gamma \vdash \psi$}
+\RightLabel{ $\lor I_2$}
+\UnaryInfC{$\Gamma \vdash \varphi \lor \psi$}
+\DisplayProof
+
+\item
+\AxiomC{$\Gamma \vdash e : \varphi \amalg \psi$}
+\AxiomC{$\Gamma, x : \varphi \vdash a : \chi$}
+\AxiomC{$\Gamma, y : \psi \vdash b : \chi$}
+\TrinaryInfC{$\Gamma \vdash \mathbf{case}\,e\,\mathbf{of}\,\{\,Left(x) \to a; Right(y) \to b\,\} : \chi$}
+\DisplayProof
+$\eqsim$
+\AxiomC{$\Gamma \vdash \varphi \lor \psi$}
+\AxiomC{$\Gamma, \varphi \vdash \chi$}
+\AxiomC{$\Gamma, \psi \vdash \chi$}
+\RightLabel{ $\lor E$}
+\TrinaryInfC{$\Gamma \vdash \chi$}
+\DisplayProof
+\end{enumerate}
+\end{solution}
+
+\begin{task}[2]
+	Приведите для следующих теорем деревья вывода и термы, доказывающие их:
+	\begin{enumerate}
+		\item $P \to P$
+		\item $P \to (P \to Q) \to Q$
+		\item $P \land Q \to P \lor Q$
+		\item $(P \lor Q) \land R \to (P \land R) \lor (Q \land R)$
+	\end{enumerate}
+\end{task}
+\begin{solution}
+\begin{enumerate}
+\item
+\AxiomC{}
+\RightLabel{(var)}
+\UnaryInfC{$P \vdash P$}
+\RightLabel{ $\to I$}
+\UnaryInfC{$\vdash P \to P$}
+\DisplayProof
+
+Терм: $\lambda x.x,\ x:P$
+\vspace{20pt}
+\item
+\AxiomC{}
+\RightLabel{(var)}
+\UnaryInfC{$P, (P \to Q) \vdash P \to Q$}
+\AxiomC{}
+\RightLabel{(var)}
+\UnaryInfC{$P, (P \to Q) \vdash P$}
+\RightLabel{$\to E$}
+\BinaryInfC{$P, (P \to Q) \vdash Q$}
+\RightLabel{$\to I$}
+\UnaryInfC{$P \vdash (P \to Q) \to Q$}
+\RightLabel{$\to I$}
+\UnaryInfC{$\vdash P \to (P \to Q) \to Q$}
+\DisplayProof
+
+Терм: 
+\[ 
+	\lambda x.\lambda f.f\ x,\ x:P, f:P \to Q
+\]
+\vspace{20pt}
+\item
+\AxiomC{}
+\RightLabel{(var)}
+\UnaryInfC{$P \land Q \vdash P \land Q$}
+\RightLabel{$\land E_1$}
+\UnaryInfC{$P \land Q \vdash P$}
+\RightLabel{$\lor I_2$}
+\UnaryInfC{$P \land Q \vdash P \lor Q$}
+\RightLabel{ $\to I$}
+\UnaryInfC{$\vdash P \land Q \to P \lor Q$}
+\DisplayProof
+
+Терм: 
+\[
+	\lambda p.Left(fst\ p),\ x:(P, Q)
+\]
+\vspace{20pt}
+
+\item
+\AxiomC{}
+\RightLabel{\scriptsize (var)}
+\UnaryInfC{$\scriptstyle \Gamma \vdash (P \lor Q) \land R$}
+\RightLabel{$\scriptstyle \land E_1$}
+\UnaryInfC{$\scriptstyle \Gamma \vdash P \lor Q$}
+\AxiomC{}
+\RightLabel{\scriptsize (var)}
+\UnaryInfC{$\scriptstyle \Gamma, P \vdash P$}
+\AxiomC{}
+\RightLabel{\scriptsize (var)}
+\UnaryInfC{$\scriptstyle \Gamma, P \vdash (P \lor Q) \land R$}
+\RightLabel{$\scriptstyle \land E_2$}
+\UnaryInfC{$\scriptstyle \Gamma, P \vdash R$}
+\RightLabel{$\scriptstyle \land I$}
+\BinaryInfC{$\scriptstyle \Gamma, P \vdash P \land R$}
+\RightLabel{$\scriptstyle \lor I_1$}
+\UnaryInfC{$\scriptstyle \Gamma, P \vdash (P \land R) \lor (Q \land R)$}
+\AxiomC{}
+\RightLabel{\scriptsize (var)}
+\UnaryInfC{$\scriptstyle \Gamma, Q \vdash Q$}
+\AxiomC{}
+\RightLabel{\scriptsize (var)}
+\UnaryInfC{$\scriptstyle \Gamma, Q \vdash (P \lor Q) \land R$}
+\RightLabel{$\scriptstyle \land E_2$}
+\UnaryInfC{$\scriptstyle \Gamma, Q \vdash R$}
+\RightLabel{$\scriptstyle \land I$}
+\BinaryInfC{$\scriptstyle \Gamma, Q \vdash Q \land R$}
+\RightLabel{$\scriptstyle \lor I_2$}
+\UnaryInfC{$\scriptstyle \Gamma, Q \vdash (P \land R) \lor (Q \land R)$}
+\RightLabel{$\lor E$}
+\TrinaryInfC{$(P \lor Q) \land R \vdash (P \land R) \lor (Q \land R)$}
+\RightLabel{$\to I$}
+\UnaryInfC{$(P \lor Q) \land R \to (P \land R) \lor (Q \land R)$}
+\DisplayProof
+
+Терм:
+\[
+	\lambda t.\mathbf{case}\ fst\ t\ \mathbf{of} \{ Left(p) \to Left\ (p, snd\ t); Right(q) \to Right\ (q,\ snd\ t)\}
+\]
+Где $t:(P \lor Q) \land R,\ p:P,\ q:Q$.
+\end{enumerate}
+\xqed
+\end{solution}
+
+\begin{task}[3]
+Приведите для следующих теорем доказывающие их термы:
+	\begin{enumerate}
+		\item $(P \land R) \lor (Q \land R) \to (P \lor Q) \land R$
+		\item $(P \lor Q) \lor R \to P \lor (Q \lor R)$
+		\item $((((P \to Q) \to P) \to P) \to Q) \to Q$
+	\end{enumerate}
+\end{task}
+\begin{solution}
+\begin{enumerate}
+\item $(P \land R) \lor (Q \land R) \to (P \lor Q) \land R$
+\begin{align*}
+	\lambda e.\mathbf{case}\ e\ \mathbf{of}\ \{ &Left(p) \to (Left\ (fst\ p), snd\ p); \\
+	                                            &Right(q) \to (Right\ (fst\ p), snd\ q) \}
+\end{align*}
+
+\item $(P \lor Q) \lor R \to P \lor (Q \lor R)$
+\begin{align*}
+	\lambda e.\mathbf{case}\ e\ \mathbf{of}\ \{ &Left(s) \to \mathbf{case}\ s\ \mathbf{of}\ \{  \\
+											   &\qquad Left(p) \to Left\ p; \\
+	                                           &\qquad Right(q) \to Right\ (Left\ q) \}; \\
+	                                            &Right(r) \to Right\ (Right\ r)  \}
+\end{align*}
+
+\item $((((P \to Q) \to P) \to P) \to Q) \to Q$
+\begin{align*}
+	\lambda f.f\ (\lambda g.g\ (\lambda h.f\ (\lambda z.h)))
+\end{align*}
+Типы получаются такие:
+\[
+\begin{array}{l}
+	f : ((((P \to Q) \to P) \to P) \to Q)\\
+	g : (P \to Q) \to P\\
+    h : P\\
+    z : (P \to Q) \to P
+\end{array}
+\]
+\end{enumerate}
+\xqed
+\end{solution}
+
+\begin{task}[4]
+Добавим в нашей логике новую связку $\leftrightarrow$, удовлетворяющую следующим условиям:
+	\begin{align*}
+		\top \leftrightarrow \top & = \top \\
+		\top \leftrightarrow \bot & = \bot \\
+		\bot \leftrightarrow \top & = \bot \\
+		\bot \leftrightarrow \bot & = \top
+	\end{align*}
+	\begin{enumerate}
+		\item Опишите правила введения и элиминации для этой связки.
+		    Они не должны использовать никакие другие связки.
+		\item Опишите аналогичные конструкции и правила типизации для них в лямбда исчислении.
+		\item Приведите терм, доказывающий формулу $(P \lor Q \to R) \leftrightarrow (P \to R) \land (Q \to R)$.
+	\end{enumerate}
+\end{task}
+\begin{solution}
+\begin{enumerate}
+	\item
+	Введение:
+	\begin{center}
+	\AxiomC{$\Gamma, \varphi \vdash \psi$}
+	\AxiomC{$\Gamma, \psi \vdash \varphi$}
+	\RightLabel{ $\leftrightarrow I$}
+	\BinaryInfC{$\Gamma \vdash \varphi \leftrightarrow \psi$}
+	\DisplayProof
+	\end{center}
+	Иллиминация:
+	\begin{center}
+	\AxiomC{$\Gamma \vdash \varphi \leftrightarrow \psi$}
+	\AxiomC{$\Gamma \vdash \varphi$}
+	\RightLabel{ $\leftrightarrow E_1$}
+	\BinaryInfC{$\Gamma \vdash \psi$}
+	\DisplayProof
+	\qquad
+	\AxiomC{$\Gamma \vdash \varphi \leftrightarrow \psi$}
+	\AxiomC{$\Gamma \vdash \psi$}
+	\RightLabel{ $\leftrightarrow E_2$}
+	\BinaryInfC{$\Gamma \vdash \varphi$}
+	\DisplayProof
+	\end{center}
+	\vspace{20pt}
+
+	\item Кажется, что лямбда-аналогом может служить пара лямбда-абстракций. Введению соответствует правило типизации:
+	\begin{center}
+	\AxiomC{$\Gamma, a:\varphi \vdash b:\psi$}
+	\AxiomC{$\Gamma, c:\psi \vdash d:\varphi$}
+	\BinaryInfC{$\Gamma \vdash (\lambda a . b, \lambda c . d) : \varphi \to \psi \times \psi \to \varphi$}
+	\DisplayProof
+	\end{center}
+	Иллиминациям соответствуют правила типизации:
+	\begin{center}
+	\AxiomC{$\Gamma\vdash p:\varphi \to \psi \times \psi \to \varphi$}
+	\AxiomC{$\Gamma \vdash a:\varphi$}
+	\BinaryInfC{$\Gamma \vdash (fst\ p)\ a : \psi$}
+	\DisplayProof
+	\qquad
+	\AxiomC{$\Gamma\vdash p:\varphi \to \psi \times \psi \to \varphi$}
+	\AxiomC{$\Gamma \vdash b:\psi$}
+	\BinaryInfC{$\Gamma \vdash (snd\ p)\ b : \varphi$}
+	\DisplayProof
+	\end{center}
+	\vspace{20pt}
+
+	\item Терм, доказывающий $(P \lor Q \to R) \leftrightarrow (P \to R) \land (Q \to R)$:
+	\begin{align*}
+		( \\
+			& \lambda f. (\lambda p . f\ (Left\ p), \lambda q. f\ (Right\ q))\\
+			& , \\
+			& \lambda p . \lambda e . \mathbf{case}\ e\ \mathbf{of} \{ Left(x) \to (fst\ p)\ x, Right(y) \to (snd\ p)\ y\}\\
+		)
+	\end{align*}
+
+
+\end{enumerate}
+\end{solution}
+\end{document}

@@ -203,6 +203,7 @@ int main() {
 
 	int n; // number of cities
 	int m; // number of roads
+	int root; // conference city
 
 	std::cin >> n >> m >> root;
     root--; // all in [0, ...) !
