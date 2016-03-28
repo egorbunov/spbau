@@ -1,0 +1,46 @@
+%!TEX program = xelatex
+\documentclass[titlepage]{article}
+
+\usepackage[main = russian, english]{babel}
+\usepackage[no-math]{fontspec}
+\usepackage{xunicode}
+\usepackage{xltxtra}
+\usepackage[top=0.5in, bottom=0.7in, left=0.6in, right=0.6in]{geometry}
+\usepackage[svgnames]{xcolor}
+\defaultfontfeatures{Mapping=tex-text, Scale=MatchLowercase}
+\newfontfamily{\cyrillicfont}{Minion Pro}
+\setmainfont{Minion Pro}
+\setromanfont{Minion Pro}
+
+\usepackage{graphicx} % Required for box manipulation
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+
+\begin{document}
+\input{title}
+
+% 1
+\input{present_simple}
+% 2
+\input{past_simple}
+% 3
+\input{future_simple}
+% 4
+\input{present_perfect}
+% 5
+\input{past_perfect}
+% 6
+\input{present_continuous}
+% 7
+\input{past_continuous}
+% 8
+\input{future_continuous}
+% 9
+\input{present_perfect_continuous}
+% 10
+\input{past_perfect_continuous}
+
+\end{document}

@@ -1,0 +1,23 @@
+\newcommand*{\rotrt}[1]{\rotatebox{90}{#1}} % Command to rotate right 90 degrees
+\newcommand*{\rotlft}[1]{\rotatebox{-90}{#1}} % Command to rotate left 90 degrees
+
+\begin{titlepage}
+\begin{center}
+
+\def\CP{\textbf{\Huge English Tenses}} % Title
+\settowidth{\unitlength}{\CP} % Set the width of the curly brackets to the width of the title
+
+{\qquad}\\[10cm]
+{\color{LightGoldenrod}\resizebox*{\unitlength}{\baselineskip}{\rotrt{$\}$}}} \\[\baselineskip] % Print top curly bracket
+\textcolor{Sienna}{\CP} \\[\baselineskip] % Print title
+{\color{RosyBrown}\Large Notes} \\ % Tagline or further description
+{\color{LightGoldenrod}\resizebox*{\unitlength}{\baselineskip}{\rotlft{$\}$}}} % Print bottom curly bracket
+
+
+\vfill % Whitespace between the title and the author name
+{\Large\textbf{}}\\ % Author name
+\vfill % Whitespace between the author name and the publisher logo
+2016 % Year published
+
+\end{center} 
+\end{titlepage}
