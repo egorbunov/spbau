@@ -1,0 +1,74 @@
+%!TEX program = xelatex
+\input{settings}
+
+\newcommand{\kw}[1]{\text{\textbf{\color{blue}{#1}}}}
+
+\title{Операции над треками}
+\author{Егор Горбунов}
+
+\begin{document}
+\maketitle
+
+\section*{Описание операций и языка}
+\begin{itemize}
+	\item \textbf{\underline{Арифметические операции}} 
+	\vspace{3pt}
+	\\\emph{Вариант №1}: $a \in \mathbb{R}, X \in \mathbb{R}^n, Y \in \mathbb{R}^n$. Кодомен всех операций --- $\mathbb{R}^n$.
+		\begin{itemize}
+			\item $X \diamond Y := \xparen{x_1 \diamond y_1, x_2 \diamond y_2, \ldots, x_n \diamond y_n}, \diamond \in \xbrace{+, -, \cdot, /}$
+			\item $a \diamond Y := \xparen{a \diamond y_1, a \diamond y_2, \ldots, a \diamond y_n}, \diamond \in \xbrace{\text{\textasciicircum}, +, -, \cdot, /}$
+			\item $X \diamond a := \xparen{x_1 \diamond a, x_2 \diamond a, \ldots, x_n \diamond a}, \diamond \in \xbrace{\text{\textasciicircum}, +, -, \cdot, /}$
+		\end{itemize}
+	Тут возникает вопрос о том, что делать с отрицательными значениями: имеет ли смысл их отрисовывать в браузере? имеют ли вообще смысл операция <<$-$>> и домножение на отрицательное число? Мне, кажется, что они не нужны и вполне заменяются предикатами и условным оператором, описанными ниже.
+	\vspace{3pt}
+	\\\emph{Вариант №2}: Всё то же, что и выше, но убираем операцию <<$-$>> и теперь $a \in \mathbb{R}_+$, а $X, Y \in \mathbb{R}_+^n$
+	\\\emph{Вариант №3}: операции все, что в 1-ом варианте, но: $x \diamond y \rightarrow \max{\xparen{0, x \diamond y}}$
+	\vspace{5pt}
+	\\Тут нужно решить, но я склоняюсь ко 2-ому варианту.
+	\item \textbf{\underline{Предикаты}} Тут всё понятно. Пусть есть $X \in \mathbb{R}^n, Y \in \mathbb{R}^n$, тогда:
+	\begin{align*}
+		&\diamond: \xparen{\mathbb{R}^n, \mathbb{R}^n} \rightarrow \xbrace{0, 1}^n \\
+		X &\diamond Y = \xparen{x_1 \diamond y_1, x_2 \diamond y_2, \ldots, x_n \diamond y_n}\\
+		&\diamond \in \xbrace{ <, >, \leqslant, \geqslant, =, \neq }
+	\end{align*}
+	\item \textbf{\underline{Связки на предикатах}} Опять же, ничего необычного: $A, B \in \xbrace{0, 1}^n$, тогда определяем:
+	\[
+		A \kw{ OR } B,\ A \kw{ AND } B,\ \kw{NOT } A \in  \xbrace{0, 1}^n
+	\]
+	\item \textbf{\underline{Условный оператор}} Пускай теперь $P \in \xbrace{0, 1}^n, X \in \mathbb{R}^n, Y \in \mathbb{R}^n, a \in \mathbb{R}, b \in \mathbb{R}$, тогда полезна следующая операция:
+	\begin{align*}
+		X \kw{ where } P \kw{ else } Y &:= P \cdot X + (1 - P) \cdot Y \\
+		a \kw{ where } P \kw{ else } Y &:= P \cdot a + (1 - P) \cdot Y \\
+		X \kw{ where } P \kw{ else } b &:= P \cdot X + (1 - P) \cdot b \\
+		a \kw{ where } P \kw{ else } b &:= P \cdot a + (1 - P) \cdot b
+	\end{align*}
+	С помощью этой операции легко выражаются всевозможные фильтры.
+	\\\emph{PS: тут можно поспорить про синтаксис}.
+	\item \textbf{\underline{Псевдонимы для треков}} Называния треков довольно длинные, поэтому полезно будет в запросах уметь ссылаться на конкретные треки через псевдонимы. Предлагаю описывать псевдонимы в самом начале запроса (как минимум потому, что autocompletion сможет их подхватить) так:
+	\[
+		x = longTrackName1, \ldots, y = longTrackNameK \kw{ in } Expression
+	\]
+	\item \textbf{\underline{Имя для нового трека}} Результатом каждого запроса $Q$ является новый трек, пользователь должен иметь возможность задать ему имя. Это будет делаться так:
+	\[
+		newTrack \kw{ <- } Q
+	\]
+	Если имя не указано, то оно будет сгенерировано или записано с именем lastResult, что перепишет предыдущий неименованый результат.
+
+	\item \textbf{\underline{Изменение размера корзины}} Кажется, что в силу серьёзности данных, это нужно делать аккуратно. Совсем честно мы можем изменить число корзин гистограммы (трека) с $n$ на $m$ только если $n > m$ и $m | n$.
+\end{itemize}
+
+\subsection*{Примеры использования}
+\begin{lstlisting}
+newTrack <- track1 where (track1 >= track2 AND track1 <= track2 + 100) else track2
+
+newTrack <- X = track1, Y = track2 in (X where X > Y else Y)
+
+newTrack <- 1 / (2 ^ track1)
+
+newTrack <- X = track1 in (X where track2 > 20 else 0)
+
+
+\end{lstlisting}
+
+
+\end{document}

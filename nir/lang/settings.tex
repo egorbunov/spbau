@@ -1,0 +1,64 @@
+\documentclass[a4paper, 12pt]{article}
+
+\usepackage[no-math]{fontspec}
+\usepackage[main = russian, english]{babel}
+\usepackage{xunicode}
+\usepackage{xltxtra}
+\usepackage{mathpazo}
+\defaultfontfeatures{Mapping=tex-text, Scale=MatchLowercase}
+\setmainfont{Linux Libertine O}
+\setmonofont[Mapping=tex-text]{Liberation Mono}
+% \newfontfamily{\cyrillicfont}{TeX Gyre Pagella}
+% \setromanfont{TeX Gyre Pagella}
+
+% page props:
+% \linespread{1.2}
+\usepackage[top=0.5in, bottom=0.7in, left=0.6in, right=0.6in]{geometry}
+
+% additional packages:
+\usepackage[shortlabels]{enumitem}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{mathtools}
+\usepackage[noend]{algpseudocode}
+\usepackage{listings}
+\usepackage{bm}
+\usepackage{graphicx}
+\usepackage{xcolor}
+
+\lstdefinelanguage{GemlBeeLang}{
+        language=Python,
+        alsoletter={<,-},
+        morekeywords={<-, where, then, AND, OR, NOT, WHERE},
+}
+
+\lstset{
+  frame=lrtb,
+  language=GemlBeeLang,
+  aboveskip=2mm,
+  belowskip=2mm,
+  showstringspaces=false,
+  columns=fullflexible,
+  basicstyle={\ttfamily},
+  % numbers=left,
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=4,
+  backgroundcolor=\color{gray!7},
+  showspaces=false,
+  showtabs=false,
+  escapeinside={(*@}{@*)},
+  rulecolor=\color{gray!10}
+}
+
+\newcommand{\xparen}[1]{\left( #1 \right)}
+\newcommand{\xangel}[1]{\left\langle #1 \right\rangle}
+\newcommand{\xbrack}[1]{\left[ #1 \right]}
+\newcommand{\xbrace}[1]{\left\lbrace #1 \right\rbrace}
+\newcommand{\xret}[0]{\rightarrow}
+\newcommand{\xintrp}[1]{\left\llbracket #1 \right\rrbracket}
