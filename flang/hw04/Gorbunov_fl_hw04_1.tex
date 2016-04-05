@@ -1,0 +1,95 @@
+%!TEX program = xelatex
+
+\input{env.tex}
+
+\title{Формальные языки. Домашнее задание №4}
+\author{Горбунов Егор Алексеевич}
+
+\begin{document}
+\maketitle
+
+\begin{task}[1]
+	Преобразовать в нормальную форму Хомского однозначную грамматику арифметических выражений, найти реализацию алгоритма CYK, запустить ее на полученной грамматике, трех различных корректных входах и трех некорректных, визуализировать полученные деревья вывода и записать сообщения об ошибках (прислать результаты работы парсера в pdf).
+	\begin{align*}
+		E &\rightarrow E + T\ |\ T \\
+		T &\rightarrow T * P\ |\ P \\
+		P &\rightarrow (E)\ |\ n
+	\end{align*}
+\end{task}
+\begin{solution}
+Грамматика у нас такая:
+	\begin{align*}
+		\Sigma &= \xbrace{+, *, (, ), n} \\
+		N &= \xbrace{E, T, P}\\
+		S &= E
+	\end{align*}
+$\varepsilon$-продукций в грамматике нет, а также нетрудно видеть, что абсолютно все символы грамматики достижимые и порождающие. 
+
+Найдём все цепные пары индуктивно:
+\[
+	\begin{array}{l}
+		(E, E)\\ (T, T)\\ (P, P)
+	\end{array}
+	\Rightarrow
+	\begin{array}{l}
+		(E, E)\\ (E, T)\\ (T, T)\\ (T, P)\\ (P, P)  
+	\end{array}
+	\Rightarrow
+	\begin{array}{l}
+		(E, E)\\ (E, T)\\ (E, P)\\ (T, T)\\ (T, P)\\ (P, P)\\  
+	\end{array}
+\]
+Теперь удалим цепные пары и добавим нужные продукции в грамматику:
+	\begin{align*}
+		E &\rightarrow E + T\ |\ T * P\ |\ (E)\ |\ n\\
+		T &\rightarrow T * P\ |\ (E)\ |\ n \\
+		P &\rightarrow (E)\ |\ n
+	\end{align*}
+Теперь приведём к нормальной форме Хомского. Для начала избавимся от терминалов в правых частях продукций, длины больше 1:
+	\begin{align*}
+		L &\rightarrow (\\
+		R &\rightarrow )\\
+		X &\rightarrow *\\
+		O &\rightarrow +\\
+		E &\rightarrow E\ O\ T\ |\ T\ X\ P\ |\ L\ E\ R\ |\ n\\
+		T &\rightarrow T\ X\ P\ |\ L\ E\ R\ |\ n \\
+		P &\rightarrow L\ E\ R\ |\ n 
+	\end{align*}
+И разобьём наконец слишком длинные правила:
+	\begin{align*}
+		L &\rightarrow (\\
+		R &\rightarrow )\\
+		X &\rightarrow *\\
+		O &\rightarrow +\\
+		E &\rightarrow E\ D\ |\ T\ M\ |\ L\ C\ |\ n\\
+		T &\rightarrow T\ M\ |\ L\ C\ |\ n \\
+		P &\rightarrow L\ C\ |\ n\\
+		D &\rightarrow O\ T\\
+		M &\rightarrow X\ P\\
+		C &\rightarrow E\ R\\
+	\end{align*}
+\end{solution}
+
+Ниже изображены деревья (в силу особенностей \texttt{JFLAP} было добавлено правило $S \rightarrow E$ и круглые скобки $()$ заменены на квадратные $[]$).
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[scale=0.5]{t1.png}
+\caption{Дерево выражения $n+n*n$}
+\end{figure}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[scale=0.5]{t2.png}
+\caption{Дерево выражения $n*[n+n]$}
+\end{figure}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[scale=0.5]{t3.png}
+\caption{Дерево выражения $[n]$}
+\end{figure}
+
+Все парсеры, которые я пробовал, не выдают информации об ошибке при неправильных вводах, поэтому картинки с <<недостроенными>> деревьями не прикреплены. Но ясно, что это были бы деревья, без верхушки :)
+
+\end{document}

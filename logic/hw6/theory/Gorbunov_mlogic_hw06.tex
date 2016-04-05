@@ -1,0 +1,133 @@
+%!TEX program = xelatex
+
+\input{env.tex}
+
+\title{Математическая логика. Домашнее задание №6}
+\author{Горбунов Егор Алексеевич}
+
+\begin{document}
+\maketitle
+
+\begin{task}[1]
+	Закончите доказательство того, что интерпретация логики с $\land$ и $\lor$ в дистрибутивных решетках корректна.
+	То есть нужно доказать, что если $\gamma \leq \varphi \lor \psi$, $\gamma \land \varphi \leq \chi$ и $\gamma \land \psi \leq \chi$, то $\gamma \leq \chi$.
+\end{task}
+\begin{solution}
+Свойство дистрибутивности решётки:
+\[
+	x \land (y \lor z) = (x \land y) \lor (x \land z)
+\]
+Т.к. верно, что $\gamma \leq \varphi \lor \psi$, то $\gamma = \gamma \land (\varphi \lor \psi)$, далее по свойству дистрибутивности $\gamma = (\gamma \land \varphi) \lor (\gamma \land \psi)$. По определению инфимума:
+\[
+	\begin{array}{l}
+		\gamma \land \varphi \leq \chi \\
+		\gamma \land \psi \leq \chi
+	\end{array}
+	\Longrightarrow
+	(\gamma \land \varphi) \lor (\gamma \land \psi) \leq \chi
+\]
+Но то, что слева от стрелочки, верно по условию, а тогда $\gamma \leq \chi$. \xqed
+\end{solution}
+
+\begin{task}[2]
+	Докажите, что в любой решетке для любых элементов $x$, $\varphi$ и $\psi$ следующие утверждения эквивалентны:
+	\begin{enumerate}
+		\item \label{2:a} Для любого $\gamma$ если $\gamma \leq x$, то $\gamma \land \varphi \leq \psi$.
+		\item \label{2:b} Для любого $\gamma$ если $\gamma \leq x$ и $\gamma \leq \varphi$, то $\gamma \leq \psi$.
+		\item \label{2:c} $x \land \varphi \leq \psi$.
+	\end{enumerate}
+\end{task}
+\begin{solution}
+\begin{itemize}
+	\item[\ref{2:a} $\Rightarrow$ \ref{2:b}] Имеем $\gamma \leq x$ и $\gamma \leq \varphi$, тогда по~\ref{2:a} верно, что $\gamma \land \varphi \leq \psi$, но $\gamma \leq \varphi \Leftrightarrow \gamma = \gamma \land \phi \leq \psi$, откуда $\gamma \leq \psi$ \xqed 
+	\item[\ref{2:b} $\Rightarrow$ \ref{2:c}] Рассмотрим $\gamma = x \land \varphi$, тогда, т.к. \ref{2:b} верно, то сразу из того, что $x \land \varphi \leq x$ и $x \land \varphi \leq \varphi$ (по свойству инфимума) имеем $x \land \varphi \leq \psi$ \xqed
+	\item[\ref{2:c} $\Rightarrow$ \ref{2:a}] Имеем $\gamma \leq x$ и $x \land \varphi \leq \psi$. Заметим, что:
+	\begin{align*}
+		\gamma \leq x &\Rightarrow \gamma = \gamma \land x \Rightarrow \gamma \land \varphi = (\gamma \land \varphi) \land x \\
+					  &\Rightarrow (\gamma \land \varphi) = (\gamma \land \varphi) \land \varphi = (\gamma \land \varphi) \land (x \land \varphi)\\
+					  &\Rightarrow \gamma \land \varphi \leq x \land \varphi
+	\end{align*}
+	Но т.к. по условию $x \land \varphi \leq \psi$, то $\gamma \land \varphi \leq \psi$ \xqed
+\end{itemize}
+\end{solution}
+
+\begin{task}[3]
+Пусть $\varphi$, $\psi$, $x$ и $x'$ -- элементы решетки. Допустим в ней верны следующие свойства:
+	\begin{enumerate}
+	\item \label{3:a} Для любого $\gamma$
+	    \[ \gamma \leq x \Leftrightarrow \gamma \land \varphi \leq \psi \]
+	\item \label{3:b} Для любого $\gamma$
+	    \[ \gamma \leq x' \Leftrightarrow \gamma \land \varphi \leq \psi \]
+	\end{enumerate}
+Докажите, что тогда $x = x'$.
+\end{task}
+\begin{solution}
+Рассмотрим $\gamma = x$, т.к. верно, что $x \leq x$, то по~\ref{3:a} имеем $x \land \varphi \leq \psi$, но тогда по стрелке в обратную сторону в~\ref{3:b} имеем $x \leq x'$. Теперь аналогичным образом рассматриваем $\gamma = x'$, и пользуясь сначала пунктом~\ref{3:b} вправо, а потом пунктом \ref{3:a} влево получаем, что $x' \leq x$. В силу антисимметричности $\leq$ получаем: $x = x'$. \xqed
+\end{solution}
+
+\begin{task}[4]
+Покажите, что в любой алгебре Гейтинга $M$ верны следующие свойства:
+	\begin{enumerate}
+	\item В $M$ существует наибольший элемент, то есть элемент $\top$, удовлетворяющий условию, что $x \leq \top$ для любого $x$.
+	\item Для любых $\varphi, \psi \in M$ верно $\varphi \leq \psi \Leftrightarrow (\varphi \to \psi) = \top$
+	\end{enumerate}
+\end{task}
+\begin{solution}
+\begin{enumerate}
+\item В $M$ существует минимальный элемент $\bot$. Тогда введём $\top = \bot \rightarrow \bot$. Такой элемент существует по определению алгебры Гейтинга. Рассмотрим тогда любой $x \in M$. Очевидно, что $\gamma \land \bot = \bot$, т.к. $\bot$ --- минимальный. Т.е. $x \land \bot \leq \bot$, а значит в силу определения алгебры Гейтинга:
+\[
+	x \land \bot \leq \bot \Rightarrow x \leq (\bot \rightarrow \bot) = x \leq \top
+\]
+В силу того, что $x$ --- любое, то $\top$ --- максимальный элемент. \xqed
+\item Пускай $\varphi \leq \psi$, тогда из определения максимального элемента получаем $\top \land \varphi = \varphi \leq \psi$, откуда ${\top \land \varphi \leq \psi}$. Тогда по определению алгебры Гейтинга, т.к. существует элемент $\varphi \rightarrow \psi$
+\[
+	\top \leq \varphi \rightarrow \psi \Rightarrow \varphi \rightarrow \psi = \top
+\]
+Теперь в обратную сторону: $\varphi \rightarrow \psi = \top \Rightarrow \varphi \rightarrow \psi \geq \top$, ну а тогда по свойству для стрелки (вправо) получаем, что $\varphi \rightarrow \psi = \top \Rightarrow \varphi \leq \psi$. \xqed
+\end{enumerate}
+\end{solution}
+
+\begin{task}[5]
+Докажите, что любая алгебра Гейтинга дистрибутивна.
+\end{task}
+\begin{solution}
+
+\begin{itemize}
+	\item Покажем, что $(x \land y) \lor (x \land z) \leq x \land (y \lor z)$. По свойствам супремума:
+		\[
+			\begin{array}{l}
+				y \lor z \geq y \\
+				y \lor z \geq z
+			\end{array}
+			\Rightarrow
+			\begin{array}{l}
+				x \land (y \lor z) \geq x \land y \\
+				x \land (y \lor z) \geq x \land z
+			\end{array}
+			\Rightarrow
+			x \land (y \lor z) \geq (x \land y) \lor (x \land z)
+		\]
+		Окей, показали.
+	\item Покажем теперь обратное. Нужно туда-обратно применять свойство для импликации:
+	\[
+		\begin{array}{cl}
+			x \land (y \lor z) \leq (x \land y) \lor (x \land z) & \\
+			\Updownarrow & \text{(свойство импликации влево)}\\
+			y \lor z \leq x \rightarrow (x \land y) \lor (x \land z) & \\
+			\Updownarrow & \text{(свойство супремума)}\\
+			\begin{cases}
+				y \leq x \rightarrow (x \land y) \lor (x \land z)\\
+				z \leq x \rightarrow (x \land y) \lor (x \land z)
+			\end{cases} & \\
+			\Updownarrow & \text{(свойство импликации вправо)}\\
+			\begin{cases}
+				x \land y \leq (x \land y) \lor (x \land z)\\
+				x \land z \leq (x \land y) \lor (x \land z)
+			\end{cases} & \text{(а это верно по свойству супремума)} \\
+		\end{array}
+	\]
+	\xqed
+\end{itemize}
+\end{solution}
+
+\end{document}
