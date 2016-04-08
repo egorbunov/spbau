@@ -4,9 +4,22 @@
 \usepackage[main = russian, english]{babel}
 \usepackage{xunicode}
 \usepackage{xltxtra}
-\usepackage{mathpazo}
+
+\usepackage{amssymb}
+\usepackage{mathtools}
+
+\usepackage[sc]{mathpazo}
+\usepackage[euler-digits,euler-hat-accent]{eulervm}
+
+\usepackage{MnSymbol} % order is crucial
+
+
 \defaultfontfeatures{Mapping=tex-text, Scale=MatchLowercase}
-\setmainfont{Linux Libertine O}
+\setmainfont[
+   BoldFont={Greta Text Pro Bold},
+   ItalicFont={Greta Text Pro Italic},
+   BoldItalicFont={Greta Text Pro Bold Italic}
+]{Greta Text Pro Light}
 \setmonofont[Mapping=tex-text]{Liberation Mono}
 % \newfontfamily{\cyrillicfont}{TeX Gyre Pagella}
 % \setromanfont{TeX Gyre Pagella}
@@ -15,22 +28,35 @@
 % \linespread{1.2}
 \usepackage[top=0.5in, bottom=0.7in, left=0.6in, right=0.6in]{geometry}
 
-% additional packages:
-\usepackage[shortlabels]{enumitem}
-\usepackage{amssymb}
+\usepackage{parskip}
 \usepackage{hyperref}
-\usepackage{mathtools}
-\usepackage[noend]{algpseudocode}
-\usepackage{listings}
-\usepackage{bm}
+\usepackage{setspace}
+\usepackage[shortlabels]{enumitem}
+
+% ========= Graph stuff packages ==========
 \usepackage{graphicx}
 \usepackage{xcolor}
+\usepackage{subfig}
+\usepackage{tikz}
+\usepackage{tkz-berge}
+
+% ========= Special packages ==============
+\usepackage{bussproofs}
+\usepackage{stmaryrd}
+
+% ========= Listings / algo packages =========
+\usepackage{xifthen}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{listings}
 
 \lstdefinelanguage{GemlBeeLang}{
         language=Python,
         alsoletter={<,-},
-        morekeywords={<-, where, then, AND, OR, NOT, WHERE},
+        morekeywords={<-, where, then, AND, OR, NOT, WHERE, show, and, or, not, true, false},
 }
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
 
 \lstset{
   frame=lrtb,
@@ -56,9 +82,63 @@
   rulecolor=\color{gray!10}
 }
 
+\lstdefinestyle{nonumbers}{numbers=none}
+
+\usetikzlibrary{shapes,snakes}
+\usetikzlibrary{arrows, petri, topaths}
+\linespread{1.3}
+\setlist[enumerate, 1]{label = (\alph*)}
+
+
+\newenvironment{task}[1][]
+{
+  \par\medskip
+  \noindent \textbf{Задание~№#1}
+  \rmfamily
+}
+{
+}
+
+\newenvironment{solution}[1][]
+{
+  \par
+  \noindent \textbf{\textit{Решение:~}}
+  \rmfamily
+}
+{
+  \medskip
+}
+
+% Math and algorithms
+\makeatletter
+\renewcommand{\ALG@name}{Алгоритм}
+\renewcommand{\listalgorithmname}{Список алгроитмов}
+\newenvironment{procedure}[1]
+  {\renewcommand*{\ALG@name}{Процедура}
+  \algorithm\renewcommand{\thealgorithm}{\thechapter.\arabic{algorithm} #1}}
+  {\endalgorithm}
+\makeatother
+
+\algrenewcommand\algorithmicrequire{\textbf{Вход:}}
+\algrenewcommand\algorithmicensure{\textbf{Выход:}}
+\algnewcommand\True{\textbf{true}\space}
+\algnewcommand\False{\textbf{false}\space}
+\algnewcommand\And{\textbf{and}\space}
+\newcommand{\xfor}[3]{#1 \textbf{from} #2 \textbf{to} #3}
+\newcommand{\xassign}[2]{\State #1 $\leftarrow$ #2}
+\newcommand{\xstate}[1]{\State #1}
+\newcommand{\xreturn}[1]{\xstate{\textbf{return} #1}}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\newcommand{\bigO}[1]{\mathcal{O}\left(#1\right)}
+\newcommand{\xqed}{\hfill $\blacksquare$}
+\newcommand{\code}[1]{\colorbox{gray!15}{\footnotesize\texttt{#1}}}
+
+% Commands (my)
+
 \newcommand{\xparen}[1]{\left( #1 \right)}
-\newcommand{\xangel}[1]{\left\langle #1 \right\rangle}
-\newcommand{\xbrack}[1]{\left[ #1 \right]}
+\newcommand{\xangle}[1]{\left\langle #1 \right\rangle}
+\newcommand{\xbracket}[1]{\left[ #1 \right]}
 \newcommand{\xbrace}[1]{\left\lbrace #1 \right\rbrace}
 \newcommand{\xret}[0]{\rightarrow}
 \newcommand{\xintrp}[1]{\left\llbracket #1 \right\rrbracket}

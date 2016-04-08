@@ -3,6 +3,7 @@
 
 \newcommand{\kw}[1]{\text{\textbf{\color{blue}{#1}}}}
 
+
 \title{Операции над треками}
 \author{Егор Горбунов}
 
@@ -10,6 +11,9 @@
 \maketitle
 
 \section*{Описание операций и языка}
+
+\subsection*{Основные операции}
+
 \begin{itemize}
 	\item \textbf{\underline{Арифметические операции}} 
 	\vspace{3pt}
@@ -37,10 +41,10 @@
 	\]
 	\item \textbf{\underline{Условный оператор}} Пускай теперь $P \in \xbrace{0, 1}^n, X \in \mathbb{R}^n, Y \in \mathbb{R}^n, a \in \mathbb{R}, b \in \mathbb{R}$, тогда полезна следующая операция:
 	\begin{align*}
-		X \kw{ where } P \kw{ else } Y &:= P \cdot X + (1 - P) \cdot Y \\
-		a \kw{ where } P \kw{ else } Y &:= P \cdot a + (1 - P) \cdot Y \\
-		X \kw{ where } P \kw{ else } b &:= P \cdot X + (1 - P) \cdot b \\
-		a \kw{ where } P \kw{ else } b &:= P \cdot a + (1 - P) \cdot b
+		\kw{ if } P \kw{ then } X \kw{ else } Y &:= P \cdot X + (1 - P) \cdot Y \\
+		\kw{ if } P \kw{ then } a \kw{ else } Y &:= P \cdot a + (1 - P) \cdot Y \\
+		\kw{ if } P \kw{ then } X \kw{ else } b &:= P \cdot X + (1 - P) \cdot b \\
+		\kw{ if } P \kw{ then } a \kw{ else } b &:= P \cdot a + (1 - P) \cdot b
 	\end{align*}
 	С помощью этой операции легко выражаются всевозможные фильтры.
 	\\\emph{PS: тут можно поспорить про синтаксис}.
@@ -54,28 +58,88 @@
 	\]
 	Если имя не указано, то оно будет сгенерировано или записано с именем lastResult, что перепишет предыдущий неименованый результат.
 
+	\item \textbf{\underline{Показазать отрезки, где выполнен предикат}} Это может быть реализовано через условный оператор.
+
+	\item \textbf{\underline{Показать трэк}} Все операции генерируют трэки, но не добавляют их к отображению. Чтобы добавить какой-то трэк, который был сгенерирован нужно специальное слово, например:
+	\[
+		\kw{show } TRACK
+	\]
+\end{itemize}
+
+\subsection*{Дополнительные операции:}
+\begin{itemize}
 	\item \textbf{\underline{Изменение размера корзины}} Такая возможность понадобится, если пользователь захочет совершать операции над треками с разными размерами корзин. Кажется, что в силу серьёзности данных, это нужно делать аккуратно. Совсем честно мы можем изменить число корзин гистограммы (трека) с $n$ на $m$ только если $n > m$ и $m | n$, т.е. если текущий размер корзины делит новый размер. При этом ещё возникают некоторые проблемы на границах рассматриваемого участка.\\
 	Вопрос: нужна ли возможность изменять размер корзины на произвольный? Если да, то видимо наиболее разумный способ реализации -- это каждую корзину равномерно разбить на корзины размера $1$, после чего уже пересчитать гистограмму для нового размера корзины.
 	\[
 		\kw { resize}(track,\ bpNewBinSize) 
 	\]
-	\item \textbf{\underline{Операции на подотрезках}} Назвал страшно, а речь идёт о построении новых треков посредством сканирования окном гистограммы (трека) и подсчёта в окне какой-нибудь функции: $\max, \min, +, \times, \ldots$. Синтаксис в духе:
+	\item \textbf{\underline{Операции на подотрезках}} Назвал страшно, а речь идёт о построении новых треков посредством сканирования окном гистограммы (трека) и подсчёта в окне какой-нибудь функции: $\max$, $\min$, $+$, $\times$, $\ldots$ Синтаксис в духе:
 	\[
 		\kw { window}(track,\ windowSize,\ Function) 
 	\]
 	Эта штука перекликается с изменением размера гистограммы, но тут $windowSize$ --- это число бинов (столбцов гистограммы), а не $bp$.
-	$Function$ действует из $\mathbb{R}^{windowSize}$ в $\mathbb{R}$ и пока кажется, что можно предоставить некоторый фиксированный выбор этих возможных функций: $MEAN, MAX, MIN, SUM, MUL, VAR, MEDIAN, NORMALIZE$, хотя, конечно, это не выглядит гибко, но если подумать, то многие функции можно выразить через имеющуюся арифметику на треках и изменение размера корзины.
+	$Function$ действует из $\mathbb{R}^{windowSize}$ в $\mathbb{R}$ и пока кажется, что можно предоставить некоторый фиксированный выбор этих возможных функций: $MEAN$, $MAX$, $MIN$, $SUM$, $MUL$, $VAR$, $MEDIAN$, $NORMALIZE$, хотя, конечно, это не выглядит гибко, но если подумать, то многие функции можно выразить через имеющуюся арифметику на треках и изменение размера корзины.
 \end{itemize}
 
 \subsection*{Примеры использования}
 \begin{lstlisting}
-newTrack <- track1 where (track1 >= track2 AND track1 <= track2 + 100) else track2
+newTrack <- if (track1 >= track2 AND track1 <= track2 + 100) then track1 else track2
 
-newTrack <- X = track1, Y = track2 in (X where X > Y else Y)
+newTrack <- X = track1, Y = track2 in (if X > Y then X else Y)
 
 newTrack <- 1 / (2 ^ track1)
 
-newTrack <- X = track1 in (X where track2 > 20 else 0)
+newTrack <- X = track1 in (if track2 > 20 then X else 0)
 \end{lstlisting}
+
+\newpage
+\section*{Грамматика}
+\begin{itemize}
+\item Главное выражение:
+
+\begin{lstlisting}[style=nonumbers]
+	S -> %track_name% <- E
+			| show %track_name%
+\end{lstlisting}
+
+\item Арифметика на треках:
+
+\begin{lstlisting}[style=nonumbers]
+	E -> E + T
+			| E - T
+			| T
+	T -> T * X
+			| T / X
+			| X
+	X -> X ^ P
+			| P
+	P -> (E) 
+			| if PRED then E else E
+			| %track_name% 
+			| %number%
+\end{lstlisting}
+
+\item Предикаты:
+
+\begin{lstlisting}[style=nonumbers]
+	PRED -> PRED or A
+			| A
+	A -> A and B
+			| B
+	B -> (PRED)
+			| not PRED
+			| true
+			| false
+			| R
+	R -> E < E
+			| E > E
+			| E <= E
+			| E >= E
+			| E == E
+			| E != E
+\end{lstlisting}
+
+\end{itemize}
+
 
 \end{document}

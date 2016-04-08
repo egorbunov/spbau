@@ -40,7 +40,7 @@ $(TEST_TARGET): $(TEST_OBJECTS) $(OBJECTS)
 
 .PHONY: clean all test
 
-all:
+all: $(TEST_TARGET)
 
 test: $(TEST_TARGET)
 	$(BIN_DIR)/$(TEST_TARGET) 
