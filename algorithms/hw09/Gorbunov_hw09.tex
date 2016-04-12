@@ -1,0 +1,114 @@
+%!TEX program = xelatex
+
+\input{env.tex}
+\title{Домашнее задание №8 \\ Алгоритмы. 5 курс. Весенний семестр.}
+\author{Горбунов Егор Алексеевич}
+
+\begin{document}
+\maketitle
+
+\begin{task}[1]
+Сведите к задаче линейного программирования задачу:
+\[
+	\min_{1 \leq i \leq p} \xbracket{\sum_{j = 1}^{n}{c_{ij}x_j}} \longrightarrow \max
+\]
+При ограничениях:
+\[
+	\begin{array}{c}
+		\sum_{j = 1}^{n}{a_{ij}x_j} = b_i, i \in \xbracket{1\ldots m} \\
+		x_i \geq 0, i \in \xbracket{1\ldots n}
+	\end{array}
+\]
+\end{task}
+
+\begin{solution}
+Введём новую переменную $y$ и такие ограничения на неё:
+\begin{equation}
+\label{t1:1}
+	y \leq \sum_{j = 1}^{n}{c_{ij}x_j}, i \in \xbracket{1\ldots p}
+\end{equation}
+Остальные ограничения оставим как есть и таким образом будем решать следующую задачу:
+\[\begin{array}{l}
+	y \longrightarrow \max \\
+	y \leq \sum_{j = 1}^{n}{c_{ij}x_j}, i \in \xbracket{1\ldots p} \\
+	\sum_{j = 1}^{n}{a_{ij}x_j} = b_i, i \in \xbracket{1\ldots m} \\
+	x_i \geq 0, i \in \xbracket{1\ldots n} \\
+\end{array}\]
+Задачу приводим к стандартному виду (все неравенства на равенства и переменную $y$ превращаем в положительную) так, как проходили на лекции.
+
+Так же заметим, что такая переформулировка верна в силу того, что хотя бы одно из неравенств~\ref{t1:1} превратится в равенство, иначе можно было бы увеличить $y$ не нарушив условия. \xqed
+\end{solution}
+
+\begin{task}[2]
+Сведите к задаче линейного программирования задачу:
+\[
+	\sum_{i = 1}^{p}{ \left| \sum_{j = 1}^{n}{c_{ij}x_j} - d_i \right| } \longrightarrow \min
+\]
+При ограничениях:
+\[
+	\begin{array}{c}
+		\sum_{j = 1}^{n}{a_{ij}x_j} = b_i, i \in \xbracket{1\ldots m} \\
+		x_i \geq 0, i \in \xbracket{1\ldots n}
+	\end{array}
+\]
+\end{task}
+\begin{solution}
+Введём переменные $y_1, y_2, \ldots, y_p$. И добавим такие ограничения:
+\[
+	\left| \sum_{j = 1}^{n}{c_{ij}x_j} - d_i \right| \leq y_i
+	\Longleftrightarrow
+	\begin{array}{c}
+		\sum_{j = 1}^{n}{c_{ij}x_j} - d_i \leq y_i \\
+		-\sum_{j = 1}^{n}{c_{ij}x_j} + d_i \leq y_i
+	\end{array}
+	, i \in \xbracket{1\ldots p}
+\]
+И тогда задача, которая будет решаться, такова:
+\[\begin{array}{l}
+	\sum_{i = 1}^{p}{y_i} \longrightarrow \min \\
+	\sum_{j = 1}^{n}{c_{ij}x_j} - d_i \leq y_i, i \in \xbracket{1\ldots p}\\
+	-\sum_{j = 1}^{n}{c_{ij}x_j} + d_i \leq y_i, i \in \xbracket{1\ldots p} \\
+	x_i \geq 0, i \in \xbracket{1\ldots n}
+\end{array}\]
+Тут неравенства в равенства переводим как на лекции, опять же. Условия, наложенные на $y_i$ автоматически делают $y_i$ неотрицательными. \xqed
+\end{solution}
+
+\begin{task}[3]
+Приведите пример несовместной задачи линейного программирования, двойственная к которой так же несовместна.
+\end{task}
+\begin{solution}
+Рассмотрим задачу:
+\[
+	-x_1 - x_2 \longrightarrow \min
+\]
+С ограничениями:
+\begin{align*}
+	-x_1 &\geq 1 \\
+	x_2 &\geq 1 \\
+	x_1 &\geq 0\\
+	x_2 &\geq 0\\
+\end{align*}
+Видно, что задача несовместна, т.к. $x_1 \geq 0$ и $x_1 \leq -1$ одновременно.\\
+Двойственная к ней задача:
+\[
+	y_1 + y_2 \longrightarrow \max
+\]
+С ограничениями:
+\begin{align*}
+	-y_1 &\leq -1 \\
+	y_2 &\leq -1 \\
+	y_1 &\geq 0\\
+	y_2 &\geq 0\\
+\end{align*}
+Система также несовместна, поскольку одновременно требуется $y_2 \geq 0$ и $y_2 \leq -1$.
+\xqed
+\end{solution}
+
+\begin{task}[4]
+Докажите, что если политоп линейной программы в канонической форме
+($Ax = b, x \geq 0$) целый для любого вектора $b$, то матрица $A$ тотально унимодулярна.
+\end{task}
+\begin{solution}
+\end{solution}
+
+\end{document}
