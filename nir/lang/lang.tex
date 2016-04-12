@@ -3,7 +3,6 @@
 
 \newcommand{\kw}[1]{\text{\textbf{\color{blue}{#1}}}}
 
-
 \title{Операции над треками}
 \author{Егор Горбунов}
 
@@ -90,20 +89,21 @@ newTrack <- X = track1, Y = track2 in (if X > Y then X else Y)
 newTrack <- 1 / (2 ^ track1)
 
 newTrack <- X = track1 in (if track2 > 20 then X else 0)
+
+Y - X + (if (if Y > 0 then Y else X) < 0 then Z else 0) * Y
 \end{lstlisting}
 
-\newpage
+% \newpage
 \section*{Грамматика}
+
 \begin{itemize}
 \item Главное выражение:
-
 \begin{lstlisting}[style=nonumbers]
 	S -> %track_name% <- E
 			| show %track_name%
 \end{lstlisting}
 
 \item Арифметика на треках:
-
 \begin{lstlisting}[style=nonumbers]
 	E -> E + T
 			| E - T
@@ -120,7 +120,6 @@ newTrack <- X = track1 in (if track2 > 20 then X else 0)
 \end{lstlisting}
 
 \item Предикаты:
-
 \begin{lstlisting}[style=nonumbers]
 	PRED -> PRED or A
 			| A
@@ -141,5 +140,37 @@ newTrack <- X = track1 in (if track2 > 20 then X else 0)
 
 \end{itemize}
 
+\newpage
+
+\subsection*{Другая SLR(1) грамматика}
+Конструкция $\kw{ if } P \kw{ then } X \kw{ else } Y$ заменяется на $\kw{ if } P \kw{ then } X \kw{ else } Y \kw{ endif }$
+\begin{lstlisting}[style=nonumbers]
+S -> S sum A
+   | S sub A
+   | A.
+A -> A mul B
+   | A div B
+   | B.
+B -> ( S )
+   | if PRED then S else S endif
+   | id
+   | num.
+
+PRED -> PRED or X
+      | X.
+X -> X and N
+   | N.
+N -> not Z
+   | Z.
+Z -> ( PRED )
+   | S le S
+   | S leq S
+   | S ge S
+   | S geq S
+   | S eq S
+   | S neq S
+   | true
+   | false.
+\end{lstlisting}
 
 \end{document}

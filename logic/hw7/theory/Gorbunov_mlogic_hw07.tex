@@ -1,0 +1,194 @@
+%!TEX program = xelatex
+
+\input{env.tex}
+
+\title{Математическая логика. Домашнее задание №7}
+\author{Горбунов Егор Алексеевич}
+
+\begin{document}
+\maketitle
+
+\begin{task}[1]
+Докажите, что формула $((P \to Q) \to P) \to P$ невыводима, показав, что ее выводимость влечет выводимость исключенного третьего.
+\end{task}
+\begin{solution}
+Обозначим:
+\begin{center}
+\AxiomC{}
+\RightLabel{(x)}
+\UnaryInfC{$\vdash ((P \to Q) \to P) \to P$}
+\DisplayProof
+\end{center}
+
+Теперь:
+
+\begin{center}
+
+\AxiomC{}
+\RightLabel{($x$)}
+\UnaryInfC{$\vdash ((P \lor \neg P \to \bot) \to P \lor \neg P) \to (P \lor \neg P)$}
+\AxiomC{см. ниже}
+\UnaryInfC{$(P \lor \neg P \to \bot) \to P \lor \neg P$}
+\RightLabel{($\to E$)}
+\BinaryInfC{$\vdash P \lor \neg P $}
+\DisplayProof
+
+\vspace{20pt}
+
+\AxiomC{}
+\RightLabel{($var$)}
+\UnaryInfC{$P, (P \lor \neg P \to \bot) \vdash P \lor \neg P \to \bot$}
+\AxiomC{}
+\RightLabel{($var$)}
+\UnaryInfC{$P, (P \lor \neg P \to \bot) \vdash P$}
+\RightLabel{($\lor I_1$)}
+\UnaryInfC{$P, (P \lor \neg P \to \bot) \vdash P \lor \neg P$}
+\RightLabel{($\to E$)}
+\BinaryInfC{$P, (P \lor \neg P \to \bot) \vdash \bot$}
+\RightLabel{($\to I$)}
+\UnaryInfC{$(P \lor \neg P \to \bot) \vdash P \to \bot$}
+\RightLabel{($\to I$ и $\lor I_2$)}
+\UnaryInfC{$(P \lor \neg P \to \bot) \to P \lor \neg P$}
+\DisplayProof
+\end{center}
+\vspace{20pt}
+Видим, что у нас получилось вывести $\vdash P \lor \neg P $ воспользовавшись тем, что $\vdash ((P \to Q) \to P) \to P$ выводим (то, что мы обозначили за ($x$)). При использовании ($x$) мы совершили подстановку $\xbrack{(P \lor \neg P / P, \bot / Q)}$. 
+\\\xqed
+\end{solution}
+
+\begin{task}[2]
+	Докажите, что в интуиционистской логике следующие правила вывода эквивалентны:
+	\begin{center}
+	\AxiomC{}
+	\RightLabel{, (lem)}
+	\UnaryInfC{$\Gamma \vdash \varphi \lor \neg \varphi$}
+	\DisplayProof
+	\qquad
+	\AxiomC{}
+	\RightLabel{, (dne)}
+	\UnaryInfC{$\Gamma \vdash \neg \neg \varphi \to \varphi$}
+	\DisplayProof
+	\end{center}
+	Для этого достаточно показать, что имея правило (lem), заключение правила (dne) выводимо, и наоборот.
+\end{task}
+
+\begin{solution}
+
+\begin{itemize}
+\item $dne \Rightarrow lem$. Вот дерево вывода, доказывающее это (в интуиционистской логике):
+
+\begin{center}
+	\AxiomC{}
+	\RightLabel{$(dne)$}
+	\UnaryInfC{$\vdash \neg\neg (\phi \lor \neg \phi) \to (\phi \lor \neg \phi)$}
+	\AxiomC{см. ниже}
+	\UnaryInfC{$\vdash \neg\neg (\phi \lor \neg \phi)$}
+	\RightLabel{$\to E$}
+	\BinaryInfC{$\vdash \phi \lor \neg \phi $}
+	\DisplayProof
+
+	\vspace{20pt}
+
+	\AxiomC{}
+	\RightLabel{($var$)}
+	\UnaryInfC{$\neg (\phi \lor \neg \phi) \vdash \neg (\phi \lor \neg \phi)$}
+	\AxiomC{}
+	\RightLabel{($var$)}
+	\UnaryInfC{$\neg (\phi \lor \neg \phi), \phi \vdash \neg (\phi \lor \neg \phi)$}
+	\AxiomC{}
+	\RightLabel{($var$)}
+	\UnaryInfC{$\Gamma, \phi \vdash \phi$}
+	\RightLabel{$\lor I_1$}
+	\UnaryInfC{$\neg (\phi \lor \neg \phi), \phi \vdash \phi \lor \neg \phi$}
+	\RightLabel{$\to E$}
+	\BinaryInfC{$\neg (\phi \lor \neg \phi), \phi \vdash \bot$}
+	\RightLabel{$\to I$}
+	\UnaryInfC{$\neg (\phi \lor \neg \phi) \vdash \neg \phi$}
+	\RightLabel{$\lor I_2$}
+	\UnaryInfC{$\neg (\phi \lor \neg \phi) \vdash \phi \lor \neg \phi$}
+	\RightLabel{$\to E$}
+	\BinaryInfC{$\neg (\phi \lor \neg \phi) \vdash \bot$}
+	\RightLabel{$\to I$}
+	\UnaryInfC{$\vdash \neg\neg (\phi \lor \neg \phi)$}
+	\DisplayProof
+
+\end{center}
+
+\item $lem \Rightarrow dme$. Т.к. мы предполагаем исключённое третье, то можно работать в исчислении Генцена! А тогда:
+\begin{center}
+	\AxiomC{}
+	\RightLabel{($lem$)}
+	\UnaryInfC{$\vdash \neg \phi \lor \phi$}
+	\UnaryInfC{$\vdash \neg \phi, \phi$}
+	\AxiomC{}
+	\RightLabel{$\bot L$}
+	\UnaryInfC{$\bot \vdash \phi$}
+	\RightLabel{$\to L$}
+	\BinaryInfC{$\neg \phi \to \bot \vdash \phi$}
+	\RightLabel{$\to R$}
+	\UnaryInfC{$\vdash \neg \neg \phi \to \phi$}
+	\DisplayProof
+\end{center}
+\end{itemize}
+\xqed
+\end{solution}
+
+\begin{task}[3]
+	Формула $\varphi \land \psi$ доказуема тогда и только тогда когда доказуемы $\varphi$ и $\psi$.
+    Верно ли аналогичное утверждение для $\varphi \lor \psi$?
+    То есть, правда ли что $\varphi \lor \psi$ доказуема тогда и только тогда когда доказуема либо $\varphi$, либо $\psi$?
+    В классической логике это не верно.
+    Действительно, $P \lor \neg P$ доказуема, но ни $P$, ни $\neg P$ не доказуемы.
+    Докажите, что в интуиционистской логике это свойство выполнено.
+    
+    Hint: используйте в качестве доказательств формул лямбда термы и примените нормализацию.
+\end{task}
+\begin{solution}
+\begin{itemize}
+	\item[$\Rightarrow$] Тут нам нужно предоставить терм с типом $\varphi \lor \psi \rightarrow (\varphi \lor \psi  \rightarrow \varphi) \lor (\varphi \lor \psi  \rightarrow \psi)$. Вот он:
+	\[
+		\lambda e.\mathbf{case}\ e\ \mathbf{of} \{ Left(p) \to Left\ (\lambda x.p); Right(q) \to Right\ (\lambda x.q)\}
+	\]
+
+	\item[$\Leftarrow$] Тут нам нужно сконструировать термы с типом $\varphi \lor \psi$ имея $\varphi$ или $\psi$. Ну, это довольно очевдно, два случая:
+	\begin{align*}
+		\lambda p. Left\ p\\
+		\lambda q. Right\ q\\
+	\end{align*}
+
+\end{itemize}
+\xqed
+\end{solution}
+
+\begin{task}[4]
+Докажите в классической логике формулу $\neg (\varphi \land \psi) \to \neg \varphi \lor \neg \psi$
+Напишите лямбда терм, доказывающий эту формулу.
+\end{task}
+\begin{solution}
+
+\begin{center}
+\AxiomC{тут ещё применяем $\lor R$}
+\UnaryInfC{$\varphi, \psi \vdash \varphi \land \psi, \bot$}
+\AxiomC{}
+\UnaryInfC{$\bot, \varphi, \psi \vdash \bot$}
+\RightLabel{$\to L$}
+\BinaryInfC{$\varphi \land \psi \to \bot, \varphi, \psi \vdash \bot$}
+\RightLabel{дважды $\to R$}
+\UnaryInfC{$\varphi \land \psi \to \bot \vdash \varphi \to \bot, \psi \to \bot$}
+\RightLabel{$\lor R$}
+\UnaryInfC{$\neg (\varphi \land \psi) \vdash \neg \varphi \lor \neg \psi$}
+\RightLabel{$\to R$}
+\UnaryInfC{$\vdash \neg (\varphi \land \psi) \to \neg \varphi \lor \neg \psi$}
+\DisplayProof
+\end{center}
+\xqed
+\end{solution}
+
+\begin{task}[5]
+Докажите в интуиционистской логике формулу $(((P \to Q) \lor (Q \to P)) \to P) \to P$.
+    Напишите лямбда терм, доказывающий эту формулу.
+\end{task}
+\begin{solution}
+\end{solution}
+
+\end{document}
