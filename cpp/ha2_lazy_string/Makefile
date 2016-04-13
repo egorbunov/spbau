@@ -17,6 +17,8 @@ GTEST_LIBS = -lgtest_main -lgtest -lpthread
 GTEST_LIB_PATH = /usr/src/googletest-release-1.7.0/build
 GTEST_INCLUDE = /usr/src/googletest-release-1.7.0/include
 
+TARGET = main
+
 
 DEBUG     ?= 0
 ifeq ($(DEBUG), 1)
@@ -40,7 +42,7 @@ $(TEST_TARGET): $(TEST_OBJECTS) $(OBJECTS)
 
 .PHONY: clean all test
 
-all: $(TEST_TARGET)
+all: $(TARGET)
 
 test: $(TEST_TARGET)
 	$(BIN_DIR)/$(TEST_TARGET) 
