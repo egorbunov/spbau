@@ -45,5 +45,8 @@ all: $(TEST_TARGET)
 test: $(TEST_TARGET)
 	$(BIN_DIR)/$(TEST_TARGET) 
 
+valgr: $(TEST_TARGET)
+	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all $(BIN_DIR)/$(TEST_TARGET) 
+
 clean: 
 	rm -rf $(BIN_DIR)/*

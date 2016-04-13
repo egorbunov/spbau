@@ -179,7 +179,7 @@ namespace std_utils
 
 		friend bool operator!=(const lazy_basic_string& lhs, const lazy_basic_string& rhs) 
 		{
-			return !(lhs = rhs);
+			return !(lhs == rhs);
 		}
 
 		friend std::ostream& operator<<(std::ostream& out, const lazy_basic_string& str) {
