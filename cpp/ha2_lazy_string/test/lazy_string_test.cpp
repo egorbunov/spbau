@@ -5,7 +5,7 @@
 #include "lazy_string.h"
 
 
-using namespace std_utlis;
+using namespace std_utils;
 
 TEST(lazy_string, construct_test) {
 	lazy_basic_string<char> s1;

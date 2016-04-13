@@ -5,16 +5,21 @@
 #include <algorithm>
 #include <cctype>
 
-namespace std_utlis
+namespace std_utils
 {
 	template<class CharT, class Traits = std::char_traits<CharT>>
 	class lazy_basic_string {
 	public:
-		typedef Traits traits_type;
-		typedef typename Traits::char_type value_type;
-		typedef size_t size_type; 
-		typedef std::ptrdiff_t difference_type;
-		typedef std::basic_string<CharT, Traits> buf_type;
+        using traits_type = Traits;
+        using value_type = typename Traits::char_type;
+        using reference = value_type&;
+        using const_reference = const value_type&;
+        using pointer =  value_type*;
+        using const_pointer = const value_type*;
+        using difference_type = ptrdiff_t;
+        using size_type = size_t;
+
+        using buf_type = std::basic_string<CharT, Traits>;
 
 		lazy_basic_string(): pbuf_(std::make_shared<buf_type>()) 
 		{}
@@ -96,13 +101,14 @@ namespace std_utlis
 			return (*pbuf_)[pos];
 		}
 
-		// Proxy for non const at operator
-		class Proxy {
+		// char_proxy for non const at operator
+		class char_proxy {
 		public:
-			Proxy(const Proxy&) = default;
-			Proxy(Proxy&&) = default;
+			char_proxy(const char_proxy&) = default;
+			char_proxy(char_proxy&&) = default;
 
-			Proxy& operator=(const CharT& c) {
+			char_proxy& operator=(const CharT& c) 
+			{
 				if (str_.pbuf_.use_count() > 1) {
 					str_.pbuf_ = std::make_shared<buf_type>(str_.c_str());
 				}
@@ -116,7 +122,8 @@ namespace std_utlis
 				return (*str_.pbuf_)[pos_];
 			}
 
-			friend std::istream& operator>>(std::istream& in, Proxy p) {
+			friend std::istream& operator>>(std::istream& in, char_proxy p) 
+			{
 				CharT ch;
 				in >> ch;
 				p = ch;
@@ -124,18 +131,17 @@ namespace std_utlis
 			}
 		private:
 			friend class lazy_basic_string;
-			Proxy(size_type pos, lazy_basic_string& str): pos_(pos), str_(str)
+			char_proxy(size_type pos, lazy_basic_string& str): pos_(pos), str_(str)
 			{}
 			size_type pos_;
 			lazy_basic_string &str_;
 		};
 
-		Proxy operator[](size_type pos) {
-			return Proxy(pos, *this);
+		char_proxy operator[](size_type pos) {
+			return char_proxy(pos, *this);
 		}
 
 		// Friend operators ...
-
 		friend lazy_basic_string operator+(const lazy_basic_string& lhs, const lazy_basic_string& rhs)
 		{
 			lazy_basic_string res = lhs;
@@ -192,39 +198,6 @@ namespace std_utlis
 		std::shared_ptr<buf_type> pbuf_;
 	};
 
-	// ============== typedefs ========================
-	
-	typedef lazy_basic_string<char> lazy_string;
-	typedef lazy_basic_string<wchar_t> lazy_wstring;
-
-	struct i_traits: std::char_traits<char> {
-	  static bool eq (char c, char d) 
-	  {
-	  	  return std::tolower(c) == std::tolower(d); 
-	  }
-	  
-	  static bool lt (char c, char d) 
-	  { 
-	  	  return std::tolower(c) < std::tolower(d); 
-	  }
-
-	  static int compare (const char* p, const char* q, std::size_t n) 
-	  {
-	      while (n--) {
-	      	if (!eq(*p,*q)) {
-	      		return lt(*p,*q) ? -1 : 1; 
-	      	}
-	      	++p; ++q;
-	      }
-	      return 0;
-	  }
-	};
-
-	typedef lazy_basic_string<char, i_traits> lazy_istring;
-
-
-	// ============== additional operators =============
-
 	template<class C, class T>
 	lazy_basic_string<C, T> operator+(const lazy_basic_string<C, T>& lhs, C rhs)
 	{
@@ -236,4 +209,38 @@ namespace std_utlis
 	{
 		return lazy_basic_string<C, T>(1, lhs) + rhs;
 	}
+
+	/**
+	 * Case-insensitive traits
+	 */
+	struct i_traits: std::char_traits<char> {
+	  static bool eq(char c, char d) 
+	  {
+	  	  return std::tolower(c) == std::tolower(d); 
+	  }
+	  
+	  static bool lt(char c, char d) 
+	  { 
+	  	  return std::tolower(c) < std::tolower(d); 
+	  }
+
+	  static int compare(const char* p, const char* q, std::size_t n) 
+	  {
+	      while (n > 0) {
+	      	if (!eq(*p,*q)) {
+	      		return lt(*p,*q) ? -1 : 1; 
+	      	}
+	      	++p; 
+	      	++q;
+	      	--n;
+	      }
+	      return 0;
+	  }
+	};
+
+	// ============== typedefs ========================
+
+	typedef lazy_basic_string<char> lazy_string;
+	typedef lazy_basic_string<wchar_t> lazy_wstring;
+	typedef lazy_basic_string<char, i_traits> lazy_istring;
 }
