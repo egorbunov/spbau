@@ -4,7 +4,6 @@
 
 #include "lazy_string.h"
 
-
 using namespace std_utils;
 
 TEST(lazy_string, construct_test) {
@@ -118,3 +117,13 @@ TEST(lazy_basic_string, testy)
 	ASSERT_EQ(s, "HeLLo");
 }
 
+TEST(lazy_basic_string, test_compare)
+{
+	lazy_string s = "42";
+	lazy_string h = "42";
+
+	ASSERT_TRUE(s == h);
+	ASSERT_FALSE(s != h);
+	ASSERT_TRUE(s == "42");
+	ASSERT_TRUE("42" == s);
+}

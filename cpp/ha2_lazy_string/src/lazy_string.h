@@ -4,6 +4,7 @@
 #include <string>
 #include <algorithm>
 #include <cctype>
+#include <cstddef>
 
 namespace std_utils
 {
@@ -40,14 +41,15 @@ namespace std_utils
 
 		lazy_basic_string& operator=(const lazy_basic_string& other)
 		{
-			pbuf_ = other.pbuf_;
-			return *this;
+	        auto copy(other);
+	        swap(copy);
+	        return *this;
 		}
 
 		lazy_basic_string& operator=(lazy_basic_string&& other) 
 		{
-			pbuf_ = std::move(other.pbuf_);
-			return *this;
+	        swap(other);
+        	return *this;
 		}
 
 		lazy_basic_string& operator=(const CharT* s) 
@@ -179,7 +181,7 @@ namespace std_utils
 
 		friend bool operator!=(const lazy_basic_string& lhs, const lazy_basic_string& rhs) 
 		{
-			return !(lhs = rhs);
+			return !(lhs == rhs);
 		}
 
 		friend std::ostream& operator<<(std::ostream& out, const lazy_basic_string& str) {
