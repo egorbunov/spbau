@@ -93,14 +93,39 @@ newTrack <- X = track1 in (if track2 > 20 then X else 0)
 Y - X + (if (if Y > 0 then Y else X) < 0 then Z else 0) * Y
 \end{lstlisting}
 
-% \newpage
-\section*{Грамматика}
+\newpage
+\section*{Грамматика (описание языка)}
+\begin{lstlisting}
+STATEMENT = ID <- EXPR 
+          | EXPR
+          | show ID
+EXPR      = ID
+          | NUM
+          | (EXPR)
+          | EXPR + EXPR
+          | EXPR - EXPR
+          | EXPR * EXPR
+          | if PRED then EXPR else EXPR
+PRED      = TERM
+          | not TERM
+          | (PRED)
+          | PRED or PRED
+          | PRED and PRED
+TERM      = true | false | REL
+REL       = EXPR <= EXPR | EXPR >= EXPR | EXPR == EXPR | EXPR < EXPR | EXPR > EXPR
+NUM       = [1-9][0-9]* | 0
+ID        = [a-zA-Z_][0-9a-zA-Z_]*
+\end{lstlisting}
+
+\newpage
+\section*{Преобразованная грамматика}
 
 \begin{itemize}
 \item Главное выражение:
 \begin{lstlisting}[style=nonumbers]
 	S -> %track_name% <- E
 			| show %track_name%
+			| E
 \end{lstlisting}
 
 \item Арифметика на треках:
@@ -141,36 +166,76 @@ Y - X + (if (if Y > 0 then Y else X) < 0 then Z else 0) * Y
 \end{itemize}
 
 \newpage
-
-\subsection*{Другая SLR(1) грамматика}
-Конструкция $\kw{ if } P \kw{ then } X \kw{ else } Y$ заменяется на $\kw{ if } P \kw{ then } X \kw{ else } Y \kw{ endif }$
-\begin{lstlisting}[style=nonumbers]
-S -> S sum A
-   | S sub A
-   | A.
-A -> A mul B
-   | A div B
-   | B.
-B -> ( S )
-   | if PRED then S else S endif
-   | id
-   | num.
-
-PRED -> PRED or X
-      | X.
-X -> X and N
-   | N.
-N -> not Z
-   | Z.
-Z -> ( PRED )
-   | S le S
-   | S leq S
-   | S ge S
-   | S geq S
-   | S eq S
-   | S neq S
-   | true
-   | false.
+\section*{Грамматика без левой рекурсии}
+\begin{lstlisting}
+	STATEMENT -> ID "<-" TRACK_EXPR 
+	    			|show ID 
+	   				|TRACK_EXPR
+	TRACK_EXPR -> E_TERM SUM_SUB
+	SUM_SUB -> "+" E_TERM SUM_SUB 
+	      		|"-" E_TERM SUM_SUB 
+	     		|.
+	E_TERM -> FACTOR MUL_DIV
+	MUL_DIV -> "*" FACTOR MUL_DIV 
+	      		|"/" FACTOR MUL_DIV 
+	      		|.
+	FACTOR -> "(" TRACK_EXPR ")" 
+	    		|if PREDICATE then TRACK_EXPR else TRACK_EXPR 
+	    		|ID 
+	    		|NUMBER
+	PREDICATE -> B_TERM OR_PRED
+	OR_PRED -> or B_TERM OR_PRED 
+	         	|.
+	B_TERM -> NOT_FACTOR AND_PRED
+	AND_PRED -> and NOT_FACTOR AND_PRED 
+	      		|.
+	NOT_FACTOR -> not FACTOR 
+	      		| FACTOR
+	FACTOR -> "(" PREDICATE ")" 
+	    		|RELATION
+	    		|true 
+	    		|false 
+	RELATION ->  TRACK_EXPR "<=" TRACK_EXPR 
+	    		|TRACK_EXPR ">=" TRACK_EXPR 
+	    		|TRACK_EXPR "==" TRACK_EXPR 
+	    		|TRACK_EXPR "!=" TRACK_EXPR
+	    		|TRACK_EXPR ">" TRACK_EXPR 
+	    		|TRACK_EXPR "<" TRACK_EXPR 
+	ID -> [a-zA-Z_][a-zA-Z_0-9]*
+	NUM -> %float_num_regex%
 \end{lstlisting}
+
+\newpage
+\section*{Около-PEG грамматика}
+\begin{lstlisting}
+	STATEMENT <- ID "<-" TRACK_EXPR 
+	    			/ show ID 
+	   				/ TRACK_EXPR
+	TRACK_EXPR <- E_TERM ("+" E_TERM / "-" E_TERM)*
+	E_TERM <- FACTOR ("*" FACTOR / "/" FACTOR)*
+	FACTOR <- "(" TRACK_EXPR ")" 
+	    		/ if PREDICATE then TRACK_EXPR else TRACK_EXPR 
+	    		/ ID 
+	    		/ NUMBER
+	PREDICATE <- B_TERM OR_PRED
+	OR_PRED <- (or B_TERM OR_PRED)? 
+	B_TERM <- NOT_FACTOR AND_PRED
+	AND_PRED <- (and NOT_FACTOR AND_PRED)?
+	NOT_FACTOR <- not FACTOR 
+	      		/ FACTOR
+	FACTOR <- "(" PREDICATE ")" 
+	    		/ RELATION
+	    		/ true 
+	    		/ false 
+	RELATION <-  TRACK_EXPR "<=" TRACK_EXPR 
+	    		/ TRACK_EXPR ">=" TRACK_EXPR 
+	    		/ TRACK_EXPR "==" TRACK_EXPR 
+	    		/ TRACK_EXPR "!=" TRACK_EXPR
+	    		/ TRACK_EXPR ">" TRACK_EXPR 
+	    		/ TRACK_EXPR "<" TRACK_EXPR 
+	ID <- [a-zA-Z_][a-zA-Z_0-9]*
+	NUM <- %float_num_regex%
+\end{lstlisting}
+
 
 \end{document}
