@@ -53,7 +53,7 @@
 	\]
 	\item \textbf{\underline{Имя для нового трека}} Результатом каждого запроса $Q$ является новый трек, пользователь должен иметь возможность задать ему имя. Это будет делаться так:
 	\[
-		newTrack \kw{ <- } Q
+		newTrack \kw{ := } Q
 	\]
 	Если имя не указано, то оно будет сгенерировано или записано с именем lastResult, что перепишет предыдущий неименованый результат.
 
@@ -82,21 +82,21 @@
 
 \subsection*{Примеры использования}
 \begin{lstlisting}
-newTrack <- if (track1 >= track2 AND track1 <= track2 + 100) then track1 else track2
+newTrack := if (track1 >= track2 AND track1 <= track2 + 100) then track1 else track2
 
-newTrack <- X = track1, Y = track2 in (if X > Y then X else Y)
+newTrack := X = track1, Y = track2 in (if X > Y then X else Y)
 
-newTrack <- 1 / (2 ^ track1)
+newTrack := 1 / (2 ^ track1)
 
-newTrack <- X = track1 in (if track2 > 20 then X else 0)
+newTrack := X = track1 in (if track2 > 20 then X else 0)
 
 Y - X + (if (if Y > 0 then Y else X) < 0 then Z else 0) * Y
 \end{lstlisting}
 
 \newpage
-\section*{Грамматика (описание языка)}
+\section*{Описание языка (грамматика)}
 \begin{lstlisting}
-STATEMENT = ID <- EXPR 
+STATEMENT = ID := EXPR 
           | EXPR
           | show ID
 EXPR      = ID
@@ -118,7 +118,7 @@ ID        = [a-zA-Z_][0-9a-zA-Z_]*
 \end{lstlisting}
 
 \newpage
-\section*{Преобразованная грамматика}
+\section*{Однознаная грамматика}
 
 \begin{itemize}
 \item Главное выражение:
@@ -168,33 +168,33 @@ ID        = [a-zA-Z_][0-9a-zA-Z_]*
 \newpage
 \section*{Грамматика без левой рекурсии}
 \begin{lstlisting}
-	STATEMENT -> ID "<-" TRACK_EXPR 
-	    			|show ID 
-	   				|TRACK_EXPR
+	STATEMENT -> ID ":=" TRACK_EXPR 
+	    			| "show" ID 
+	   				| TRACK_EXPR
 	TRACK_EXPR -> E_TERM SUM_SUB
 	SUM_SUB -> "+" E_TERM SUM_SUB 
-	      		|"-" E_TERM SUM_SUB 
+	      		| "-" E_TERM SUM_SUB 
 	     		|.
-	E_TERM -> FACTOR MUL_DIV
-	MUL_DIV -> "*" FACTOR MUL_DIV 
-	      		|"/" FACTOR MUL_DIV 
-	      		|.
-	FACTOR -> "(" TRACK_EXPR ")" 
-	    		|if PREDICATE then TRACK_EXPR else TRACK_EXPR 
-	    		|ID 
-	    		|NUMBER
+	E_TERM -> E_FACTOR MUL_DIV
+	MUL_DIV -> "*" E_FACTOR MUL_DIV 
+	      		| "/" E_FACTOR MUL_DIV 
+	      		| .
+	E_FACTOR -> "(" TRACK_EXPR ")" 
+	    		| "if" PREDICATE "then" TRACK_EXPR "else" TRACK_EXPR 
+	    		| ID 
+	    		| NUMBER
 	PREDICATE -> B_TERM OR_PRED
-	OR_PRED -> or B_TERM OR_PRED 
+	OR_PRED -> "or" B_TERM OR_PRED 
 	         	|.
 	B_TERM -> NOT_FACTOR AND_PRED
-	AND_PRED -> and NOT_FACTOR AND_PRED 
+	AND_PRED -> "and" NOT_FACTOR AND_PRED 
 	      		|.
-	NOT_FACTOR -> not FACTOR 
-	      		| FACTOR
-	FACTOR -> "(" PREDICATE ")" 
-	    		|RELATION
-	    		|true 
-	    		|false 
+	NOT_FACTOR -> "not" B_FACTOR 
+	      		| B_FACTOR
+	B_FACTOR -> "(" PREDICATE ")" 
+	    		| RELATION
+	    		| "true" 
+	    		| "false" 
 	RELATION ->  TRACK_EXPR "<=" TRACK_EXPR 
 	    		|TRACK_EXPR ">=" TRACK_EXPR 
 	    		|TRACK_EXPR "==" TRACK_EXPR 
@@ -206,33 +206,31 @@ ID        = [a-zA-Z_][0-9a-zA-Z_]*
 \end{lstlisting}
 
 \newpage
-\section*{Около-PEG грамматика}
+\section*{Parsing Expression Grammar}
 \begin{lstlisting}
-	STATEMENT <- ID "<-" TRACK_EXPR 
-	    			/ show ID 
+	STATEMENT <- ID ":=" TRACK_EXPR 
+	    			/ "show" ID 
 	   				/ TRACK_EXPR
 	TRACK_EXPR <- E_TERM ("+" E_TERM / "-" E_TERM)*
-	E_TERM <- FACTOR ("*" FACTOR / "/" FACTOR)*
-	FACTOR <- "(" TRACK_EXPR ")" 
-	    		/ if PREDICATE then TRACK_EXPR else TRACK_EXPR 
+	E_TERM <- E_FACTOR ("*" E_FACTOR / "/" E_FACTOR)*
+	E_FACTOR <- "(" TRACK_EXPR ")" 
+	    		/ "if" PREDICATE "then" TRACK_EXPR "else" TRACK_EXPR 
 	    		/ ID 
 	    		/ NUMBER
-	PREDICATE <- B_TERM OR_PRED
-	OR_PRED <- (or B_TERM OR_PRED)? 
-	B_TERM <- NOT_FACTOR AND_PRED
-	AND_PRED <- (and NOT_FACTOR AND_PRED)?
-	NOT_FACTOR <- not FACTOR 
-	      		/ FACTOR
-	FACTOR <- "(" PREDICATE ")" 
+	PREDICATE <- B_TERM ("or" B_TERM)*
+	B_TERM <- NOT_FACTOR ("and" NOT_FACTOR)*
+	NOT_FACTOR <- "not" B_FACTOR 
+	      		/ B_FACTOR
+	B_FACTOR <- "(" PREDICATE ")" 
 	    		/ RELATION
-	    		/ true 
-	    		/ false 
+	    		/ "false" 
+	    		/ "true" 
 	RELATION <-  TRACK_EXPR "<=" TRACK_EXPR 
-	    		/ TRACK_EXPR ">=" TRACK_EXPR 
-	    		/ TRACK_EXPR "==" TRACK_EXPR 
-	    		/ TRACK_EXPR "!=" TRACK_EXPR
-	    		/ TRACK_EXPR ">" TRACK_EXPR 
-	    		/ TRACK_EXPR "<" TRACK_EXPR 
+	    		  / TRACK_EXPR ">=" TRACK_EXPR 
+	    		  / TRACK_EXPR "==" TRACK_EXPR 
+	    		  / TRACK_EXPR "!=" TRACK_EXPR
+	    		  / TRACK_EXPR ">" TRACK_EXPR 
+                  / TRACK_EXPR "<" TRACK_EXPR 
 	ID <- [a-zA-Z_][a-zA-Z_0-9]*
 	NUM <- %float_num_regex%
 \end{lstlisting}
