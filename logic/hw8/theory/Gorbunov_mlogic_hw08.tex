@@ -1,0 +1,117 @@
+%!TEX program = xelatex
+
+\input{env.tex}
+
+\title{Математическая логика. Домашнее задание №8}
+\author{Горбунов Егор Алексеевич}
+
+\begin{document}
+\maketitle
+
+\begin{task}[1]
+	Определите формулы, удовлетворяющие следующим описаниям. Для
+	первых двух заданий мы предполагаем, что в сигнатуре есть преди-
+	катный символ $\leq$.
+	\begin{enumerate}
+		\item $\exists x \leq t\ \psi$ (<<Существует $x$, меньше либо равный $t$, такой что верно $\psi$>>)
+		\item $\forall x \leq t\ \psi$ (<<Для любого $x$, меньше либо равного $t$, верно $\psi$>>)
+		\item <<Существует не менее двух элементов, удовлетворяющих $\varphi(x)$>>
+		\item <<Существует ровно два элемента, удовлетворяющие $\varphi(x)$>>
+		\item <<Существует по крайней мере один, но не более двух элементов, удовлетворяющих $\varphi(x)$>>
+		\item <<Существует не более одного элемента, удовлетворяющего $\varphi(x)$>>
+	\end{enumerate}
+\end{task}
+\begin{solution}
+Сокращённо пишем вместо $\varphi[y/x] := \varphi(y)$, как я понимаю.
+\begin{enumerate}
+	\item $\exists x\ ((x \leq t) \land \psi)$
+	\item $\forall x\ ((x \leq t) \to \psi)$
+	\item $\exists x\ (\exists y\ ((x = y) \to \bot \land \varphi(x) \land \varphi(y)))$
+	\item $\gamma :=$ $\exists x\ ((\exists y\ ((x = y) \to \bot \land \varphi(x) \land \varphi(y))) \land \forall z (\varphi(z) \to (x = z \lor y = z))$
+	\item $\gamma \lor \exists x\ (\varphi(x) \land \forall y\ (\varphi(y) \to (x = y)))$
+	\item $(\exists x\ (\varphi(x) \land \forall y\ (\varphi(y) \to (x = y))) \lor (\forall x\ (\varphi(x) \to \bot))$
+\end{enumerate}
+\end{solution}
+
+\begin{task}[2]
+	Напишите на хаскелле функцию, аналогичную конструкции $\bm{case}$ для пар, используя $fst$ и $snd$.
+    Укажите ее тип (вам нужно будет использовать функции высшего порядка вместо расширения контекста).
+    Реализуйте функции $fst'$ и $snd'$, эквивалентные обычным $fst$ и $snd$, через эту функцию.
+\end{task}
+\begin{solution}
+\begin{lstlisting}
+	caseI :: (a, b) -> (a -> b -> c) -> c 
+	caseI p f = f (fst p) (snd p)
+
+	fst' :: (a, b) -> a
+	fst' p = caseI p const
+
+	snd' :: (a, b) -> b
+	snd' p = caseI p (flip const)
+\end{lstlisting}
+\end{solution}
+
+\begin{task}[3]
+	Пусть у нас есть несколько формул:
+	\begin{enumerate}
+		\item \label{it:no} $x \neq y$
+		\item \label{it:e} $\exists x (x \neq y)$
+		\item \label{it:a} $\forall x (x \neq y)$
+		\item \label{it:ee} $\exists x \exists y (x \neq y)$
+		\item \label{it:ea} $\exists x \forall y (x \neq y)$
+		\item \label{it:ae} $\forall x \exists y (x \neq y)$
+		\item \label{it:aa} $\forall x \forall y (x \neq y)$
+	\end{enumerate}
+	И несколько интерпретаций:
+	\begin{align*}
+	M_0 & = \varnothing \\
+	M_1 & = \{ 7 \} \\
+	M_2 & = \{ 13, 28 \}
+	\end{align*}
+	Какие из этих формул верны в каких моделях?
+\end{task}
+\begin{solution}
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+	\hline
+	            & $M_0$ & $M_1$ & $M_2$ \\
+	\hline
+	\ref{it:no} & \xtick  & \xcross & \xcross \\
+	\ref{it:e}  & \xcross & \xcross & \xtick  \\
+	\ref{it:a}  & \xtick  & \xcross & \xcross \\
+	\ref{it:ee} & \xcross & \xcross & \xtick  \\
+	\ref{it:ea} & \xcross & \xcross & \xcross \\
+	\ref{it:ae} & \xtick  & \xcross & \xtick  \\
+	\ref{it:aa} & \xtick  & \xcross & \xcross \\
+	\hline
+\end{tabular}
+\end{center}
+\end{solution}
+
+\begin{task}[4]
+Докажите, что формулы $\forall x \forall y (x \neq y)$ и $\neg \exists x\ \top$ эквивалентны,
+написав лямбда терм типа $((\forall x \forall y (x \neq y)) \to \neg \exists x\ \top) \land ((\neg \exists x\ \top) \to \forall x \forall y (x \neq y))$.
+\end{task}
+\begin{solution}
+\begin{enumerate}
+	\item[$(\Rightarrow)$] Терм типа $(\forall x \forall y (x \neq y)) \to \neg \exists x\ \top)$:
+	\[
+		t_{\Rightarrow} := \lambda f.\xparen{\lambda p. f\ (fst\ p)\ (fst\ p)\ (refl\ (fst\ p))}
+	\]
+	Тут $f$ имеет тип $x \to y\ \to (x = y) \to \bot$, а $p$ имеет тип $(x, \bot \to \bot)$
+
+	\item[$(\Leftarrow)$] Терм типа $(\neg \exists x\ \top) \to \forall x \forall y (x \neq y)$, тип можно переписать так: 
+	\[
+		((x, \bot \to \bot) \to \bot) \to (x \to y \to (x = y) \to \bot)
+	\]
+	Тогда искомый терм таков:
+	\[
+		t_{\Leftarrow} := \lambda g.\xparen{ \lambda a.\lambda b.\lambda e. g\ (a, leib(x, x=y, e, e))}
+	\]
+	У нас получается, что $a$ имеет тип $x$, $b$ имеет тип $y$, а $e$ имеет тип $x=y$, тогда, соответственно, можно считать, что $e$ имеет тип $x=y[x/x]$,
+	а значит $leib(x, x=y, e, e)$ будет иметь тип $y=y$, что эквивалентно $\top = \bot \to \bot$
+\end{enumerate}
+Требуемый итоговый терм: $(t_{\Rightarrow}, t_{\Leftarrow})$ \xqed
+\end{solution}
+
+\end{document}
