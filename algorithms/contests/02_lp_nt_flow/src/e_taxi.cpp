@@ -1,7 +1,9 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
+#include <ostream>
 #include <tuple>
+#include <cmath>
 
 using namespace std;
 
@@ -48,28 +50,56 @@ private:
 
 };
 
+struct pos_t {
+    int x, y;
+    friend istream& operator>>(istream& in, pos_t& pos) {
+        return in >> pos.x >> pos.y;
+    }
+};
+
+int dist(pos_t& a, pos_t& b) {
+    return (abs(b.x - a.x) + abs(b.y - a.y));
+}
+
+
+
+struct order_t {
+    int time;
+    pos_t from;
+    pos_t to;
+    order_t(int t, pos_t from, pos_t to): time(t), from(from), to(to) {
+    }
+};
+
 int main() {
-    int n, m;
+    int order_num;
+    cin >> order_num;
 
-    cin >> n >> m;
+    vector<order_t> orders;
 
-    graph g(n, m);
+    for (int i = 0; i < order_num; ++i) {
+        int h, m;
+        char skip;
+        cin >> h >> skip >> m;
+        pos_t from, to;
+        cin >> from >> to;
+        orders.push_back(order_t(60 * h + m, from, to));
+    }
 
-    for (int i = 0; i < n; ++i) {
-        int b;
-        for (;;) {
-            cin >> b;
-            if (b == 0) break;
-            g.add_a_to_b(i, b - 1);
+    graph g = graph(orders.size(), orders.size());
+
+    for (size_t a = 0; a < orders.size(); ++a) {
+        for (size_t b = 0; b < orders.size(); ++b) {
+            if (orders[a].time
+                + dist(orders[a].from, orders[a].to)
+                + dist(orders[a].to, orders[b].from) < orders[b].time) {
+
+                g.add_a_to_b(a, b);
+            }
         }
     }
 
     auto t = g.get_max_match();
-    cout << get<0>(t) << endl;
-    auto match = get<1>(t);
-    for (int i = 0; i < match.size(); ++i) {
-        if (match[i] != -1) {
-            cout << match[i] + 1 << " " << i + 1 << endl;
-        }
-    }
+
+    cout << orders.size() - get<0>(t) << endl;
 }
