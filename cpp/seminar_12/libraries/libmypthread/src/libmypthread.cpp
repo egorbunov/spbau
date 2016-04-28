@@ -22,7 +22,6 @@ static void __attribute__ ((destructor)) libmypthread_deinit(void) {
 int pthread_mutex_lock(pthread_mutex_t *mutex) noexcept {
 
 	auto tid = std::this_thread::get_id();
-
 	if (thread_ids.find(tid) == thread_ids.end()) {
 		thread_ids[tid] = max_id++;
 	}

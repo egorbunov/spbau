@@ -30,7 +30,7 @@ struct binder {
 	{}
 
 	void call() {
-		
+
 	}
 };
 
