@@ -1,0 +1,174 @@
+%!TEX program = xelatex
+
+\input{env.tex}
+
+\title{Математическая логика. Домашнее задание №10}
+\author{Горбунов Егор Алексеевич}
+
+\begin{document}
+\maketitle
+
+\begin{task}[1]
+Докажите, что $L_1^{lem}$ является консервативным расширением $L_0^{lem}$.
+\end{task}
+\begin{solution}
+У нас в обеих логических системах есть исключённое третье. Мы показывали, что исключённое третье эквивалентно закону двойного отрицанию:
+\[
+	 \phi \lor \neg \phi \Leftrightarrow \neg \neg \phi \to \phi 
+\]
+Так же мы знаем, что в интуиционистской логике верно правило де Моргана:
+\[
+	\neg (\phi \land \psi) \leftrightarrow (\neg \phi \lor \neg \psi)
+\]
+Таким образом видим, что у нас при доказательстве появляется возможность использовать:
+\begin{center}
+\AxiomC{$\Gamma \vdash \neg \neg \phi$}
+\UnaryInfC{$\Gamma \vdash \phi$}
+\DisplayProof
+\end{center}
+
+Теперь пусть есть формула из $L_0^{lem}$, которая доказуема в $L_1^{lem}$. Тогда, чтобы получить её доказательство в $L_0^{lem}$ нужно сделать замены:
+\begin{itemize}
+	\item 
+	\AxiomC{$\Gamma \vdash \varphi \land \psi$}
+	\RightLabel{ $\land E_1$}
+	\UnaryInfC{$\Gamma \vdash \varphi$}
+	\DisplayProof
+	\qquad 
+	на
+	\qquad
+	\AxiomC{$\Gamma \vdash \neg (\neg \phi \lor \neg \psi)$}
+	\UnaryInfC{$\Gamma \vdash \varphi$}
+	\DisplayProof
+
+	\item 
+	\AxiomC{$\Gamma \vdash \varphi \land \psi$}
+	\RightLabel{ $\land E_2$}
+	\UnaryInfC{$\Gamma \vdash \psi$}
+	\DisplayProof
+	\qquad 
+	на
+	\qquad
+	\AxiomC{$\Gamma \vdash \neg (\neg \phi \lor \neg \psi)$}
+	\UnaryInfC{$\Gamma \vdash \psi$}
+	\DisplayProof
+\end{itemize}
+Правило введения $\land$ заменится на 
+\AxiomC{$\Gamma \vdash \varphi$}
+\AxiomC{$\Gamma \vdash \psi$}
+\RightLabel{ $\land I'$}
+\BinaryInfC{$\Gamma \vdash \neg (\neg \phi \lor \neg \psi)$}
+\DisplayProof\\
+Получится доказательство в $L_0^{lem}$
+\end{solution}
+
+\begin{task}[2]
+	Если в $PRCPA$ можно определять функции при помощи паттерн матчинга на нескольких аргументах сразу, то мы легко можем определить функции $min$ и $max$:
+	\begin{align*}
+	& min : \mathbb{N} \times \mathbb{N} \to \mathbb{N} \\
+	& min(0,y) = 0 \\
+	& min(S(x),0) = 0 \\
+	& min(S(x),S(y)) = S(min(x,y)) \\
+	& \\
+	& max : \mathbb{N} \times \mathbb{N} \to \mathbb{N} \\
+	& max(0,y) = y \\
+	& max(S(x),S(y)) = S(max(x,y))
+	\end{align*}
+	\begin{enumerate}
+	\item Определите их, используя только базовый вариант паттерн матчинга как в лекциях.
+	\item Докажите, что $\forall x \forall y\ (min(x,y) \leq max(x,y))$, где $a \leq b$ означает $\exists c\ (a + c = b)$.
+	\end{enumerate}
+\end{task}
+\begin{solution}
+\begin{enumerate}
+	\item Определяем:
+		\begin{align*}
+		    & P : \mathbb{N} \to \mathbb{N} \\
+		    & P(0) = 0\\
+		    & P(S(x)) = x\\
+		    & \\
+			& - : \mathbb{N} \times \mathbb{N} \to \mathbb{N}\\
+			& 0 - y = 0\\
+			& x - 0 = x\\
+			& x - S(y) = P(x - y)\\
+			& \\
+		    & sign : \mathbb{N} \to \mathbb{N} \\
+		    & sign(0) = 0\\
+		    & sign(S(x)) = 1\\
+		\end{align*}
+		\begin{align*}
+			& min : \mathbb{N} \times \mathbb{N} \to \mathbb{N} \\
+			& min(0, y) = 0 \\
+			& min(S(x), y) = min(x, y) + sign(y - x)\\
+			& \\
+			& max : \mathbb{N} \times \mathbb{N} \to \mathbb{N} \\
+			& max(0,y) = y \\
+			& max(S(x), y) = max(x, y) + sign(S(x) - y)
+		\end{align*}
+	\item Индукция по $x$. При $x = 0$: $min(0, y) = 0$, $max(0, y) = y$, знаем, что $0 + y = y$, т.е. нашли такой $b$, что $0 + b = y$, а значит $0 \leq y$. Пускай теперь утверждение верно для $x, y$, покажем для $S(x), y$:
+	\begin{align*}
+		min(S(x), y) &= min(x, y) + sign(y - x)\\
+		max(S(x), y) &= max(x, y) + sign(S(x) - y) = min(x, y) + c + sign(S(x) - y)
+	\end{align*}
+	Нужно показать, что $sign(y - x) \leq c + sign(S(x) - y)$. Легко видеть, что если $S(x) > y$, то $sign(S(x) - y) = 1$, а $sign(y - x) = 0$, т.е. если взять $c' = c + sign(S(x) - y)$, то $max(S(x), y) = min(S(x), y) + c'$. 
+
+	Теперь если $S(x) \leq y$ ($x < y$), то:
+	\begin{align*}
+		min(S(x), y) &= min(x, y) + sign(y - x) = x + 1\\
+		max(S(x), y) &= max(x, y) + sign(S(x) - y) = y\\
+		max(S(x), y) &= x + c \qquad (\text{по предположению})
+	\end{align*}
+	Таким образом $x + c = y$, но т.к. $x < y$, то $c > 0$, а значит $x + 1 \leq x + c$, т.е. $min(S(x), y) \leq max(S(x), y)$. \xqed
+\end{enumerate}
+\end{solution}
+
+\begin{task}[3]
+	Пусть в $PRCPA$ у нас есть функции $+$ и $+'$, определенные следующим образом:
+	\begin{align*}
+	& + : \mathbb{N} \times \mathbb{N} \to \mathbb{N} \\
+	& 0 + y = y \\
+	& S(x) + y = S(x + y) \\
+	& \\
+	& +' : \mathbb{N} \times \mathbb{N} \to \mathbb{N} \\
+	& x +' 0 = x \\
+	& x +' S(y) = S(x +' y)
+	\end{align*}
+	Докажите, что $\forall x \forall y\ (x + y = x +' y)$
+\end{task}
+\begin{solution}
+Двойная индукция. Сначала по $x$, потом по $y$.
+\begin{itemize}
+\item Для $x = 0$.
+	\begin{itemize}
+		\item Для $y = 0$. $0 + 0 = 0$, $0 +' 0 = 0$, т.е. $0 + 0 = 0 +' 0$
+		\item Пускай верно для $y$, тогда: $0 + S(y) = S(y)$, $0 +' S(y) = S(0 +' y) =^{\text{предположение}} S(0 + y) = S(y)$, т.е. $0 + S(y) = 0 +' S(y)$, показали.
+	\end{itemize}
+\item Пускай верно для $x$, тогда покажем для $S(x)$
+	\begin{itemize}
+		\item $y = 0$. $S(x) + 0 = S(x + 0) = S(x)$, $S(x) +' 0 = S(x)$, т.е. $S(x) + 0 = S(x) +' 0$.
+		\item Пускай верно для $y$, покажем для $S(y)$: 
+		\begin{align*}
+			S(x) + S(y) &= S(x + S(y)) =^{\text{предположение для $x$}} = S(x +' S(y)) = S(S(x +' y))\\
+			S(x) +' S(y) &= S(S(x) +' y) =^{\text{предположение для $y$}} = S(S(x) + y) = S(S(x + y))
+ 		\end{align*}
+ 		Но по предположению $x + y = x +' y$, т.е. $S(x)+S(y) = S(x) +' S(y)$ \xqed
+	\end{itemize}
+\end{itemize}
+\end{solution}
+
+\begin{task}[4]
+	Докажите в $CPA$, что $\forall n\ (2^n \leq ack\,n\,n)$, где $a \leq b$ означает $\exists c\ (a + c = b)$ и функции $2^{(-)}$ и $ack$ определены следующим образом:
+	\begin{align*}
+	& 2^{(-)} : \mathbb{N} \to \mathbb{N} \\
+	& 2^0 = S(0) \\
+	& 2^{S(n)} = 2 \cdot 2^n \\
+	& \\
+	& ack : \mathbb{N} \to \mathbb{N} \to \mathbb{N} \\
+	& ack\,0\,n = S(n) \\
+	& ack\,(S\,m)\,0 = ack\,m\,(S\,0) \\
+	& ack\,(S\,m)\,(S\,n) = ack\,m\,(ack\,(S\,m)\,n)
+	\end{align*}
+\end{task}
+\begin{solution}
+\end{solution}
+\end{document}
