@@ -14,7 +14,7 @@ namespace fn {
     template<size_t Idx>
     struct placeholder_t : placeholder_base_t
     {
-        constexpr static size_t index = Idx;
+        constexpr static size_t index = Idx - 1;
     };
 
     const placeholder_t<1> _1;
@@ -52,9 +52,11 @@ namespace fn {
         /**
          * Binder struct
          */
-        template<class F, class Tuple>
+        template<class F, class... Types>
         struct binder_t {
         private:
+            typedef std::tuple<typename std::decay<Types>::type...> Tuple;
+
             typename std::decay<F>::type f;
             Tuple saved_args;
 
@@ -65,13 +67,12 @@ namespace fn {
                 return arg;
             }
 
-            // TODO: ugly -1, but...
             template<class ArgsTuple, class T>
             static auto apply_placeholder(ArgsTuple&& args_tuple, T&& arg)
             -> typename std::enable_if<is_placeholder<typename std::decay<T>::type>::value,
-                    decltype(std::get<std::decay<T>::type::index - 1>(args_tuple))>::type
+                    decltype(std::get<std::decay<T>::type::index>(args_tuple))>::type
             {
-                return std::get<std::decay<T>::type::index - 1>(args_tuple);
+                return std::get<std::decay<T>::type::index>(args_tuple);
             }
 
             template<class ArgTuple, size_t... Indices>
@@ -84,16 +85,17 @@ namespace fn {
             }
 
         public:
-            binder_t(F &&f, Tuple &&saved_args) : f(f), saved_args(saved_args)
-            {}
+            binder_t(F &&f, Types&&... args) : f(std::forward<F>(f)),
+                                               saved_args(std::forward<Types>(args)...)
+            { }
 
             /**
              * TODO: I can't move that function definition to the head of the struct, because
              * TODO: compiler says, that `call` function (in return type) can't be found. Why?!
              * TODO: How to forward declare functions with auto + decltype?
              */
-            template<class... Types>
-            auto operator()(Types&&... args)
+            template<class... ArgTypes>
+            auto operator()(ArgTypes&&... args)
             -> decltype(call(std::forward_as_tuple(args...), build_indices_t<std::tuple_size<Tuple>::value>{}))
             {
                 return call(std::forward_as_tuple(args...), build_indices_t<std::tuple_size<Tuple>::value>{});
@@ -105,9 +107,7 @@ namespace fn {
      * Analogue for bind c++ standard function
      */
     template<class F, class... Types>
-    auto bind(F&& f, Types&&... args) -> binder_t<F, decltype(std::forward_as_tuple(args...))>
-    {
-        return binder_t<F, decltype(std::forward_as_tuple(args...))>(std::forward<F>(f),
-                                                                     std::forward_as_tuple(args...));
+    auto bind(F&& f, Types&&... args) -> binder_t<F, Types...> {
+        return binder_t<F, Types...>(std::forward<F>(f), std::forward<Types>(args)...);
     }
 }

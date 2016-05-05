@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+//#include <functional>
 
 #include "fn.h"
 #include "gtest/gtest.h"
@@ -44,9 +45,10 @@ TEST(bind, bind_reference_params_no_placeholders_call)
 {
     int rx = 42;
     int ry = 8;
+
     auto binder_5 = bind(sum_to_x, rx, ry);
     ASSERT_EQ(50, binder_5());
-    ASSERT_EQ(50, rx);
+//    ASSERT_EQ(50, rx); TODO: WHY STANDARD BIND DOESENT CHANGE rx?
 }
 
 TEST(placeholder, is_placeholder_test)
@@ -136,3 +138,174 @@ TEST(bind, partly_binded_test)
     auto fb = bind(complex_fun, _1, s, _2, "4");
     ASSERT_EQ("1234", fb("1", "3"));
 }
+
+// mr. Lesin tests
+
+int global_var;
+static bool post_increment_global_var(int amount=1)
+{
+    int old_val = global_var;
+    global_var += amount;
+    return old_val;
+}
+
+TEST(bind, test_1_arg_func_bind)
+{
+    global_var = 0;
+    ASSERT_TRUE(bind(post_increment_global_var, 777)() == 0);
+    ASSERT_TRUE(global_var == 777);
+    global_var = 0;
+    ASSERT_TRUE(bind(post_increment_global_var, _1)(777) == 0);
+    ASSERT_TRUE(global_var == 777);
+}
+
+static int take_first(int first, int second)
+{
+    return first;
+}
+
+static int take_second(int first, int second)
+{
+    return second;
+}
+
+TEST(bind, test_2_arg_func_bind)
+{
+    ASSERT_TRUE(bind(take_first, 111, 222)() == 111);
+    ASSERT_TRUE(bind(take_first, _1, 222)(111) == 111);
+    ASSERT_TRUE(bind(take_first, 111, _1)(222) == 111);
+    ASSERT_TRUE(bind(take_first, _1, _2)(111, 222) == 111);
+    ASSERT_TRUE(bind(take_first, _2, _1)(111, 222) == 222);
+
+    ASSERT_TRUE(bind(take_second, 111, 222)() == 222);
+    ASSERT_TRUE(bind(take_second, _1, 222)(111) == 222);
+    ASSERT_TRUE(bind(take_second, 111, _1)(222) == 222);
+    ASSERT_TRUE(bind(take_second, _1, _2)(111, 222) == 222);
+    ASSERT_TRUE(bind(take_second, _2, _1)(111, 222) == 111);
+}
+
+template<class T>
+typename std::decay<T>::type func_arb_arg(T &&arg)
+{
+    return arg;
+}
+
+static int arg_by_val(int i)
+{
+    return i;
+}
+
+TEST(bind, test_passing_by_value)
+{
+    int i = 777;
+    auto binder = bind(arg_by_val, i);
+    ASSERT_TRUE(i == binder());
+}
+
+static int arg_by_ref(int &i)
+{
+    return i;
+}
+
+TEST(bind, test_passing_by_ref)
+{
+    int i = 777;
+    auto binder = bind(arg_by_ref, i);
+    ASSERT_TRUE(i == binder());
+}
+
+static int arg_by_const_ref(const int &i)
+{
+    return i;
+}
+
+TEST(bind, test_passing_by_const_ref)
+{
+    int i = 777;
+    auto binder = bind(arg_by_const_ref, i);
+    ASSERT_TRUE(i == binder());
+}
+
+
+TEST(bind, test_passing_by_rvalue_ref)
+{
+    struct test_struct
+    {
+        test_struct()
+                : was_moved_(false)
+        {}
+
+        test_struct(const test_struct &src)
+                : was_moved_(false)
+        {
+        }
+
+        test_struct(test_struct &&src)
+                : was_moved_(false)
+        {
+            src.was_moved_ = true;
+        }
+
+        bool was_moved_;
+    };
+
+    test_struct arg;
+    auto src = bind(func_arb_arg<test_struct&&>, std::move(arg));
+    ASSERT_TRUE(arg.was_moved_);
+    (void)src;
+}
+
+TEST(bind, test_placeholder_validity)
+{
+    auto _1_copy(_1);
+    _1_copy = _1;
+    auto _1_ptr = &_1;
+    bind(take_second, *_1_ptr, 2)(1);
+}
+
+TEST(bind, test_binder_move_constructor)
+{
+    struct test_struct
+    {
+        test_struct()
+                : was_moved_(false)
+        {}
+
+        test_struct(const test_struct &src)
+                : was_moved_(src.was_moved_)
+        {}
+
+        test_struct(test_struct &&src)
+                : was_moved_(true)
+        {
+            src.was_moved_ = true;
+        }
+
+        bool was_moved_;
+    };
+
+    test_struct arg;
+    auto src = bind(func_arb_arg<test_struct&>, arg);
+    src();
+    auto moved = std::move(src);
+    ASSERT_TRUE(moved().was_moved_);
+}
+
+TEST(bind, test_binder_copy_constructor)
+{
+    auto src = bind(take_first, 1, _1);
+    auto copy(src);
+    ASSERT_TRUE(src(2) == copy(2));
+}
+
+//static void test_assignment()
+//{
+//    /* There is no assignment in standard bind. */
+//    /* So ignore this task. */
+//    /*auto inst1 = bind(take_first, 1, _1);
+//    auto inst2 = bind(take_second, 2, _1);
+//    assert(inst1(2) == 1);
+//    assert(inst2(1) == 1);
+//    inst2 = inst1;
+//    assert(inst1(2) == 1);*/
+//}
