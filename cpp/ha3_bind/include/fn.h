@@ -8,7 +8,6 @@
 
 // ------------------- BIND --------------------
 namespace fn {
-
     /**
      * Base placeholder type; Used for sfinae in bind implementation.
     */
@@ -27,6 +26,10 @@ namespace fn {
     const placeholder_t<4> _4;
     const placeholder_t<5> _5;
     const placeholder_t<6> _6;
+    const placeholder_t<7> _7;
+    const placeholder_t<8> _8;
+    const placeholder_t<9> _9;
+    const placeholder_t<10> _10;
 
     template<typename T>
     struct is_placeholder : std::is_base_of<placeholder_base_t, T>
@@ -87,11 +90,6 @@ namespace fn {
                                                saved_args(std::forward<Types>(args)...)
             { }
 
-            /**
-             * TODO: I can't move that function definition to the head of the struct, because
-             * TODO: compiler says, that `call` function (in return type) can't be found. Why?!
-             * TODO: How to forward declare functions with auto + decltype?
-             */
             template<class... ArgTypes>
             auto operator()(ArgTypes&&... args)
             -> decltype(std::declval<binder_t<F, Types...>>().call(std::forward_as_tuple(args...), build_indices_t<std::tuple_size<BindedTuple>::value>{}))

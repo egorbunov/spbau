@@ -5,12 +5,12 @@ project(${PROJECT_NAME_STR} CXX)
 find_package(Threads REQUIRED)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-    add_definitions(-Wall -Werror -std=c++11 -Wno-deprecated -pthread)
+    add_definitions(-Wall -Werror -std=c++14 -Wno-deprecated -pthread)
 endif()
 
 if(MSVC)
     #vc 2012 fix for vararg templates
-    set(MSVC_COMPILER_DEFS "-D_VARIADIC_MAX=10")
+    set(MSVC_COMPILER_DEFS "-std=c++14 -D_VARIADIC_MAX=10")
 endif() 
 #-------------------
 # set common include folder for module
@@ -39,7 +39,7 @@ include_directories(${GTEST_INCLUDE_DIRS} ${COMMON_INCLUDES})
 
 file(GLOB TEST_SRC_FILES ${PROJECT_SOURCE_DIR}/test/*.cpp)
 add_executable(${PROJECT_TEST_NAME} ${TEST_SRC_FILES})
-# add_dependencies(${PROJECT_TEST_NAME} googletest)
+add_dependencies(${PROJECT_TEST_NAME} googletest)
 
 
 if(NOT WIN32)
