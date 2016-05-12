@@ -94,7 +94,7 @@ namespace fn {
              */
             template<class... ArgTypes>
             auto operator()(ArgTypes&&... args)
-            -> decltype(call(std::forward_as_tuple(args...), build_indices_t<std::tuple_size<BindedTuple>::value>{}))
+            -> decltype(std::declval<binder_t<F, Types...>>().call(std::forward_as_tuple(args...), build_indices_t<std::tuple_size<BindedTuple>::value>{}))
             {
                 return call(std::forward_as_tuple(args...), build_indices_t<std::tuple_size<BindedTuple>::value>{});
             }
