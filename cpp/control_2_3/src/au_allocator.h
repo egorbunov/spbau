@@ -66,7 +66,7 @@ private:
 
         ~chunks_for_order_t() {
             for (uint8_t* ptr : chunks) {
-                delete ptr;
+                delete[] ptr;
             }
         }
 

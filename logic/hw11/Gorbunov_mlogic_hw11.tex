@@ -1,0 +1,116 @@
+%!TEX program = xelatex
+
+\input{env.tex}
+
+\title{Математическая логика. Домашнее задание №11}
+\author{Горбунов Егор Алексеевич}
+
+\begin{document}
+\maketitle
+
+\begin{task}[1]
+Докажите, что отношение $\subseteq$ является частичным порядком. Какие
+аксиомы при этом необходимо использовать?
+\end{task}
+\begin{solution}
+\begin{itemize}
+	\item Рефлексивность. Нам нужно показать, что $\forall x\ (x \subseteq x)$, т.е. $\forall z\ (z \in x \to z \in x)$. Это доказывается вообще без использования аксиом специфичных для $IZF$: достаточно один раз применить правило $\to I$, а после $(var)$.
+	\item Антисимментричность сразу же следует из аксиомы экстенсиальности.
+	\item Транзитивность. Нужно показать, что $\forall a \forall b \forall c\ (a \subseteq b \land b \subseteq c \to a \subseteq c)$.
+	\[
+		(\forall z\ (z \in a \to z \in b) \land \forall z\ (z \in b \to z \in c)) \to \forall z\ (z \in a \to z \in c)
+	\] 
+	Мы доказывали транзитивность импликации в интуиционистской логике (легко предоставить терм), так что никакие специфичные для $IZF$ аксиомы использовать не нужно.
+\end{itemize}
+\end{solution}
+
+\begin{task}[2]
+Докажите при помощи $\in$-индукции:
+\begin{enumerate}
+	\item Отношение $\in$ иррефлексивно.
+	\item Не существует $x$ и $y$, таких что $x in y$ и $y in x$.
+\end{enumerate}
+\end{task}
+\begin{solution}
+\begin{enumerate}
+	\item Для пустого множества по его определению иррефлексивность верна. Пускай для множества $x$ верно $ \forall y \in x\ y \notin y $. Пускай у нас $x \in x$, но тогда $\exists y \in x\ (y \in y)$, что не может быть верно по предположению индукции, а поэтому верно, что $\neg (x \in x)$.
+	\item Индукция по $x$.
+	\begin{itemize}
+		\item $x = \emptyset$
+			\begin{itemize}
+				\item $y = \emptyset$. Понятно, что $x \notin y$ и $y \notin x$ по определению пустого множества.
+				\item $y \neq \emptyset$. Тут верно, что $y \notin x$, т.к. $x$ пусто.
+			\end{itemize}
+		\item $x$ --- какое-то множество, не пустое.
+			\begin{itemize}
+				\item $y = \emptyset$. Верно, что $x \notin y$, а значит не верно, что $x \in y \land y \in x$.
+				\item $y$ --- какое-то множество. По предположению индукции тут верно, что
+				\[
+					\forall a \forall b\ (a \in x \land b \in y \to \neg (a \in b \land b \in a))
+				\]
+				Если $x \in y \land y \in x$, то предположение индукции сразу же будет нарушено, т.к. найдутся такие $a = x$ и $b = y$, что $a \in b \land b \in a$.
+			\end{itemize}
+	\end{itemize}
+\end{enumerate}
+Я тут видимо напутал с тем, как использовать аксиому индукции, но сути это не меняет, т.к. видимо, достаточно просто последнего пункта док-ва.
+\xqed
+\end{solution}
+
+\begin{task}[3]
+Докажите следующие свойства натуральных чисел:
+\begin{enumerate}
+	\item $\forall x \in \mathbb{\mathbb{N}} (x = 0 \lor \exists y \in \mathbb{\mathbb{N}} (x = S(y)))$
+	\item Используя предыдущий пункт и следующий принцип индукции
+	\[
+		(\forall x \in \mathbb{\mathbb{N}} (\forall y < x\ \varphi(y)) \to \varphi(x)) \to \forall x \in \mathbb{\mathbb{N}}\ \varphi(x)
+	\]
+	докажите обычный принцип индукции для натуральных чисел:
+	\[
+		\varphi(0) \land (\forall y \in \mathbb{\mathbb{N}} \varphi(y) \to \varphi(S(y))) \to \forall x \in \mathbb{\mathbb{N}}\ \varphi(x)
+	\]
+\end{enumerate}
+\end{task}
+\begin{solution}
+Пусть $S'(n)$ --- это предикат в рамках теории множеств, а $S(n)$ --- succ.
+\begin{enumerate}
+	\item По аксиоме, характеризующей натуральные числа, если $n \in \mathbb{\mathbb{N}}$, то либо $n = \emptyset$, либо верен предикат $S'(n)$, а предикат $S'(n)$ в свою очередь утверждает, что $\exists k (n = \xbrace{k \cup \xbrace{k}})$ (неформально), т.е. $n = S(k) = \xbrace{k \cup \xbrace{k}}$. \xqed
+
+	\item Покажем, что:
+	\[
+		x \vdash (\varphi(0) \land (\forall y \in \mathbb{\mathbb{N}} \varphi(y) \to \varphi(S(y)))) \to 
+		((\forall y < x\ \varphi(y)) \to \varphi(x))
+	\]
+	По пункту а) $x$ может быть либо $0$ либо $S(z)$ для какого-то $y$. Если $x = 0$, то приведённая выше импликация примет вид:
+	\[
+		x \vdash \varphi(0) \to \top
+	\]
+	Т.к. не существует $y < 0$. Таким образом при $x = 0$ доказали.
+
+	Если же $x = S(z)$. Тогда по левой части импликации верно, что $\varphi(z) \to \varphi(x)$. При этом по индукции верно, т.к. $z < x$, что $(\forall y < z\ \varphi(y)) \to \varphi(z)$, а тогда по транзитивности импликации получаем: $(x = S(z) \land (\forall y < z\ \varphi(y)) \to \varphi(z) \land (\varphi(z) \to \varphi(x))) \to \varphi(x)$, что эквивалентно тому, что хотим доказать.
+	\xqed 
+\end{enumerate}
+\end{solution}
+
+\begin{task}[4]
+Докажите следующие свойства натуральных чисел (hint: каждый сле-
+дующий пункт следует из предыдущего):
+\begin{enumerate}
+\item Если $S(x) < S(y)$, то $x < y$.
+\item $x < y$ тогда и только тогда, когда $S(x) ≤ y$.
+\item Отношение $\in$ транзитивно на элементах $\mathbb{N}$. Можно показать более
+общее утверждение: если $x \in y \in z \in \mathbb{N}$, то $x \in z$.
+\item Если $x \in y$ и $y \in \mathbb{N}$, то $x \in \mathbb{N}$.
+\end{enumerate}
+\end{task}
+
+\begin{solution}
+\begin{enumerate}
+	\item $S(x) = \xbrace{x, \xbrace{x}}$, $S(y) = \xbrace{y, \xbrace{y}}$. Если $S(x) < S(y)$, то:
+	\begin{align*}
+		\xbrace{x, \xbrace{x}} \in y & \Rightarrow x \in \xbrace{x, \xbrace{x}} \in y \Rightarrow x < y \\
+		\xbrace{x, \xbrace{x}} = y & \Rightarrow x \in \xbrace{x, \xbrace{x}} \subseteq y \Rightarrow x < y
+	\end{align*}
+\end{enumerate}
+\end{solution}
+
+\end{document}
