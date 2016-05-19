@@ -63,14 +63,14 @@ namespace fn {
             BindedTuple saved_args;
 
             template<class ArgsTuple, class T>
-            static auto apply_placeholder(ArgsTuple&& args_tuple, T&& arg)
+            static auto apply_placeholder(const ArgsTuple& args_tuple, T&& arg)
             -> typename std::enable_if<!is_placeholder<typename std::decay<T>::type>::value, T&&>::type
             {
                 return arg;
             }
 
             template<class ArgsTuple, class T>
-            static auto apply_placeholder(ArgsTuple&& args_tuple, T&& arg)
+            static auto apply_placeholder(const ArgsTuple& args_tuple, T&& arg)
             -> typename std::enable_if<is_placeholder<typename std::decay<T>::type>::value,
                     decltype(std::get<std::decay<T>::type::index>(args_tuple))>::type
             {
@@ -78,8 +78,8 @@ namespace fn {
             }
 
             template<class ArgTuple, size_t... Indices>
-            auto call(ArgTuple&& args_tuple, const indices_t<Indices...>& ignored)
-            -> decltype(f(apply_placeholder(args_tuple,std::get<Indices>(saved_args))...))
+            auto call(const ArgTuple& args_tuple, const indices_t<Indices...>& ignored)
+            -> decltype(f(apply_placeholder(args_tuple, std::get<Indices>(saved_args))...))
             {
                 return f(apply_placeholder(args_tuple,
                                            std::get<Indices>(saved_args))...);
@@ -92,9 +92,11 @@ namespace fn {
 
             template<class... ArgTypes>
             auto operator()(ArgTypes&&... args)
-            -> decltype(std::declval<binder_t<F, Types...>>().call(std::forward_as_tuple(args...), build_indices_t<std::tuple_size<BindedTuple>::value>{}))
+            -> decltype(std::declval<binder_t<F, Types...>>().call(std::forward_as_tuple(args...),
+                                                                   build_indices_t<std::tuple_size<BindedTuple>::value>{}))
             {
-                return call(std::forward_as_tuple(args...), build_indices_t<std::tuple_size<BindedTuple>::value>{});
+                return call(std::forward_as_tuple(args...),
+                            build_indices_t<std::tuple_size<BindedTuple>::value>{});
             }
         };
     } // BIND IMPLEMENTATION DETAILS END
@@ -107,8 +109,3 @@ namespace fn {
         return binder_t<F, Types...>(std::forward<F>(f), std::forward<Types>(args)...);
     }
 } // END BIND IMPLEMENTATION
-
-namespace fn {
-    struct function {
-    };
-}

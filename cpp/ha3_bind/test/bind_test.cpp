@@ -297,30 +297,29 @@ TEST(bind, test_binder_copy_constructor)
     ASSERT_TRUE(src(2) == copy(2));
 }
 
+int copy_cnt = 0;
+int move_cnt = 0;
+
+struct test_struct
+{
+    test_struct() {
+    }
+
+    test_struct(const test_struct &src)
+    {
+        ++copy_cnt;
+    }
+
+    test_struct(test_struct &&src)
+    {
+        ++move_cnt;
+    }
+};
+
 
 TEST(bind, test_binder_move_constructor1)
 {
-    struct test_struct
-    {
-        int& copy_cnt;
-        int& move_cnt;
-        test_struct(int& copy_cnt, int& move_cnt): copy_cnt(copy_cnt), move_cnt(move_cnt)
-        {}
-
-        test_struct(const test_struct &src): copy_cnt(src.copy_cnt), move_cnt(src.move_cnt)
-        {
-            ++copy_cnt;
-        }
-
-        test_struct(test_struct &&src): copy_cnt(src.copy_cnt), move_cnt(src.move_cnt)
-        {
-            ++move_cnt;
-        }
-    };
-
-    int copy_cnt = 0;
-    int move_cnt = 0;
-    test_struct arg(copy_cnt, move_cnt);
+    test_struct arg;
     std::cout << "constructor\n";
     auto src = bind(func_arb_arg<test_struct&>, arg); // 1st copy
     auto res = src(); // 2nd copy
@@ -330,7 +329,46 @@ TEST(bind, test_binder_move_constructor1)
     (void)moved;
     (void)res;
 }
+//
+//TEST(bind, test_binder_move_constructor2)
+//{
+//    struct test_struct
+//    {
+//        int& copy_cnt;
+//        int& move_cnt;
+//        test_struct(int& copy_cnt, int& move_cnt): copy_cnt(copy_cnt), move_cnt(move_cnt)
+//        {}
+//
+//        test_struct(const test_struct &src): copy_cnt(src.copy_cnt), move_cnt(src.move_cnt)
+//        {
+//            ++copy_cnt;
+//        }
+//
+//        test_struct(test_struct &&src): copy_cnt(src.copy_cnt), move_cnt(src.move_cnt)
+//        {
+//            ++move_cnt;
+//        }
+//    };
+//
+//    int copy_cnt = 0;
+//    int move_cnt = 0;
+//    test_struct arg1(copy_cnt, move_cnt);
+//    test_struct res1 = bind(func_arb_arg<test_struct&&>, _1)(std::move(arg1));
+//    (void)res1;
+//    ASSERT_TRUE(move_cnt == 1);
+//    ASSERT_TRUE(copy_cnt == 0);
+//}
 
+TEST(bind, moves_and_copies)
+{
+    move_cnt = 0;
+    copy_cnt = 0;
+    test_struct arg2;
+    test_struct res2 = bind(func_arb_arg<test_struct>, _1)(std::move(arg2));
+    (void)res2;
+    ASSERT_TRUE(move_cnt == 2);
+    ASSERT_TRUE(copy_cnt == 0);
+}
 TEST(bind, test_assignment)
 {
     /* There is no assignment in standard bind. */
