@@ -179,3 +179,5 @@ sympy-plots-for-*.tex/
 # WinEdt
 *.bak
 *.sav
+
+_minted-*

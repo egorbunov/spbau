@@ -1,6 +1,6 @@
 %% Creator: Inkscape 0.91_64bit, www.inkscape.org
 %% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
-%% Accompanies image file 'treap_n_construction.pdf' (pdf, eps, ps)
+%% Accompanies image file 'rec_seg_2.pdf' (pdf, eps, ps)
 %%
 %% To include the image in your LaTeX document, write
 %%   \input{<filename>.pdf_tex}
@@ -36,7 +36,7 @@
   }%
   \providecommand\rotatebox[2]{#2}%
   \ifx\svgwidth\undefined%
-    \setlength{\unitlength}{186.41065222bp}%
+    \setlength{\unitlength}{94.06928836bp}%
     \ifx\svgscale\undefined%
       \relax%
     \else%
@@ -48,12 +48,7 @@
   \global\let\svgwidth\undefined%
   \global\let\svgscale\undefined%
   \makeatother%
-  \begin{picture}(1,1.16477947)%
-    \put(0,0){\includegraphics[width=\unitlength,page=1]{treap_n_construction.pdf}}%
-    \put(0.45540147,0.78554205){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$a$}}}%
-    \put(0.65798287,0.37112439){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$b$}}}%
-    \put(0,0){\includegraphics[width=\unitlength,page=2]{treap_n_construction.pdf}}%
-    \put(0.89117361,0.67231816){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$x$}}}%
-    \put(0,0){\includegraphics[width=\unitlength,page=3]{treap_n_construction.pdf}}%
+  \begin{picture}(1,0.64413694)%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{rec_seg_2.pdf}}%
   \end{picture}%
 \endgroup%

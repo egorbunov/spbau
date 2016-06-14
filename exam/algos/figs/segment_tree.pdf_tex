@@ -1,0 +1,75 @@
+%% Creator: Inkscape 0.91_64bit, www.inkscape.org
+%% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
+%% Accompanies image file 'segment_tree.pdf' (pdf, eps, ps)
+%%
+%% To include the image in your LaTeX document, write
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics{<filename>.pdf}
+%% To scale the image, write
+%%   \def\svgwidth{<desired width>}
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics[width=<desired width>]{<filename>.pdf}
+%%
+%% Images with a different path to the parent latex file can
+%% be accessed with the `import' package (which may need to be
+%% installed) using
+%%   \usepackage{import}
+%% in the preamble, and then including the image with
+%%   \import{<path to file>}{<filename>.pdf_tex}
+%% Alternatively, one can specify
+%%   \graphicspath{{<path to file>/}}
+%% 
+%% For more information, please see info/svg-inkscape on CTAN:
+%%   http://tug.ctan.org/tex-archive/info/svg-inkscape
+%%
+\begingroup%
+  \makeatletter%
+  \providecommand\color[2][]{%
+    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\transparent[1]{%
+    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+    \renewcommand\transparent[1]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \ifx\svgwidth\undefined%
+    \setlength{\unitlength}{390.7092958bp}%
+    \ifx\svgscale\undefined%
+      \relax%
+    \else%
+      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
+    \fi%
+  \else%
+    \setlength{\unitlength}{\svgwidth}%
+  \fi%
+  \global\let\svgwidth\undefined%
+  \global\let\svgscale\undefined%
+  \makeatother%
+  \begin{picture}(1,0.37372635)%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{segment_tree.pdf}}%
+    \put(0.24073407,0.01362143){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{Исходный массив $A$}}}%
+    \put(0.03929942,0.13198483){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{}}}%
+    \put(0.70637734,0.04139606){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{\small{Нейтральные элементы}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=2]{segment_tree.pdf}}%
+    \put(0.37156772,0.0536591){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{\small{$[l, r]$}}}}%
+    \put(0.03242268,0.1256252){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$8$}}}%
+    \put(0.09384943,0.1256252){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$1$}}}%
+    \put(0.15527617,0.1256252){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$3$}}}%
+    \put(0.21670292,0.1256252){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$5$}}}%
+    \put(0.27827591,0.12553378){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$0$}}}%
+    \put(0.33988512,0.12569693){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$9$}}}%
+    \put(0.40125212,0.12573849){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$6$}}}%
+    \put(0.46265612,0.12563001){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$2$}}}%
+    \put(0.52416866,0.12582166){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$3$}}}%
+    \put(0.58544794,0.12599249){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$2$}}}%
+    \put(0.64705752,0.1257){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$7$}}}%
+    \put(0.70833804,0.1257){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$0$}}}%
+    \put(0.76987451,0.1257731){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$0$}}}%
+    \put(0.83104531,0.12580966){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$0$}}}%
+    \put(0.89287422,0.12580966){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$0$}}}%
+    \put(0.95433758,0.12595594){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$0$}}}%
+  \end{picture}%
+\endgroup%

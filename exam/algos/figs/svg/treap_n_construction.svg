@@ -26,7 +26,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2.8"
-     inkscape:cx="85.396876"
+     inkscape:cx="85.039733"
      inkscape:cy="145.89761"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -55,7 +55,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -140,7 +140,7 @@
          id="tspan4888"
          x="401.63782"
          y="123.28569"
-         style="font-size:22.5px">a</tspan></text>
+         style="font-size:22.5px">$a$</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -152,7 +152,7 @@
          id="tspan4888-1"
          x="448.84198"
          y="219.85052"
-         style="font-size:22.5px">b</tspan></text>
+         style="font-size:22.5px">$b$</tspan></text>
     <ellipse
        style="fill:none;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:4, 2;stroke-dashoffset:10"
        id="path4942"
@@ -177,7 +177,7 @@
          id="tspan4965"
          x="503.17853"
          y="149.66837"
-         style="font-size:27.5px">x</tspan></text>
+         style="font-size:27.5px">$x$</tspan></text>
     <path
        style="fill:none;fill-rule:evenodd;stroke:#f30000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 440.93159,157.36705 -16.66752,24.74874"
