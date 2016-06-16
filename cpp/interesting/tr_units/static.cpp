@@ -1,0 +1,1 @@
+static int static_a = 42;
