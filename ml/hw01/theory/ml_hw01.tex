@@ -1,0 +1,67 @@
+%!TEX program = xelatex
+
+\input{env.tex}
+\title{Домашнее задание №1 \\ Машинное обучение. 6 курс. Осенний семестр.}
+\author{Горбунов Егор Алексеевич}
+
+\begin{document}
+\maketitle
+
+\section{Back propagation алгоритм}
+
+\begin{equation*}
+s^l_i = \sum_j{\omega_{ij}^l \cdot x^{l-1}_j} \qquad
+\delta^L_i = \frac{\partial L(w)}{\partial s^L_i} \qquad
+\delta^{l-1}_i = \sum_j{\delta_j^l \cdot \omega_{ji}^l \cdot \sigma'(s_i^l)}
+\end{equation*}
+
+
+\begin{task}[1]
+Выписать в явном виде выражения для $\delta^L$:
+\begin{itemize}
+	\item Решающая функция: softmax
+	\begin{equation*}
+		\sigma^L(s^L)_i = \frac{\exp{s^L_i}}{\sum_j{\exp{s^L_j}}}
+	\end{equation*}
+	\item Функция активации: сигмоида
+	\begin{equation*}
+		\sigma(s) = \frac{1}{1 + e^{-s}}
+	\end{equation*}
+	\item Функция потерь: кросс-энтропия
+	\begin{equation*}
+		C(w) = -\sum_k{o_k\cdot \log{x^L_k}}
+	\end{equation*}
+\end{itemize}
+\end{task}
+\begin{solution}
+\begin{align*}
+\delta^L_i &= \frac{\partial L(w)}{\partial s^L_i} = \sum_k{\frac{\partial C(w)}{\partial x_k^L} \cdot \frac{\partial x_k^L}{\partial s^L_i}}\\
+           &= \xbracket{\text{от $s_i^L$ зависит только $x_i^L$}} \\
+           &= \frac{\partial C(w)}{\partial x_i^L} \cdot \frac{\partial x_i^L}{\partial s^L_i} \\
+           &= (-o_i\cdot \log{x^L_i})' \cdot  \frac{\partial \sigma^L(s^L)_i}{\partial s^L_i} 
+            = -\frac{o_i}{x^L_i} \cdot \frac{\exp{s^L_i} \cdot \sum_j{\exp{s^L_j}} - \exp{2s^L_i}}{\xparen{\sum_j{\exp{s^L_j}}}^2} \\
+           &= -\frac{o_i}{x^L_i} \cdot \frac{\exp{s^L_i} \cdot \sum_{j \neq i}{\exp{s^L_j}}}{\xparen{\sum_j{\exp{s^L_j}}}^2}
+\end{align*}
+\end{solution}
+
+\begin{task}[2]
+Выписать в явном виде выражения для $\delta^{l-1}$ для следующий функций активации:
+\begin{enumerate}
+	\item Сигмоида: $\sigma(s) = \frac{1}{1 + e^{-s}}$
+	\item Гиперболический тангенс: $\sigma(s) = \frac{e^{2s} - 1}{e^{2s} + 1}$
+	\item ReLU: $\sigma(s) = \max{(0, s)}$
+\end{enumerate}
+\end{task}
+\begin{solution}
+\begin{enumerate}
+	\item $\sigma'(s) = \frac{e^{-s}}{\xparen{1 + e^{-s}}^2} \Longrightarrow 
+	       \delta^{l-1}_i = \sum_j{\delta_j^l \cdot \omega_{ji}^l \cdot \frac{e^{-s_i^l}}{\xparen{1 + e^{-s_i^l}}^2}}$
+	\item $\sigma'(s) = \frac{2e^{2s}\xparen{e^{2s}+1}-2e^{2s}\xparen{e^{2s}-1}}{\xparen{e^{2s}+1}^2}
+	                  = \frac{4e^{2s}}{\xparen{e^{2s}+1}^2} \Longrightarrow 
+	       \delta^{l-1}_i = \sum_j{\delta_j^l \cdot \omega_{ji}^l \cdot \frac{4e^{2s_i^l}}{\xparen{e^{2s_i^l}+1}^2}}$
+	\item $\sigma'(s) = \begin{cases} 0, & s \leq 0 \\ 1, & s > 0\end{cases} \Longrightarrow
+	       \delta^{l-1}_i = \begin{cases} 0, & s_i^l \leq 0 \\ \sum_j{\delta_j^l \cdot \omega_{ji}^l}, & s_i^l > 0 \end{cases}$
+\end{enumerate}
+\end{solution}
+
+\end{document}
