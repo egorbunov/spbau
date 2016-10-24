@@ -159,7 +159,7 @@ object IntArrayBuffer {
     }
 }
 
-// tests
+// ======================== tests ===========================
 
 {
     val arr1 = IntArrayBuffer.empty
