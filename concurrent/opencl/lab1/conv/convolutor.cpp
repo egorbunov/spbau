@@ -197,7 +197,7 @@ int main() {
 	queue.enqueueNDRangeKernel(convolute_part, 
 		                       cl::NullRange, 
 		                       cl::NDRange(matrices.c_mat.size()), // size of work items (one row --> one work item) 
-		                       cl::NullRange);
+		                       cl::NDRange(matrices.c_mat.size()); // one work group
 
     queue.enqueueReadBuffer(buffer_c, CL_TRUE, 0, sizeof(float) * flat_c_size, matrices.c_mat.buffer());
 
