@@ -46,7 +46,7 @@ cl::Device get_host_device() {
 }
 
 std::string read_convolution_program() {
-    std::ifstream file("convolute_one_cell.cl");
+    std::ifstream file("convolute_part.cl");
     std::string prog((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
     return prog;
 }
@@ -197,7 +197,7 @@ int main() {
 	queue.enqueueNDRangeKernel(convolute_part, 
 		                       cl::NullRange, 
 		                       cl::NDRange(matrices.c_mat.size()), // size of work items (one row --> one work item) 
-		                       cl::NDRange(matrices.c_mat.size()); // one work group
+		                       cl::NDRange(matrices.c_mat.size())); // one work group
 
     queue.enqueueReadBuffer(buffer_c, CL_TRUE, 0, sizeof(float) * flat_c_size, matrices.c_mat.buffer());
 
