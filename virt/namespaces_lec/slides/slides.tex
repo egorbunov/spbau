@@ -1,0 +1,230 @@
+%!TEX program = xelatex
+\input{./env.tex}
+\makeatletter
+\def\input@path{{./fig/}}
+\makeatother
+\graphicspath{{./fig/}}
+
+\title{Linux namespaces}
+\author[Егор Горбунов]{
+	Егор Горбунов
+}
+\institute{CПбАУ}
+% \date{20 мая 2016 г.}
+
+\begin{document}
+\maketitle
+
+\begin{frame}{Содержание}
+\begin{large}
+\begin{enumerate}
+	\item \hyperlink{namespaces_overview}{Напоминание о namespaces}
+	\item \hyperlink{uts_ns_usage}{Использование UTS NS}
+	\item \hyperlink{pid_ns_usage}{Использование PID NS}
+	\item \hyperlink{ns_internals}{Namespaces внутри}
+	\item \hyperlink{uts_ns_inter}{Устройство UTS NS}
+	\item \hyperlink{pid_ns_inter}{Устройство PID NS}
+\end{enumerate}
+\end{large}
+\end{frame}
+
+\begin{frame}[label={namespaces_overview}]
+\frametitle{Namespaces}
+\begin{tabular}{lp{9cm}}
+	\alert{User} & Изоляция ID пользователя, ID группы \\
+	\alert{\textbf{PID}} & \textbf{Изоляция ID процесса} \\
+	\alert{\textbf{UTS}} & \textbf{Изоляция Hostname и доменного имени NIS} \\
+	\alert{Network} & Изоляция сетевого стека: таблица маршрутизации, firewall rules, сетевые устройства, порты \\
+	\alert{IPC} & Изоляция объектов межпроцессного взаимодействия: семафоры (sem), очереди сообщений (msg), общая память (shm) \\
+	\alert{Mount} & Изоляция точек монтирования \\
+	\alert{Cgroup} & Изоляция иерархии cgroup \\
+	... & 
+\end{tabular}
+\end{frame}
+
+\begin{frame}[label={uts_ns_usage}]
+\frametitle{Что позволяет UTS NS?}
+\begin{enumerate}
+	\item \alert{Изменять \emph{hostname}} для процесса (контейнера)
+	\begin{itemize}
+		\item Идентификация контейнера
+		\item Используется для администрирования (логи, ...)
+		% (hostname используется многими приложениями как идентификатор; записи в логах могут классифицироваться по hostname)
+		% работа в терминале с разными контейнерами ===> легче различать по именам
+	\end{itemize}
+	\item \alert{Изменять \emph{NIS domain name}} для процесса (контейнера)
+	\begin{itemize}
+		\item NIS --- Network Information Service --- устаревшая технология, используется для централизованного хранения файлов конфигураций (на сервере) и распространения их по клиентам
+		\item Разные NIS domain name $\Rightarrow$ разные конфигурации
+	\end{itemize}
+\end{enumerate}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Как работать с UTS NS?}
+\begin{lstlisting}[language=bash, basicstyle={\normalsize\ttfamily}]
+$ sudo unshare --uts
+$ hostname leonid
+$ ypdomainname some-nis-domain
+$ ping leonid
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile, label={pid_ns_usage}]
+\frametitle{Что позволяет PID NS?}
+\begin{itemize}
+	\item Создавать свежее дерево процессов (набор PIDs)
+	\item Важно для контейнеров
+\end{itemize}
+
+\begin{block}{}
+\begin{lstlisting}[language=bash, basicstyle={\normalsize\ttfamily}]
+$ unshare --fork --pid --user
+$ echo $$
+1
+\end{lstlisting}
+\end{block}
+
+Многие приложения рассчитывают на то, что PID константный, \texttt{getpid()} кэширует PID $\Longrightarrow$ \texttt{unshare(), setns()} вступает в силу лишь для первого ребёнка (после \texttt{fork()})
+
+\end{frame}
+
+\begin{frame}[fragile, label={ns_internals}]
+\frametitle{Namespaces внутри}
+\begin{lstlisting}[title={\href{http://lxr.free-electrons.com/source/include/linux/sched.h\#L1658}{sched.h}}]
+struct task_struct {
+    ...
+/* namespaces */
+    struct nsproxy *nsproxy;
+    ...
+}
+\end{lstlisting}
+\begin{lstlisting}[title={\href{http://lxr.free-electrons.com/source/include/linux/nsproxy.h\#L30}{nsproxy.h}}]
+struct nsproxy {
+     atomic_t count;
+     struct uts_namespace *uts_ns;
+     struct ipc_namespace *ipc_ns;
+     struct mnt_namespace *mnt_ns;
+     struct pid_namespace *pid_ns_for_children;
+     struct net           *net_ns;
+     struct cgroup_namespace *cgroup_ns;
+};
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{\texttt{nsproxy}}
+\begin{small}
+\begin{itemize}
+	\item copy on write
+	\item \alert{изменять} \textbf{\texttt{task->nsproxy}} можно только если \textbf{\texttt{task}} --- текущая задача
+\end{itemize}
+\end{small}
+\begin{lstlisting}[basicstyle={\tiny\ttfamily}, title=\href{http://lxr.free-electrons.com/source/include/linux/nsproxy.h\#L67}{nsproxy methods}]
+int copy_namespaces(unsigned long flags, struct task_struct *tsk);
+void exit_task_namespaces(struct task_struct *tsk);
+void switch_task_namespaces(struct task_struct *tsk, struct nsproxy *new);
+void free_nsproxy(struct nsproxy *ns);
+int unshare_nsproxy_namespaces(unsigned long, struct nsproxy **, struct cred *, struct fs_struct *);
+int __init nsproxy_cache_init(void);
+
+static inline void put_nsproxy(struct nsproxy *ns){
+        if (atomic_dec_and_test(&ns->count)) {
+                free_nsproxy(ns);
+        }
+}
+
+static inline void get_nsproxy(struct nsproxy *ns){
+        atomic_inc(&ns->count);
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Структура одного namespace}
+\begin{lstlisting}[title=\href{http://lxr.free-electrons.com/source/include/linux/ns_common.h\#L6}{ns\_common}]
+struct ns_common {
+    atomic_long_t stashed;
+    const struct proc_ns_operations *ops;
+    unsigned int inum;
+};
+\end{lstlisting}
+\begin{lstlisting}[title=\href{http://lxr.free-electrons.com/source/include/linux/proc_ns.h\#L15}{proc\_ns\_operations}]
+struct proc_ns_operations {
+    const char *name;
+    int type;
+    struct ns_common *(*get)(struct task_struct *task);
+    void (*put)(struct ns_common *ns);
+    int (*install)(struct nsproxy *nsproxy, struct ns_common *ns);
+};
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{namespaces в \texttt{fork()}, \texttt{clone()}, \texttt{unshare()}}
+
+\begin{block}{\texttt{fork()}, \texttt{clone()}}
+	\texttt{copy\_namespaces}
+\end{block}
+
+\begin{block}{\texttt{unshare()}}
+	\texttt{unshare\_nsproxy\_namespaces} $\Rightarrow$ \texttt{switch\_task\_namespaces}
+\end{block}
+
+\begin{block}{\texttt{exit()}}
+	\texttt{exit\_task\_namespaces}
+\end{block}
+
+\begin{block}{\texttt{setns()}}
+	\texttt{create\_new\_namespaces} $\Rightarrow$ \texttt{ns->ops->install}
+\end{block}
+
+\end{frame}
+
+\begin{frame}[fragile, label={uts_ns_inter}]
+\frametitle{Устройство UTS NS}
+\begin{lstlisting}[title=\href{http://lxr.free-electrons.com/source/include/linux/utsname.h\#L23}{uts\_namespace}]
+struct uts_namespace {
+    struct kref kref;
+    struct new_utsname name;
+    struct user_namespace *user_ns;
+    struct ns_common ns;
+};
+\end{lstlisting}
+\begin{lstlisting}[title=\href{http://lxr.free-electrons.com/source/include/uapi/linux/utsname.h\#L24}{utsname.h}]
+struct new_utsname {
+    char sysname[__NEW_UTS_LEN + 1];
+    char nodename[__NEW_UTS_LEN + 1];
+    char release[__NEW_UTS_LEN + 1];
+    char version[__NEW_UTS_LEN + 1];
+    char machine[__NEW_UTS_LEN + 1];
+    char domainname[__NEW_UTS_LEN + 1];
+};
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile, label={pid_ns_inter}]
+\frametitle{Устройство PID NS}
+\begin{lstlisting}[basicstyle={\tiny\ttfamily}, title=\href{http://lxr.free-electrons.com/source/include/linux/pid_namespace.h\#L24}{pid\_namespace.h}]
+struct pid_namespace {
+        ...
+        struct pidmap pidmap[PIDMAP_ENTRIES];
+        int last_pid;
+        unsigned int nr_hashed;
+        struct task_struct *child_reaper;
+        struct kmem_cache *pid_cachep;
+        unsigned int level;
+        struct pid_namespace *parent;
+        struct user_namespace *user_ns;
+        struct work_struct proc_work;
+        kgid_t pid_gid;
+        int hide_pid;
+        struct ns_common ns;
+        ...
+};
+\end{lstlisting}
+
+\end{frame}
+
+\end{document}
