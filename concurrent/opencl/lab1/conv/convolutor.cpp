@@ -160,7 +160,12 @@ int main() {
     sources.push_back({prog_str.c_str(), prog_str.length()});
 
     cl::Program cl_program(context, sources);
-    if (cl_program.build({cl_device}) != CL_SUCCESS) {
+    const size_t block_size = 16;
+    auto ret = cl_program.build(
+    	{cl_device}, 
+    	(std::string("-D BLOCK_SIZE=") + std::to_string(block_size)).c_str()
+    );
+    if (ret != CL_SUCCESS) {
         std::cout << "Error building: " << cl_program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(cl_device) << std::endl;
         exit(1);
     }
@@ -196,8 +201,8 @@ int main() {
 	convolute_part.setArg(3, buffer_sizes);
 	queue.enqueueNDRangeKernel(convolute_part, 
 		                       cl::NullRange, 
-		                       cl::NDRange(matrices.c_mat.size()), // size of work items (one row --> one work item) 
-		                       cl::NDRange(matrices.c_mat.size())); // one work group
+		                       cl::NDRange(matrices.c_mat.size(), matrices.c_mat.size()), // global size
+		                       cl::NDRange(block_size, block_size)); // one work group size
 
     queue.enqueueReadBuffer(buffer_c, CL_TRUE, 0, sizeof(float) * flat_c_size, matrices.c_mat.buffer());
 
