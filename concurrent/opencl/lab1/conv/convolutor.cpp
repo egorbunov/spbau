@@ -192,6 +192,9 @@ int main() {
     queue.enqueueWriteBuffer(buffer_b, CL_TRUE, 0, sizeof(float) * flat_b_size, matrices.b_mat.buffer());
     queue.enqueueWriteBuffer(buffer_sizes, CL_TRUE, 0, sizeof(size_t) * 2, sizes);
 
+    // calculating global grid size to be multiple of chosen block size
+    size_t grid_size = matrices.c_mat.size();
+    grid_size += (block_size - grid_size % block_size);
 
     // RUN ZE KERNEL
     cl::Kernel convolute_part(cl_program, "convolute_part");
@@ -201,7 +204,7 @@ int main() {
 	convolute_part.setArg(3, buffer_sizes);
 	queue.enqueueNDRangeKernel(convolute_part, 
 		                       cl::NullRange, 
-		                       cl::NDRange(matrices.c_mat.size(), matrices.c_mat.size()), // global size
+		                       cl::NDRange(grid_size, grid_size), // global size
 		                       cl::NDRange(block_size, block_size)); // one work group size
 
     queue.enqueueReadBuffer(buffer_c, CL_TRUE, 0, sizeof(float) * flat_c_size, matrices.c_mat.buffer());
