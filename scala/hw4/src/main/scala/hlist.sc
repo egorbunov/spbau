@@ -11,7 +11,6 @@ case class Suc[T <: ChurchNum](prev: T) extends ChurchNum
 object ChurchNum {
     type Zero = Zero.type
 
-
     def suc[T <: ChurchNum](prev: T): Suc[T] = Suc(prev)
 
     final val _0 = Zero
