@@ -1,9 +1,0 @@
-01 Test from the problem statement
-02 13,27,137 Always increasing
-03 1,2,568 Always decreasing
-04 54,55,6666 Lognormal p0=50.00 exp_yield=0.0001 vol=0.03
-05 99,100,10000 Lognormal p0=11.11 exp_yield=0.00005 vol=0.01
-06 39,97,9876 Lognormal p0=90.00 exp_yield=0 vol=0.02
-07 1,2,10000 Flips between 99.99 and 0.01 -- 9999 signals in the answer
-08 7,81,7865 Lognormal p0=88.88 exp_yield=-0.0005, vol=0.005 (almost always decreasing)
-09 67,73,6789 Lognormal p0=0.15 exp_yield=0.001 vol=0.001 (almost always increasing)
